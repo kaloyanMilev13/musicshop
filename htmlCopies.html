@@ -1,0 +1,2784 @@
+orders copy
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Orders - MusicShop</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<h1>Your Orders</h1>
+
+<section id="cart_section">
+    <h2>Current cart</h2>
+    <div id="cart_list"></div>
+    <p id="cart_total"></p>
+
+    <h3>Checkout details</h3>
+    <form id="checkout_form" onsubmit="event.preventDefault(); placeOrder();">
+        <!-- All labels and placeholders in English -->
+        <div>
+            <label for="chk_name">Full name*</label><br>
+            <input type="text" id="chk_name" required>
+        </div>
+        <div>
+            <label for="chk_email">Email (optional)</label><br>
+            <input type="email" id="chk_email">
+        </div>
+        <div>
+            <label for="chk_phone">Phone (optional)</label><br>
+            <input type="text" id="chk_phone">
+        </div>
+        <div>
+            <label for="chk_address">Address*</label><br>
+            <input type="text" id="chk_address" required>
+        </div>
+        <div>
+            <label for="chk_city">City*</label><br>
+            <input type="text" id="chk_city" required>
+        </div>
+        <div>
+            <label for="chk_postcode">Postcode*</label><br>
+            <input type="text" id="chk_postcode" required>
+        </div>
+        <div>
+            <label for="chk_country">Country*</label><br>
+            <input type="text" id="chk_country" required>
+        </div>
+        <div>
+            <label for="chk_note">Order note (optional)</label><br>
+            <textarea id="chk_note" rows="3" placeholder="Any additional information"></textarea>
+        </div>
+
+        <br>
+        <button type="submit" id="place_order_btn">Place order</button>
+    </form>
+</section>
+
+<hr>
+
+<section id="history_section">
+    <h2>Order history</h2>
+    <div id="orders_list">Loading...</div>
+</section>
+
+<script>
+// ----- Cart helpers -----
+function getCart() {
+    try {
+        const raw = localStorage.getItem('musicshop_cart');
+        return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+        return [];
+    }
+}
+
+function saveCart(cart) {
+    localStorage.setItem('musicshop_cart', JSON.stringify(cart));
+}
+
+function clearCart() {
+    localStorage.removeItem('musicshop_cart');
+}
+
+function renderCart() {
+    const cart = getCart();
+    const container = document.getElementById("cart_list");
+    const totalEl = document.getElementById("cart_total");
+
+    container.innerHTML = "";
+
+    if (cart.length === 0) {
+        container.textContent = "Your cart is empty.";
+        totalEl.textContent = "";
+        return;
+    }
+
+    let total = 0;
+
+    cart.forEach((item, index) => {
+        const lineTotal = item.price * item.quantity;
+        total += lineTotal;
+
+        const div = document.createElement("div");
+        div.className = "cart-item";
+        div.innerHTML = `
+            <strong>${item.name}</strong>
+            <div class="cart-controls">
+                <button class="dec-btn" data-index="${index}">-</button>
+                <span class="qty">${item.quantity}</span>
+                <button class="inc-btn" data-index="${index}">+</button>
+                <span class="line-total">€${lineTotal.toFixed(2)}</span>
+                <button class="remove-btn" data-index="${index}">Remove</button>
+            </div>
+        `;
+        container.appendChild(div);
+    });
+
+    totalEl.textContent = "Total: €" + total.toFixed(2);
+
+    // Increment quantity
+    container.querySelectorAll(".inc-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const idx = parseInt(btn.getAttribute("data-index"), 10);
+            changeQuantity(idx, +1);
+        });
+    });
+
+    // Decrement quantity
+    container.querySelectorAll(".dec-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const idx = parseInt(btn.getAttribute("data-index"), 10);
+            changeQuantity(idx, -1);
+
+        });
+    });
+
+    // Remove item completely
+    container.querySelectorAll(".remove-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const idx = parseInt(btn.getAttribute("data-index"), 10);
+            removeItem(idx);
+        });
+    });
+}
+
+function changeQuantity(index, delta) {
+    const cart = getCart();
+    if (!cart[index]) return;
+
+    cart[index].quantity += delta;
+
+    if (cart[index].quantity <= 0) {
+        cart.splice(index, 1);
+    }
+
+    saveCart(cart);
+    renderCart();
+}
+
+function removeItem(index) {
+    const cart = getCart();
+    if (!cart[index]) return;
+
+    cart.splice(index, 1);
+    saveCart(cart);
+    renderCart();
+}
+
+
+// ----- Place order with checkout fields -----
+function placeOrder() {
+    const cart = getCart();
+    if (cart.length === 0) {
+        alert("Your cart is empty.");
+        return;
+    }
+
+    const name     = document.getElementById("chk_name").value.trim();
+    const email    = document.getElementById("chk_email").value.trim();
+    const phone    = document.getElementById("chk_phone").value.trim();
+    const address  = document.getElementById("chk_address").value.trim();
+    const city     = document.getElementById("chk_city").value.trim();
+    const postcode = document.getElementById("chk_postcode").value.trim();
+    const country  = document.getElementById("chk_country").value.trim();
+    const note     = document.getElementById("chk_note").value.trim();
+
+    if (!name || !address || !city || !postcode || !country) {
+        alert("Please fill in all required fields (marked with *).");
+        return;
+    }
+
+    const items = cart.map(it => ({
+        product_id: it.id,
+        quantity: it.quantity
+    }));
+
+    fetch('/musicshop/api/create_order.php', {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+            items,
+            name,
+            email,
+            phone,
+            address,
+            city,
+            postcode,
+            country,
+            note
+        })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (!data.ok) {
+            alert("Order failed: " + (data.error || "Unknown error"));
+            return;
+        }
+
+        alert("Order placed successfully. ID: " + data.order_id);
+        clearCart();
+        // Optionally reset the form
+        document.getElementById("checkout_form").reset();
+        renderCart();
+        loadOrderHistory();
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Error placing order.");
+    });
+}
+
+// ----- Load order history -----
+function loadOrderHistory() {
+    fetch('/musicshop/api/get_orders.php', {
+        credentials: "include"
+    })
+    .then(r => r.json())
+    .then(data => {
+        const container = document.getElementById("orders_list");
+        container.innerHTML = "";
+
+        if (!data.ok) {
+            container.textContent = "Error loading orders: " + (data.error || "");
+            return;
+        }
+
+        if (!data.orders || data.orders.length === 0) {
+            container.textContent = "You have no orders yet.";
+            return;
+        }
+
+        data.orders.forEach(order => {
+            const div = document.createElement("div");
+            div.className = "order";
+
+            let itemsHtml = "";
+            order.items.forEach(it => {
+                itemsHtml += `
+                    <li>${it.name} - x${it.quantity} @ €${Number(it.unit_price).toFixed(2)}</li>
+                `;
+            });
+
+            div.innerHTML = `
+                <h3>Order #${order.id}</h3>
+                <p>Date: ${order.created_at}</p>
+                <p>Total: €${Number(order.total_price).toFixed(2)}</p>
+                <p><strong>Name:</strong> ${order.customer_name || '-'}</p>
+                <p><strong>Address:</strong> ${order.shipping_address || ''}, ${order.shipping_city || ''} ${order.shipping_postcode || ''}, ${order.shipping_country || ''}</p>
+                <ul>${itemsHtml}</ul>
+            `;
+
+            container.appendChild(div);
+        });
+    })
+    .catch(err => {
+        console.error(err);
+        document.getElementById("orders_list").textContent = "Error loading orders.";
+    });
+}
+
+// ----- Init -----
+document.addEventListener("DOMContentLoaded", () => {
+    renderCart();
+    loadOrderHistory();
+});
+</script>
+
+</body>
+</html>
+
+
+
+login copy
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - MusicShop</title>
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        body {
+            max-width: 400px;
+            margin: auto;
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 15px;
+            cursor: pointer;
+        }
+        #errorBox {
+            background: #ffdddd;
+            color: #a80000;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            display: none;
+        }
+        a {
+            text-decoration: none;
+            color: #0066cc;
+        }
+        .center {
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>Login</h1>
+
+<div id="errorBox"></div>
+
+<div class="form-group">
+    <label for="email">Email:</label>
+    <input type="text" id="email" placeholder="Enter your email">
+</div>
+
+<div class="form-group">
+    <label for="password">Password:</label>
+    <input type="password" id="password" placeholder="Enter your password">
+</div>
+
+<button onclick="doLogin()">Login</button>
+
+<div class="center">
+    <p>Don't have an account? <a href="register.html">Register here</a></p>
+</div>
+
+<script>
+function doLogin() {
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const errorBox = document.getElementById("errorBox");
+
+    errorBox.style.display = "none";
+
+    if (!email || !password) {
+        errorBox.textContent = "Please fill in all fields.";
+        errorBox.style.display = "block";
+        return;
+    }
+
+    fetch("/musicshop/api/login.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ email, password })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (!data.ok) {
+            errorBox.textContent = data.error || "Login failed.";
+            errorBox.style.display = "block";
+        } else {
+            window.location.href = "index.html";
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        errorBox.textContent = "Network or server error.";
+        errorBox.style.display = "block";
+    });
+}
+</script>
+
+</body>
+</html>
+
+
+
+favourites copy
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Favorites</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<h1>Your Favorites</h1>
+<div id="favorites_list">Loading...</div>
+
+<script>
+// Cart helpers (same as products.html)
+function getCart() {
+    try {
+        const raw = localStorage.getItem('musicshop_cart');
+        return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+        return [];
+    }
+}
+
+function saveCart(cart) {
+    localStorage.setItem('musicshop_cart', JSON.stringify(cart));
+}
+
+function addToCart(id, name, price) {
+    const cart = getCart();
+    const existing = cart.find(item => item.id === id);
+
+    if (existing) {
+        existing.quantity += 1;
+    } else {
+        cart.push({
+            id: id,
+            name: name,
+            price: Number(price),
+            quantity: 1
+        });
+    }
+
+    saveCart(cart);
+    alert("Added to cart.");
+}
+
+function removeFavorite(productId) {
+    fetch('/musicshop/api/remove_favorite.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+
+        body: JSON.stringify({ product_id: productId })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (!data.ok) {
+            alert('Failed to remove from favorites: ' + (data.error || 'Unknown error'));
+            return;
+        }
+        loadFavorites();
+    })
+    .catch(() => {
+        alert('Error removing from favorites.');
+    });
+}
+
+function loadFavorites() {
+    fetch('/musicshop/api/get_favorites.php', {
+        credentials: 'include'
+    })
+    .then(r => r.json())
+    .then(data => {
+        const container = document.getElementById("favorites_list");
+        container.innerHTML = "";
+
+        if (!data.ok) {
+            container.innerText = "Error loading favorites.";
+            return;
+        }
+
+        if (!data.favorites || data.favorites.length === 0) {
+            container.innerText = "You have no favorites yet.";
+            return;
+        }
+
+        data.favorites.forEach(p => {
+            const div = document.createElement("div");
+            div.className = "product";
+
+            const safeName = (p.name || '').replace(/"/g, '&quot;').replace(/'/g, "\\'");
+
+
+            div.innerHTML = `
+                <h3>${p.name}</h3>
+                <p>${p.description || ''}</p>
+                <p><strong>€${p.price}</strong></p>
+                <button onclick="addToCart(${p.id}, '${safeName}', ${p.price})">Add to cart</button>
+                <button onclick="removeFavorite(${p.id})">Remove from favorites</button>
+            `;
+
+            container.appendChild(div);
+        });
+    })
+    .catch(() => {
+        document.getElementById("favorites_list").innerText = "Error loading favorites.";
+    });
+}
+
+document.addEventListener("DOMContentLoaded", loadFavorites);
+</script>
+
+</body>
+</html>
+
+
+
+
+cart.html copy
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cart - MusicShop</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<h1>Your cart</h1>
+
+<section id="cart_section">
+    <h2>Current cart</h2>
+    <div id="cart_list"></div>
+    <p id="cart_total"></p>
+
+    <!-- Button to see recent orders (history page) -->
+    <p>
+        <button type="button" onclick="window.location.href='orders.html'">
+            View recent orders
+        </button>
+    </p>
+
+    <h3>Checkout details</h3>
+    <form id="checkout_form" onsubmit="event.preventDefault(); placeOrder();">
+        <!-- All labels and placeholders in English -->
+        <div>
+            <label for="chk_name">Full name*</label><br>
+            <input type="text" id="chk_name" required>
+        </div>
+        <div>
+            <label for="chk_email">Email (optional)</label><br>
+            <input type="email" id="chk_email">
+        </div>
+        <div>
+            <label for="chk_phone">Phone (optional)</label><br>
+            <input type="text" id="chk_phone">
+        </div>
+        <div>
+            <label for="chk_address">Address*</label><br>
+            <input type="text" id="chk_address" required>
+        </div>
+        <div>
+            <label for="chk_city">City*</label><br>
+            <input type="text" id="chk_city" required>
+        </div>
+        <div>
+            <label for="chk_postcode">Postcode*</label><br>
+            <input type="text" id="chk_postcode" required>
+        </div>
+        <div>
+            <label for="chk_country">Country*</label><br>
+            <input type="text" id="chk_country" required>
+        </div>
+        <div>
+            <label for="chk_note">Order note (optional)</label><br>
+            <textarea id="chk_note" rows="3" placeholder="Any additional information"></textarea>
+        </div>
+
+        <br>
+        <button type="submit" id="place_order_btn">Place order</button>
+    </form>
+</section>
+
+<script>
+// ----- Cart helpers -----
+function getCart() {
+    try {
+        const raw = localStorage.getItem('musicshop_cart');
+        return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+        return [];
+    }
+}
+
+function saveCart(cart) {
+    localStorage.setItem('musicshop_cart', JSON.stringify(cart));
+}
+
+function clearCart() {
+    localStorage.removeItem('musicshop_cart');
+}
+
+function renderCart() {
+    const cart = getCart();
+    const container = document.getElementById("cart_list");
+    const totalEl = document.getElementById("cart_total");
+
+    container.innerHTML = "";
+
+    if (cart.length === 0) {
+        container.textContent = "Your cart is empty.";
+        totalEl.textContent = "";
+        return;
+    }
+
+    let total = 0;
+
+    cart.forEach((item, index) => {
+        const lineTotal = item.price * item.quantity;
+        total += lineTotal;
+
+        const div = document.createElement("div");
+        div.className = "cart-item";
+        div.innerHTML = `
+            <strong>${item.name}</strong>
+            <div class="cart-controls">
+                <button class="dec-btn" data-index="${index}">-</button>
+                <span class="qty">${item.quantity}</span>
+                <button class="inc-btn" data-index="${index}">+</button>
+                <span class="line-total">€${lineTotal.toFixed(2)}</span>
+                <button class="remove-btn" data-index="${index}">Remove</button>
+            </div>
+        `;
+        container.appendChild(div);
+    });
+
+    totalEl.textContent = "Total: €" + total.toFixed(2);
+
+    // Increment quantity
+    container.querySelectorAll(".inc-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const idx = parseInt(btn.getAttribute("data-index"), 10);
+            changeQuantity(idx, +1);
+        });
+    });
+
+    // Decrement quantity
+    container.querySelectorAll(".dec-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const idx = parseInt(btn.getAttribute("data-index"), 10);
+            changeQuantity(idx, -1);
+        });
+    });
+
+    // Remove item completely
+    container.querySelectorAll(".remove-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const idx = parseInt(btn.getAttribute("data-index"), 10);
+            removeItem(idx);
+        });
+    });
+}
+
+function changeQuantity(index, delta) {
+    const cart = getCart();
+    if (!cart[index]) return;
+
+    cart[index].quantity += delta;
+
+    if (cart[index].quantity <= 0) {
+        cart.splice(index, 1);
+    }
+
+    saveCart(cart);
+    renderCart();
+}
+
+function removeItem(index) {
+    const cart = getCart();
+    if (!cart[index]) return;
+
+    cart.splice(index, 1);
+    saveCart(cart);
+    renderCart();
+}
+
+// ----- Place order with checkout fields -----
+function placeOrder() {
+    const cart = getCart();
+    if (cart.length === 0) {
+        alert("Your cart is empty.");
+        return;
+    }
+
+    const name     = document.getElementById("chk_name").value.trim();
+    const email    = document.getElementById("chk_email").value.trim();
+    const phone    = document.getElementById("chk_phone").value.trim();
+    const address  = document.getElementById("chk_address").value.trim();
+    const city     = document.getElementById("chk_city").value.trim();
+    const postcode = document.getElementById("chk_postcode").value.trim();
+    const country  = document.getElementById("chk_country").value.trim();
+    const note     = document.getElementById("chk_note").value.trim();
+
+    if (!name || !address || !city || !postcode || !country) {
+        alert("Please fill in all required fields (marked with *).");
+        return;
+    }
+
+    const items = cart.map(it => ({
+        product_id: it.id,
+        quantity: it.quantity
+    }));
+
+    fetch('/musicshop/api/create_order.php', {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+            items,
+            name,
+            email,
+            phone,
+            address,
+            city,
+            postcode,
+            country,
+            note
+        })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (!data.ok) {
+            alert("Order failed: " + (data.error || "Unknown error"));
+            return;
+        }
+
+        alert("Order placed successfully. ID: " + data.order_id);
+        clearCart();
+        document.getElementById("checkout_form").reset();
+        renderCart();
+        // We DON'T load order history here anymore; user can click "View recent orders"
+    })
+    .catch(err => {
+        console.error(err);
+        alert("Error placing order.");
+    });
+}
+
+// ----- Init -----
+document.addEventListener("DOMContentLoaded", () => {
+    renderCart();
+});
+</script>
+
+</body>
+</html>
+
+
+
+
+orders.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Orders - MusicShop</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<h1>Your Orders</h1>
+
+<!-- Button to go make a new order (cart page) -->
+<p>
+    <button type="button" onclick="window.location.href='cart.html'">
+        Make a new order
+    </button>
+</p>
+
+<section id="history_section">
+    <h2>Order history</h2>
+    <div id="orders_list">Loading...</div>
+</section>
+
+<script>
+// ----- Load order history (same logic as before) -----
+function loadOrderHistory() {
+    fetch('/musicshop/api/get_orders.php', {
+        credentials: "include"
+    })
+    .then(r => r.json())
+
+    .then(data => {
+        const container = document.getElementById("orders_list");
+        container.innerHTML = "";
+
+        if (!data.ok) {
+            container.textContent = "Error loading orders: " + (data.error || "");
+            return;
+        }
+
+        if (!data.orders || data.orders.length === 0) {
+            container.textContent = "You have no orders yet.";
+            return;
+        }
+
+        data.orders.forEach(order => {
+            const div = document.createElement("div");
+            div.className = "order";
+
+            let itemsHtml = "";
+            order.items.forEach(it => {
+                itemsHtml += `
+                    <li>${it.name} - x${it.quantity} @ €${Number(it.unit_price).toFixed(2)}</li>
+                `;
+            });
+
+            div.innerHTML = `
+                <h3>Order #${order.id}</h3>
+                <p>Date: ${order.created_at}</p>
+                <p>Total: €${Number(order.total_price).toFixed(2)}</p>
+                <p><strong>Name:</strong> ${order.customer_name || '-'}</p>
+                <p><strong>Address:</strong> ${order.shipping_address || ''}, ${order.shipping_city || ''} ${order.shipping_postcode || ''}, ${order.shipping_country || ''}</p>
+                <ul>${itemsHtml}</ul>
+            `;
+
+            container.appendChild(div);
+        });
+    })
+    .catch(err => {
+        console.error(err);
+        document.getElementById("orders_list").textContent = "Error loading orders.";
+    });
+}
+
+// ----- Init -----
+document.addEventListener("DOMContentLoaded", () => {
+    loadOrderHistory();
+});
+</script>
+
+</body>
+</html>
+
+
+news.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>News - MusicShop</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<h1>News</h1>
+<div id="news_list">Loading...</div>
+
+<script>
+function loadNews() {
+    fetch('/musicshop/api/get_news.php')
+        .then(r => r.json())
+
+        .then(data => {
+            const container = document.getElementById('news_list');
+            container.innerHTML = '';
+
+            if (!data.ok) {
+                container.textContent = 'Error loading news.';
+                return;
+
+            }
+
+            if (!data.news || data.news.length === 0) {
+                container.textContent = 'No news yet.';
+                return;
+            }
+
+            data.news.forEach(n => {
+                const div = document.createElement('div');
+                div.className = 'news-item';
+                div.innerHTML = `
+                    <h2>${n.title}</h2>
+                    <p><small>${n.created_at}</small></p>
+                    <p>${n.content}</p>
+                `;
+                container.appendChild(div);
+            });
+        })
+        .catch(() => {
+            document.getElementById('news_list').textContent = 'Error loading news.';
+        });
+}
+
+document.addEventListener('DOMContentLoaded', loadNews);
+
+</script>
+
+</body>
+</html>
+
+
+
+admin.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - Manage Products</title>
+</head>
+<body>
+<h2>Product Management</h2>
+
+<!--
+    Admin panel: add / edit products for the MusicShop.
+    - Main category is stored in `category` (Instruments / Music / Merch / Other).
+    - Subcategory is stored in `genre` (e.g. Guitars, Vinyls, Clothing, etc.).
+    - Extra fields depend on category (music details, merch details, instrument subtype, accessories).
+-->
+<div>
+    <h3>Add / Edit Product</h3>
+
+    <!-- Basic product info -->
+    <input id="name" placeholder="Name"><br>
+    <input id="artist" placeholder="Artist (optional)"><br>
+
+    <!-- Main category dropdown -->
+    <label>Main category:</label>
+    <select id="category">
+        <option value="">Select main category</option>
+        <option value="Instruments">Instruments</option>
+        <option value="Music">Music</option>
+        <option value="Merch">Merch</option>
+        <option value="Other">Other</option>
+    </select>
+
+    <!-- Subcategory: stored in `genre`, depends on main category -->
+    <label> Subcategory:</label>
+    <select id="subcategory">
+        <option value="">Select subcategory</option>
+    </select>
+    <br>
+
+    <!-- Price / stock / image / description -->
+    <input id="price" type="number" step="0.01" placeholder="Price"><br>
+    <input id="stock" type="number" placeholder="Stock"><br>
+    <input id="image_url" placeholder="Image URL"><br>
+    <textarea id="description" placeholder="Description"></textarea><br>
+
+    <!-- Extra fields (shown dynamically based on category) -->
+
+    <!-- For category = Music -->
+    <div id="musicFields" style="display:none; margin-top:8px;">
+        <h4>Music details</h4>
+        <input id="format" placeholder="Format (Vinyl, CD, Digital, etc.)"><br>
+        <input id="music_genre" placeholder="Music genre (Rock, Metal, Pop, etc.)"><br>
+    </div>
+
+    <!-- For Merch -> Clothing -->
+    <div id="merchClothingFields" style="display:none; margin-top:8px;">
+        <h4>Clothing details</h4>
+        <input id="size" placeholder="Size (S, M, L, XL, etc.)"><br>
+        <input id="color" placeholder="Color"><br>
+        <input id="merch_type" placeholder="Type (T-Shirt, Hoodie, etc.)"><br>
+    </div>
+
+    <!-- For Instruments (guitars, basses, drums, keys, etc.) -->
+    <div id="instrumentFields" style="display:none; margin-top:8px;">
+        <h4>Instrument details</h4>
+        <input id="instrument_subtype" placeholder="Subtype (Acoustic, Electric, etc.)"><br>
+    </div>
+
+    <!-- For Other (accessories, etc.) -->
+    <div id="otherFields" style="display:none; margin-top:8px;">
+        <h4>Other / Accessories</h4>
+        <input id="accessory_type" placeholder="Accessory type (Cable, Stand, Case, etc.)"><br>
+    </div>
+
+    <!-- One button used for both add & edit -->
+    <button onclick="addProduct()">Save Product</button>
+</div>
+
+<hr>
+
+<h3>Existing Products</h3>
+<div id="productList">Loading...</div>
+
+<h2>All Orders</h2>
+<div id="admin_orders">Loading orders...</div>
+
+<h2>Manage News</h2>
+<div>
+    <input type="text" id="news_title" placeholder="News title">
+    <br>
+    <textarea id="news_content" placeholder="News content"></textarea>
+    <br>
+    <button onclick="addNews()">Add news</button>
+</div>
+<div id="admin_news_list">Loading...</div>
+
+
+
+<script>
+// Mapping: main category -> allowed subcategories (stored in `genre`)
+// This is designed similar to real shops like Muziker.
+const CATEGORY_MAP = {
+    "Instruments": ["Guitars", "Basses", "Drums", "Keys", "Studio", "DJ", "Amps", "Pedals", "Microphones", "Accessories", "Other"],
+    "Music": ["Vinyls", "CDs", "Digital", "Cassette", "Boxset", "Other"],
+    "Merch": ["Clothing", "Headwear", "Drinkware", "Posters", "Stickers", "Other"],
+    "Other": ["Cables", "Stands", "Cases", "Maintenance", "Gift", "Other"]
+};
+
+// Current product ID in edit mode; null = add mode
+let editId = null;
+
+/**
+ * Populate subcategory <select> based on selected main category.
+ * If selectedSub is provided, it will be pre-selected (used when editing).
+ */
+function populateSubcategories(mainCat, selectedSub = "") {
+    const sub = document.getElementById("subcategory");
+    sub.innerHTML = '<option value="">Select subcategory</option>';
+
+    if (CATEGORY_MAP[mainCat]) {
+
+        CATEGORY_MAP[mainCat].forEach(s => {
+            const opt = document.createElement("option");
+            opt.value = s;
+            opt.textContent = s;
+            if (s === selectedSub) opt.selected = true;
+            sub.appendChild(opt);
+        });
+    }
+}
+
+/**
+ * Show / hide extra attribute sections based on category + subcategory.
+ * This is only visual logic; the backend receives whatever is filled.
+ */
+function updateExtraFields() {
+    const cat = document.getElementById("category").value;
+    const sub = document.getElementById("subcategory").value;
+
+    // Hide all by default
+    document.getElementById("musicFields").style.display = "none";
+    document.getElementById("merchClothingFields").style.display = "none";
+    document.getElementById("instrumentFields").style.display = "none";
+    document.getElementById("otherFields").style.display = "none";
+
+    // Music → show format + music_genre
+    if (cat === "Music") {
+        document.getElementById("musicFields").style.display = "block";
+    }
+
+    // Merch + Clothing → clothing details
+    if (cat === "Merch" && sub === "Clothing") {
+        document.getElementById("merchClothingFields").style.display = "block";
+    }
+
+    // Instruments with specific subcategories → instrument_subtype
+    if (cat === "Instruments" &&
+        (sub === "Guitars" || sub === "Basses" || sub === "Drums" || sub === "Keys")) {
+        document.getElementById("instrumentFields").style.display = "block";
+    }
+
+    // Other → accessory_type
+    if (cat === "Other") {
+        document.getElementById("otherFields").style.display = "block";
+    }
+}
+
+// When main category changes: update subcategories + extras
+document.getElementById("category").addEventListener("change", () => {
+    const mainCat = document.getElementById("category").value;
+    populateSubcategories(mainCat);
+    updateExtraFields();
+});
+
+// When subcategory changes: re-evaluate which extra fields should show
+document.getElementById("subcategory").addEventListener("change", updateExtraFields);
+
+/**
+ * Load all products for admin listing.
+ */
+function loadProductsList() {
+    fetch("/musicshop/api/products.php", {
+        credentials: "include"
+    })
+    .then(r => r.json())
+    .then(data => {
+        const box = document.getElementById("productList");
+        box.innerHTML = "";
+
+        if (!data.ok) {
+            box.innerText = "Error: " + data.error;
+            return;
+        }
+
+        if (data.products.length === 0) {
+            box.innerText = "No products yet.";
+            return;
+        }
+
+        data.products.forEach(p => {
+            const row = document.createElement("div");
+            row.className = "productRow";
+            row.innerHTML = `
+                <strong>${p.name}</strong>
+                | €${p.price}
+                | ${p.category || '-'} / ${p.genre || '-'}
+                <button onclick="editProduct(${p.id})">Edit</button>
+                <button onclick="deleteProduct(${p.id})">Delete</button>
+            `;
+            box.appendChild(row);
+        });
+    });
+}
+
+/**
+ * Delete product (admin only, checked in PHP).
+ */
+function deleteProduct(id) {
+    if (!confirm("Delete this product?")) return;
+
+    fetch(`/musicshop/api/admin_delete_product.php?id=${id}`, {
+        method: "GET",
+        credentials: "include"
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.ok) {
+            loadProductsList();
+        } else {
+            alert("Error: " + (data.error || "Delete failed"));
+        }
+    });
+}
+
+/**
+ * Load a product into the form for editing.
+ */
+function editProduct(id) {
+    fetch("/musicshop/api/get_product.php?id=" + id, {
+        credentials: "include"
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (!data.ok || !data.product) {
+            alert(data.error || "Product not found");
+            return;
+        }
+
+        const p = data.product;
+
+        document.getElementById("name").value = p.name;
+        document.getElementById("artist").value = p.artist || "";
+        document.getElementById("category").value = p.category || "";
+
+        // Rebuild subcategory list then select current one (genre)
+        populateSubcategories(p.category, p.genre);
+
+        document.getElementById("price").value = p.price;
+        document.getElementById("stock").value = p.stock;
+        document.getElementById("description").value = p.description || "";
+        document.getElementById("image_url").value = p.image_url || "";
+
+        // Fill extra fields if exist
+        if (p.format) document.getElementById("format").value = p.format;
+        if (p.music_genre) document.getElementById("music_genre").value = p.music_genre;
+        if (p.size) document.getElementById("size").value = p.size;
+        if (p.color) document.getElementById("color").value = p.color;
+        if (p.merch_type) document.getElementById("merch_type").value = p.merch_type;
+        if (p.instrument_subtype) document.getElementById("instrument_subtype").value = p.instrument_subtype;
+        if (p.accessory_type) document.getElementById("accessory_type").value = p.accessory_type;
+
+        updateExtraFields();
+        editId = id; // switch to edit mode
+    });
+
+}
+
+/**
+ * Add new product or update existing one, depending on editId.
+ */
+function addProduct() {
+    const payload = {
+        name: document.getElementById("name").value,
+        artist: document.getElementById("artist").value,
+        category: document.getElementById("category").value,
+        genre: document.getElementById("subcategory").value,
+        price: parseFloat(document.getElementById("price").value),
+        stock: parseInt(document.getElementById("stock").value),
+        description: document.getElementById("description").value,
+        image_url: document.getElementById("image_url").value,
+        format: document.getElementById("format")?.value || null,
+        music_genre: document.getElementById("music_genre")?.value || null,
+        size: document.getElementById("size")?.value || null,
+        color: document.getElementById("color")?.value || null,
+        merch_type: document.getElementById("merch_type")?.value || null,
+        instrument_subtype: document.getElementById("instrument_subtype")?.value || null,
+        accessory_type: document.getElementById("accessory_type")?.value || null
+    };
+
+    if (!payload.name || !payload.category) {
+        alert("Name and main category are required.");
+        return;
+    }
+
+    // Add mode
+    if (editId === null) {
+        fetch("/musicshop/api/admin_add_product.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify(payload)
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (!data.ok) {
+                alert("Error: " + (data.error || "Add failed"));
+                return;
+            }
+            resetForm();
+            loadProductsList();
+        });
+    } else {
+        // Edit mode
+        payload.id = editId;
+
+        fetch("/musicshop/api/admin_edit_product.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify(payload)
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (!data.ok) {
+                alert("Error: " + (data.error || "Update failed"));
+                return;
+            }
+            resetForm();
+            loadProductsList();
+        });
+    }
+}
+
+/**
+ * Reset form and go back to "add mode".
+ */
+function resetForm() {
+    document.getElementById("name").value = "";
+    document.getElementById("artist").value = "";
+    document.getElementById("category").value = "";
+    document.getElementById("subcategory").innerHTML = '<option value="">Select subcategory</option>';
+    document.getElementById("price").value = "";
+    document.getElementById("stock").value = "";
+    document.getElementById("description").value = "";
+    document.getElementById("image_url").value = "";
+
+    // Extra fields
+    ["format","music_genre","size","color","merch_type","instrument_subtype","accessory_type"]
+        .forEach(id => { const el = document.getElementById(id); if (el) el.value = ""; });
+
+    // Hide extra blocks
+    document.getElementById("musicFields").style.display = "none";
+    document.getElementById("merchClothingFields").style.display = "none";
+    document.getElementById("instrumentFields").style.display = "none";
+    document.getElementById("otherFields").style.display = "none";
+
+    editId = null;
+}
+
+// Initial load
+loadProductsList();
+
+async function loadAllOrders() {
+  const el = document.getElementById('admin_orders');
+  el.textContent = 'Loading orders...';
+
+  try {
+    const resp = await fetch('/musicshop/api/get_all_orders.php', { credentials: 'include' });
+
+    // Try JSON first
+    const text = await resp.text();
+    let data;
+    try { data = JSON.parse(text); }
+    catch (e) {
+      el.innerHTML = 'Error loading orders: <pre>' + text.replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s])) + '</pre>';
+      return;
+    }
+
+    if (!data.ok) {
+      el.textContent = 'Error loading orders: ' + (data.error || 'Unknown error');
+      return;
+    }
+
+    if (!data.orders || data.orders.length === 0) {
+      el.textContent = 'No orders yet.';
+      return;
+    }
+
+    el.innerHTML = '';
+    data.orders.forEach(order => {
+      const items = order.items.map(it => `<li>${it.name} - x${it.quantity} @ €${it.unit_price.toFixed(2)}</li>`).join('');
+
+      const div = document.createElement('div');
+      div.className = 'order';
+      div.innerHTML = `
+        <h3>Order #${order.id}</h3>
+        <p><strong>Date:</strong> ${order.created_at}</p>
+        <p><strong>User:</strong> ${order.username || ''} ${order.email ? '('+order.email+')' : ''}</p>
+        <p><strong>Customer:</strong> ${order.customer_name || '-'} ${order.customer_email ? '('+order.customer_email+')' : ''} ${order.customer_phone ? ', '+order.customer_phone : ''}</p>
+        <p><strong>Address:</strong> ${(order.shipping_address || '')}, ${(order.shipping_city || '')} ${(order.shipping_postcode || '')}, ${(order.shipping_country || '')}</p>
+        ${order.customer_note ? `<p><strong>Note:</strong> ${order.customer_note}</p>` : ''}
+        <p><strong>Total:</strong> €${order.total_price.toFixed(2)}</p>
+        <ul>${items}</ul>
+      `;
+      el.appendChild(div);
+    });
+  } catch (err) {
+    el.textContent = 'Error loading orders.';
+    console.error(err);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', loadAllOrders);
+
+
+function loadAdminNews() {
+    fetch('/musicshop/api/get_news.php')
+        .then(r => r.json())
+        .then(data => {
+            const container = document.getElementById('admin_news_list');
+            container.innerHTML = '';
+
+            if (!data.ok) {
+                container.textContent = 'Error loading news.';
+                return;
+            }
+
+            if (!data.news || data.news.length === 0) {
+                container.textContent = 'No news yet.';
+                return;
+            }
+
+            data.news.forEach(n => {
+                const div = document.createElement('div');
+                div.className = 'news-item';
+                div.innerHTML = `
+                    <h3>${n.title}</h3>
+                    <p><small>${n.created_at}</small></p>
+                    <p>${n.content}</p>
+                    <button onclick="deleteNews(${n.id})">Delete</button>
+                `;
+                container.appendChild(div);
+            });
+        })
+        .catch(() => {
+            document.getElementById('admin_news_list').textContent = 'Error loading news.';
+        });
+}
+
+function addNews() {
+    const title = document.getElementById('news_title').value.trim();
+    const content = document.getElementById('news_content').value.trim();
+
+    if (!title || !content) {
+        alert('Please fill title and content.');
+        return;
+    }
+
+    fetch('/musicshop/api/admin_add_news.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ title, content })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (!data.ok) {
+            alert('Error adding news: ' + (data.error || 'Unknown error'));
+            return;
+        }
+        document.getElementById('news_title').value = '';
+        document.getElementById('news_content').value = '';
+        loadAdminNews();
+    });
+}
+
+function deleteNews(id) {
+    const formData = new FormData();
+    formData.append('id', id);
+
+    fetch('/musicshop/api/admin_delete_news.php', {
+        method: 'POST',
+        credentials: 'include',
+        body: formData
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (!data.ok) {
+            alert('Error deleting news: ' + (data.error || 'Unknown error'));
+            return;
+        }
+        loadAdminNews();
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadAllOrders();
+    loadAdminNews();
+});
+
+
+</script>
+
+</body>
+</html>
+
+
+
+admin.html - 27.11.20205
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - MusicShop</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-page: #f3f4f6;
+            --bg-header: #ffffff;
+            --bg-card: #ffffff;
+            --bg-card-soft: #f9fafb;
+            --accent: #ec4899;
+            --accent-soft: rgba(236, 72, 153, 0.08);
+            --accent-2: #6366f1;
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --border-subtle: #e5e7eb;
+            --radius-lg: 16px;
+            --radius-xl: 22px;
+            --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.06);
+        }
+
+        /* DARK THEME */
+        body.dark-theme {
+            --bg-page: #020617;
+            --bg-header: #020617;
+            --bg-card: #020617;
+            --bg-card-soft: #111827;
+            --accent: #ec4899;
+            --accent-2: #6366f1;
+            --accent-soft: rgba(236, 72, 153, 0.15);
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --border-subtle: #1f2937;
+            --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.8);
+            color: var(--text-main);
+        }
+        body.dark-theme .site-header {
+            border-bottom-color: var(--border-subtle);
+        }
+
+        body.admin-page {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: var(--bg-page);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* HEADER (same style as index/products) */
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            background: var(--bg-header);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .nav-inner {
+            max-width: 100%;
+            margin: 0;
+            padding: 12px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            box-sizing: border-box;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 999px;
+            background: radial-gradient(circle at 30% 20%, #f97316, #ec4899 40%, #6366f1 80%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 18px rgba(236, 72, 153, 0.35);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .brand-icon::after {
+            content: "";
+            position: absolute;
+            inset: 3px;
+            border-radius: inherit;
+            border: 1px solid rgba(248, 250, 252, 0.8);
+            opacity: 0.8;
+        }
+
+        .brand-icon span {
+            font-size: 22px;
+            position: relative;
+            color: #ffffff;
+        }
+
+        .brand-text h1 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .brand-text p {
+            margin: 0;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 14px;
+        }
+
+        .nav-links a {
+            padding: 6px 0;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -4px;
+            width: 0;
+            height: 2px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+            transition: width 0.25s ease;
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .nav-secondary {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .theme-toggle {
+            border-radius: 999px;
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-card-soft);
+            padding: 4px 8px;
+            font-size: 10px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .theme-toggle span {
+            font-size: 14px;
+        }
+
+        .user-status-pill {
+            min-width: 120px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            border: 1px solid var(--border-subtle);
+            font-size: 11px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            background: var(--bg-card);
+        }
+
+        .user-status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 999px;
+            background: #22c55e;
+        }
+
+        #userStatus {
+            font-size: 11px;
+            color: var(--text-main);
+        }
+
+        .logout-btn {
+            border: none;
+            border-radius: 999px;
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            background: linear-gradient(135deg, #f97316, #ef4444);
+            color: #f9fafb;
+            box-shadow: 0 8px 18px rgba(248, 113, 113, 0.4);
+            display: inline-flex;
+            align-items: center;
+
+            gap: 6px;
+        }
+
+        .logout-btn span {
+            font-size: 14px;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        /* LAYOUT */
+        main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .page-wrapper {
+            width: 100%;
+            max-width: 100%;
+            margin: 0;
+            padding: 22px 32px 32px;
+            box-sizing: border-box;
+            display: grid;
+            grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+            gap: 24px;
+            align-items: start;
+        }
+
+        @media (max-width: 1100px) {
+            .page-wrapper {
+                grid-template-columns: minmax(0, 1fr);
+                padding: 18px 16px 24px;
+            }
+        }
+
+        .admin-column {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .admin-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-subtle);
+            box-shadow: var(--shadow-soft);
+            padding: 18px 18px 16px;
+        }
+
+        .admin-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .admin-card-header h2 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .admin-card-header span {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* PRODUCT FORM */
+        .product-form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px 12px;
+            font-size: 13px;
+        }
+
+        @media (max-width: 900px) {
+            .product-form-grid {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .form-group label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--text-muted);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            border-radius: 10px;
+            border: 1px solid var(--border-subtle);
+            padding: 7px 10px;
+            font-size: 13px;
+            background: var(--bg-card-soft);
+            color: var(--text-main);
+            outline: none;
+            resize: vertical;
+        }
+
+        .form-group textarea {
+            min-height: 60px;
+        }
+
+        .product-extra-groups {
+            margin-top: 8px;
+            border-top: 1px dashed var(--border-subtle);
+            padding-top: 10px;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px 12px;
+        }
+
+        @media (max-width: 900px) {
+            .product-extra-groups {
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        .product-form-actions {
+            margin-top: 12px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            border-radius: 999px;
+            border: none;
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            background: linear-gradient(110deg, var(--accent), #f97316, var(--accent-2));
+            color: #f9fafb;
+            box-shadow: 0 12px 26px rgba(236, 72, 153, 0.35);
+        }
+
+        .btn-secondary,
+        .btn-outline {
+            border-radius: 999px;
+            padding: 7px 14px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-card-soft);
+            color: var(--text-main);
+        }
+
+        .btn-secondary {
+            border-color: transparent;
+            background: linear-gradient(110deg, var(--accent), var(--accent-2));
+            color: #f9fafb;
+        }
+
+        .btn-primary:hover,
+        .btn-secondary:hover,
+        .btn-outline:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 22px rgba(15, 23, 42, 0.12);
+        }
+
+        /* PRODUCT LIST */
+        .product-list-container {
+            margin-top: 14px;
+            border-top: 1px solid var(--border-subtle);
+            padding-top: 12px;
+        }
+
+        .product-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 8px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        #productList {
+            font-size: 13px;
+        }
+
+        .productRow {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 8px;
+            border-radius: 10px;
+            background: var(--bg-card-soft);
+            border: 1px solid var(--border-subtle);
+            margin-bottom: 6px;
+        }
+
+        .productRow-main {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .productRow-name {
+            font-weight: 600;
+        }
+
+        .productRow-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .productRow-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+
+        .productRow-actions button {
+            padding: 4px 10px;
+            font-size: 11px;
+        }
+
+        /* ORDERS */
+        .orders-list {
+            font-size: 12px;
+        }
+
+        .admin-order-card {
+            border-radius: 12px;
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-card-soft);
+            padding: 8px 10px;
+            margin-bottom: 8px;
+        }
+
+        .admin-order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .admin-order-header strong {
+            font-size: 13px;
+        }
+
+        .admin-order-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .admin-order-items {
+            margin: 4px 0 0 0;
+            padding-left: 18px;
+        }
+
+        .admin-order-items li {
+            margin: 1px 0;
+        }
+
+        /* NEWS */
+        .news-form {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .news-form-row {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .news-form-row label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--text-muted);
+        }
+
+        .news-form-row input,
+        .news-form-row textarea {
+            border-radius: 10px;
+            border: 1px solid var(--border-subtle);
+            padding: 7px 10px;
+            font-size: 13px;
+            background: var(--bg-card-soft);
+            color: var(--text-main);
+            outline: none;
+            resize: vertical;
+        }
+
+        .news-form-row textarea {
+            min-height: 70px;
+        }
+
+        .news-form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        #admin_news_list {
+            margin-top: 12px;
+            font-size: 13px;
+        }
+
+        .news-item {
+            border-radius: 12px;
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-card-soft);
+            padding: 8px 10px;
+            margin-bottom: 8px;
+        }
+
+        .news-item h3 {
+            margin: 0 0 2px 0;
+            font-size: 14px;
+        }
+
+        .news-item small {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .news-item p {
+            margin: 4px 0;
+        }
+
+        .news-item-actions {
+            margin-top: 4px;
+            display: flex;
+            gap: 6px;
+        }
+
+        .news-item-actions button {
+            padding: 4px 10px;
+            font-size: 11px;
+        }
+
+        /* FOOTER */
+        footer {
+            border-top: 1px solid var(--border-subtle);
+            padding: 10px 32px 14px;
+            font-size: 11px;
+            color: var(--text-muted);
+            box-sizing: border-box;
+            background: var(--bg-header);
+        }
+
+        .footer-inner {
+            max-width: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .footer-inner a {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body class="admin-page">
+
+<header class="site-header">
+    <div class="nav-inner">
+        <a href="index.html" class="brand">
+            <div class="brand-icon">
+                <span>♫</span>
+            </div>
+            <div class="brand-text">
+                <h1>MusicShop</h1>
+                <p>Instruments · Vinyls · Merch</p>
+            </div>
+        </a>
+
+        <nav class="nav-links">
+            <a href="products.html">Products</a>
+            <a href="favorites.html">Favorites</a>
+            <a href="cart.html">Cart</a>
+            <a href="orders.html">Orders</a>
+            <a href="news.html">News</a>
+            <a href="admin.html" class="active admin-only" id="adminLink">Admin</a>
+        </nav>
+
+        <div class="nav-secondary">
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                <span id="themeIcon">🌞</span>
+            </button>
+
+            <div class="user-status-pill">
+                <div class="user-status-dot"></div>
+                <div id="userStatus">Not logged in.</div>
+            </div>
+
+            <button class="logout-btn" id="logoutBtn" style="display:none" onclick="logout()">
+                <span>⏏</span>
+                Logout
+            </button>
+        </div>
+    </div>
+</header>
+
+<main>
+    <div class="page-wrapper">
+        <!-- LEFT COLUMN: PRODUCTS -->
+        <section class="admin-column">
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <div>
+                        <h2>Product management</h2>
+                        <span>Add new products or edit existing ones</span>
+                    </div>
+                </div>
+
+                <!-- PRODUCT FORM -->
+                <div class="product-form-grid">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input id="name" placeholder="Product name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="artist">Artist (optional)</label>
+                        <input id="artist" placeholder="Artist / Band">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category">Main category</label>
+                        <select id="category">
+                            <option value="">Select main category</option>
+                            <option value="Instruments">Instruments</option>
+                            <option value="Music">Music</option>
+                            <option value="Merch">Merch</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="subcategory">Subcategory</label>
+                        <select id="subcategory">
+                            <option value="">Select subcategory</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="price">Price (€)</label>
+                        <input id="price" type="number" step="0.01" placeholder="e.g. 19.99">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="stock">Stock</label>
+                        <input id="stock" type="number" placeholder="Available quantity">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="image_url">Image URL</label>
+                        <input id="image_url" placeholder="https://...">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" placeholder="Short description..."></textarea>
+                    </div>
+                </div>
+
+                <!-- EXTRA FIELDS -->
+                <div class="product-extra-groups">
+                    <!-- For category = Music -->
+                    <div id="musicFields" style="display:none;">
+                        <div class="form-group">
+                            <label for="format">Music format</label>
+                            <input id="format" placeholder="Vinyl, CD, Digital, etc.">
+                        </div>
+                        <div class="form-group">
+                            <label for="music_genre">Music genre</label>
+                            <input id="music_genre" placeholder="Rock, Metal, Pop, etc.">
+                        </div>
+                    </div>
+
+                    <!-- For Merch -> Clothing -->
+                    <div id="merchClothingFields" style="display:none;">
+                        <div class="form-group">
+                            <label for="size">Size</label>
+                            <input id="size" placeholder="S, M, L, XL, etc.">
+                        </div>
+                        <div class="form-group">
+                            <label for="color">Color</label>
+                            <input id="color" placeholder="Black, White, etc.">
+                        </div>
+                        <div class="form-group">
+                            <label for="merch_type">Merch type</label>
+                            <input id="merch_type" placeholder="T-Shirt, Hoodie, etc.">
+                        </div>
+                    </div>
+
+                    <!-- For Instruments -->
+                    <div id="instrumentFields" style="display:none;">
+                        <div class="form-group">
+                            <label for="instrument_subtype">Instrument subtype</label>
+                            <input id="instrument_subtype" placeholder="Acoustic, Electric, etc.">
+                        </div>
+                    </div>
+
+                    <!-- For Other -->
+                    <div id="otherFields" style="display:none;">
+                        <div class="form-group">
+                            <label for="accessory_type">Accessory type</label>
+                            <input id="accessory_type" placeholder="Cable, Stand, Case, etc.">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="product-form-actions">
+                    <button class="btn-outline" type="button" onclick="resetForm()">Reset</button>
+                    <button class="btn-primary" type="button" onclick="addProduct()">Save product</button>
+                </div>
+
+                <!-- PRODUCT LIST -->
+                <div class="product-list-container">
+                    <div class="product-list-header">
+                        <span>Existing products</span>
+                        <span id="productCountLabel"></span>
+                    </div>
+                    <div id="productList">Loading...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RIGHT COLUMN: ORDERS + NEWS -->
+        <section class="admin-column">
+            <!-- ORDERS -->
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <div>
+                        <h2>All orders</h2>
+                        <span>Admin view of every order</span>
+                    </div>
+                </div>
+                <div id="admin_orders" class="orders-list">Loading orders...</div>
+            </div>
+
+            <!-- NEWS -->
+            <div class="admin-card">
+                <div class="admin-card-header">
+                    <div>
+                        <h2>News management</h2>
+                        <span>Post updates about events & drops</span>
+                    </div>
+                </div>
+
+                <div class="news-form">
+                    <div class="news-form-row">
+                        <label for="news_title">Title</label>
+                        <input type="text" id="news_title" placeholder="News title">
+                    </div>
+                    <div class="news-form-row">
+                        <label for="news_content">Content</label>
+                        <textarea id="news_content" placeholder="Full news content..."></textarea>
+                    </div>
+                    <div class="news-form-actions">
+                        <button class="btn-outline" id="newsCancelBtn" type="button" style="display:none;" onclick="cancelNewsEdit()">Cancel</button>
+                        <button class="btn-secondary" type="button" onclick="saveNews()" id="newsSaveBtn">Add news</button>
+                    </div>
+                </div>
+
+                <div id="admin_news_list">Loading...</div>
+            </div>
+        </section>
+    </div>
+</main>
+
+<footer>
+    <div class="footer-inner">
+        <span>© <span id="year"></span> MusicShop. All rights reserved.</span>
+        <span>Built for your diploma project · <a href="admin.html" id="adminFooterLink" class="admin-only">Admin panel</a></span>
+    </div>
+</footer>
+
+<script>
+    function logout() {
+        fetch("/musicshop/api/logout.php", {
+            credentials: "include"
+        }).then(() => window.location = "index.html");
+
+    }
+
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    // ===== THEME / ADMIN CHECK / LOGIN STATE =====
+    document.addEventListener("DOMContentLoaded", function () {
+        const themeToggle = document.getElementById("themeToggle");
+        const themeIcon = document.getElementById("themeIcon");
+        const logoutBtn = document.getElementById("logoutBtn");
+
+        function applyTheme(theme) {
+            if (theme === "dark") {
+                document.body.classList.add("dark-theme");
+                if (themeIcon) themeIcon.textContent = "🌙";
+            } else {
+                document.body.classList.remove("dark-theme");
+                if (themeIcon) themeIcon.textContent = "🌞";
+            }
+        }
+        const savedTheme = localStorage.getItem("theme");
+        applyTheme(savedTheme === "dark" ? "dark" : "light");
+
+        if (themeToggle) {
+            themeToggle.addEventListener("click", () => {
+                const isDark = document.body.classList.toggle("dark-theme");
+                localStorage.setItem("theme", isDark ? "dark" : "light");
+                if (themeIcon) themeIcon.textContent = isDark ? "🌙" : "🌞";
+            });
+        }
+
+        // Hard admin gate: if admin_check.php is NOT ok, redirect away
+        fetch("/musicshop/api/admin_check.php", { credentials: "include" })
+            .then(r => {
+                if (!r.ok) {
+                    window.location = "index.html";
+                    return;
+                }
+            })
+            .catch(() => {
+                window.location = "index.html";
+            });
+
+        // Login state (just for logout visibility)
+        fetch("/musicshop/api/whoami.php", { credentials: "include" })
+            .then(r => r.ok ? r.json() : null)
+            .then(data => {
+                const loggedIn = data && data.logged_in;
+                if (loggedIn) {
+                    if (logoutBtn) logoutBtn.style.display = "inline-flex";
+                } else {
+                    if (logoutBtn) logoutBtn.style.display = "none";
+                }
+            })
+            .catch(() => {
+                if (logoutBtn) logoutBtn.style.display = "none";
+            });
+
+        // After DOM ready, init admin logic
+        initAdminPage();
+    });
+
+    // ===== PRODUCTS ADMIN LOGIC (from your original admin.html) =====
+
+    // Mapping: main category -> subcategories (genre)
+    const CATEGORY_MAP = {
+        "Instruments": ["Guitars", "Basses", "Drums", "Keys", "Studio", "DJ", "Amps", "Pedals", "Microphones", "Accessories", "Other"],
+        "Music": ["Vinyls", "CDs", "Digital", "Cassette", "Boxset", "Other"],
+        "Merch": ["Clothing", "Headwear", "Drinkware", "Posters", "Stickers", "Other"],
+        "Other": ["Cables", "Stands", "Cases", "Maintenance", "Gift", "Other"]
+    };
+
+    let editId = null;          // current product edit id (null = add mode)
+    let editingNewsId = null;   // current news edit id (null = add mode)
+
+    function populateSubcategories(mainCat, selectedSub = "") {
+        const sub = document.getElementById("subcategory");
+        if (!sub) return;
+        sub.innerHTML = '<option value="">Select subcategory</option>';
+
+        if (CATEGORY_MAP[mainCat]) {
+            CATEGORY_MAP[mainCat].forEach(s => {
+                const opt = document.createElement("option");
+                opt.value = s;
+                opt.textContent = s;
+                if (s === selectedSub) opt.selected = true;
+                sub.appendChild(opt);
+            });
+        }
+    }
+
+    function updateExtraFields() {
+        const catEl = document.getElementById("category");
+        const subEl = document.getElementById("subcategory");
+        const cat = catEl ? catEl.value : "";
+        const sub = subEl ? subEl.value : "";
+
+        const musicFields = document.getElementById("musicFields");
+        const merchClothingFields = document.getElementById("merchClothingFields");
+        const instrumentFields = document.getElementById("instrumentFields");
+        const otherFields = document.getElementById("otherFields");
+
+        if (musicFields) musicFields.style.display = "none";
+        if (merchClothingFields) merchClothingFields.style.display = "none";
+        if (instrumentFields) instrumentFields.style.display = "none";
+        if (otherFields) otherFields.style.display = "none";
+
+        if (cat === "Music" && musicFields) {
+            musicFields.style.display = "block";
+        }
+
+        if (cat === "Merch" && sub === "Clothing" && merchClothingFields) {
+            merchClothingFields.style.display = "block";
+        }
+
+        if (cat === "Instruments" &&
+            (sub === "Guitars" || sub === "Basses" || sub === "Drums" || sub === "Keys") &&
+            instrumentFields) {
+            instrumentFields.style.display = "block";
+        }
+
+        if (cat === "Other" && otherFields) {
+            otherFields.style.display = "block";
+        }
+    }
+
+    function loadProductsList() {
+        fetch("/musicshop/api/products.php", {
+            credentials: "include"
+        })
+        .then(r => r.json())
+        .then(data => {
+            const box = document.getElementById("productList");
+            const countLabel = document.getElementById("productCountLabel");
+            if (!box) return;
+
+            box.innerHTML = "";
+
+            if (!data.ok) {
+                box.innerText = "Error: " + data.error;
+                if (countLabel) countLabel.textContent = "";
+                return;
+            }
+
+            if (!data.products || data.products.length === 0) {
+                box.innerText = "No products yet.";
+                if (countLabel) countLabel.textContent = "0 products";
+                return;
+            }
+
+            if (countLabel) {
+                countLabel.textContent = data.products.length + " product" + (data.products.length !== 1 ? "s" : "");
+            }
+
+            data.products.forEach(p => {
+                const row = document.createElement("div");
+                row.className = "productRow";
+
+                const main = document.createElement("div");
+                main.className = "productRow-main";
+                main.innerHTML = `
+                    <div class="productRow-name">${p.name}</div>
+                    <div class="productRow-meta">
+                        €${p.price} · ${(p.category || "-")} / ${(p.genre || "-")}
+                    </div>
+                `;
+
+                const actions = document.createElement("div");
+                actions.className = "productRow-actions";
+                actions.innerHTML = `
+                    <button class="btn-outline" type="button" onclick="editProduct(${p.id})">Edit</button>
+                    <button class="btn-outline" type="button" onclick="deleteProduct(${p.id})">Delete</button>
+                `;
+
+                row.appendChild(main);
+                row.appendChild(actions);
+                box.appendChild(row);
+            });
+        });
+    }
+
+    function deleteProduct(id) {
+        if (!confirm("Delete this product?")) return;
+
+        fetch(`/musicshop/api/admin_delete_product.php?id=${id}`, {
+            method: "GET",
+            credentials: "include"
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.ok) {
+                loadProductsList();
+            } else {
+                alert("Error: " + (data.error || "Delete failed"));
+            }
+        });
+    }
+
+    function editProduct(id) {
+        fetch("/musicshop/api/get_product.php?id=" + id, {
+            credentials: "include"
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (!data.ok || !data.product) {
+                alert(data.error || "Product not found");
+                return;
+            }
+
+            const p = data.product;
+
+            document.getElementById("name").value = p.name || "";
+            document.getElementById("artist").value = p.artist || "";
+
+            document.getElementById("category").value = p.category || "";
+
+            populateSubcategories(p.category, p.genre);
+
+            document.getElementById("price").value = p.price;
+            document.getElementById("stock").value = p.stock;
+            document.getElementById("description").value = p.description || "";
+            document.getElementById("image_url").value = p.image_url || "";
+
+            if (document.getElementById("format")) document.getElementById("format").value = p.format || "";
+            if (document.getElementById("music_genre")) document.getElementById("music_genre").value = p.music_genre || "";
+            if (document.getElementById("size")) document.getElementById("size").value = p.size || "";
+            if (document.getElementById("color")) document.getElementById("color").value = p.color || "";
+            if (document.getElementById("merch_type")) document.getElementById("merch_type").value = p.merch_type || "";
+            if (document.getElementById("instrument_subtype")) document.getElementById("instrument_subtype").value = p.instrument_subtype || "";
+            if (document.getElementById("accessory_type")) document.getElementById("accessory_type").value = p.accessory_type || "";
+
+            updateExtraFields();
+            editId = id;
+        });
+    }
+
+    function addProduct() {
+        const payload = {
+            name: document.getElementById("name").value,
+            artist: document.getElementById("artist").value,
+            category: document.getElementById("category").value,
+            genre: document.getElementById("subcategory").value,
+            price: parseFloat(document.getElementById("price").value),
+            stock: parseInt(document.getElementById("stock").value),
+            description: document.getElementById("description").value,
+            image_url: document.getElementById("image_url").value,
+            format: document.getElementById("format")?.value || null,
+            music_genre: document.getElementById("music_genre")?.value || null,
+            size: document.getElementById("size")?.value || null,
+            color: document.getElementById("color")?.value || null,
+            merch_type: document.getElementById("merch_type")?.value || null,
+            instrument_subtype: document.getElementById("instrument_subtype")?.value || null,
+            accessory_type: document.getElementById("accessory_type")?.value || null
+        };
+
+        if (!payload.name || !payload.category) {
+            alert("Name and main category are required.");
+            return;
+        }
+
+        if (editId === null) {
+            // ADD
+            fetch("/musicshop/api/admin_add_product.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify(payload)
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (!data.ok) {
+                    alert("Error: " + (data.error || "Add failed"));
+                    return;
+                }
+                resetForm();
+                loadProductsList();
+            });
+        } else {
+            // EDIT
+            payload.id = editId;
+
+            fetch("/musicshop/api/admin_edit_product.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify(payload)
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (!data.ok) {
+                    alert("Error: " + (data.error || "Update failed"));
+                    return;
+                }
+                resetForm();
+                loadProductsList();
+            });
+        }
+    }
+
+    function resetForm() {
+        ["name","artist","category","price","stock","description","image_url"].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = "";
+        });
+
+        const sub = document.getElementById("subcategory");
+        if (sub) sub.innerHTML = '<option value="">Select subcategory</option>';
+
+        ["format","music_genre","size","color","merch_type","instrument_subtype","accessory_type"].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = "";
+        });
+
+        const extraIds = ["musicFields","merchClothingFields","instrumentFields","otherFields"];
+        extraIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.style.display = "none";
+        });
+
+        editId = null;
+    }
+
+    // ===== ORDERS ADMIN =====
+    async function loadAllOrders() {
+        const el = document.getElementById('admin_orders');
+        if (!el) return;
+        el.textContent = 'Loading orders...';
+
+        try {
+            const resp = await fetch('/musicshop/api/get_all_orders.php', { credentials: 'include' });
+            const text = await resp.text();
+            let data;
+            try {
+                data = JSON.parse(text);
+            } catch (e) {
+                el.innerHTML = 'Error loading orders: <pre>' +
+                    text.replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s])) +
+                    '</pre>';
+                return;
+            }
+
+            if (!data.ok) {
+                el.textContent = 'Error loading orders: ' + (data.error || 'Unknown error');
+                return;
+            }
+
+            if (!data.orders || data.orders.length === 0) {
+                el.textContent = 'No orders yet.';
+                return;
+            }
+
+            el.innerHTML = '';
+            data.orders.forEach(order => {
+                const items = (order.items || []).map(it =>
+                    `<li>${it.name} - x${it.quantity} @ €${Number(it.unit_price).toFixed(2)}</li>`
+                ).join('');
+
+                const div = document.createElement('div');
+                div.className = 'admin-order-card';
+                div.innerHTML = `
+                    <div class="admin-order-header">
+                        <strong>Order #${order.id}</strong>
+                        <span>${order.created_at}</span>
+                    </div>
+                    <div class="admin-order-meta">
+                        <div><strong>User:</strong> ${order.username || ''} ${order.email ? '('+order.email+')' : ''}</div>
+                        <div><strong>Customer:</strong> ${order.customer_name || '-'}${order.customer_email ? ' ('+order.customer_email+')' : ''}${order.customer_phone ? ', '+order.customer_phone : ''}</div>
+                        <div><strong>Address:</strong> ${(order.shipping_address || '')}, ${(order.shipping_city || '')} ${(order.shipping_postcode || '')}, ${(order.shipping_country || '')}</div>
+                        ${order.customer_note ? `<div><strong>Note:</strong> ${order.customer_note}</div>` : ''}
+                        <div><strong>Total:</strong> €${Number(order.total_price).toFixed(2)}</div>
+                    </div>
+                    ${items ? `<ul class="admin-order-items">${items}</ul>` : ''}
+                `;
+                el.appendChild(div);
+            });
+        } catch (err) {
+            console.error(err);
+            el.textContent = 'Error loading orders.';
+        }
+    }
+
+    // ===== NEWS ADMIN =====
+    function loadAdminNews() {
+        fetch('/musicshop/api/get_news.php')
+            .then(r => r.json())
+            .then(data => {
+                const container = document.getElementById('admin_news_list');
+                if (!container) return;
+                container.innerHTML = '';
+
+                if (!data.ok) {
+                    container.textContent = 'Error loading news.';
+
+                    return;
+                }
+
+                if (!data.news || data.news.length === 0) {
+                    container.textContent = 'No news yet.';
+                    return;
+                }
+
+                data.news.forEach(n => {
+                    const div = document.createElement('div');
+                    div.className = 'news-item';
+                    div.innerHTML = `
+                        <h3>${n.title}</h3>
+                        <p><small>${n.created_at}</small></p>
+                        <p>${n.content}</p>
+                        <div class="news-item-actions">
+                            <button type="button" class="btn-outline" onclick="startNewsEdit(${n.id}, ${JSON.stringify(n.title).replace(/</g,'&lt;')}, ${JSON.stringify(n.content).replace(/</g,'&lt;')})">Edit</button>
+                            <button type="button" class="btn-outline" onclick="deleteNews(${n.id})">Delete</button>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            })
+            .catch(() => {
+                const container = document.getElementById('admin_news_list');
+                if (container) container.textContent = 'Error loading news.';
+            });
+    }
+
+    function startNewsEdit(id, title, content) {
+        editingNewsId = id;
+        document.getElementById('news_title').value = title || '';
+        document.getElementById('news_content').value = content || '';
+        document.getElementById('newsSaveBtn').textContent = 'Save changes';
+        document.getElementById('newsCancelBtn').style.display = 'inline-flex';
+    }
+
+    function cancelNewsEdit() {
+        editingNewsId = null;
+        document.getElementById('news_title').value = '';
+        document.getElementById('news_content').value = '';
+        document.getElementById('newsSaveBtn').textContent = 'Add news';
+        document.getElementById('newsCancelBtn').style.display = 'none';
+    }
+
+    function saveNews() {
+        const title = document.getElementById('news_title').value.trim();
+        const content = document.getElementById('news_content').value.trim();
+
+        if (!title || !content) {
+            alert('Please fill title and content.');
+            return;
+        }
+
+        // ADD
+        if (editingNewsId === null) {
+            fetch('/musicshop/api/admin_add_news.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ title, content })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (!data.ok) {
+                    alert('Error adding news: ' + (data.error || 'Unknown error'));
+                    return;
+                }
+                cancelNewsEdit();
+                loadAdminNews();
+            });
+        } else {
+            // EDIT
+            fetch('/musicshop/api/admin_edit_news.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({ id: editingNewsId, title, content })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (!data.ok) {
+                    alert('Error updating news: ' + (data.error || 'Unknown error'));
+                    return;
+                }
+                cancelNewsEdit();
+                loadAdminNews();
+            });
+        }
+    }
+
+    function deleteNews(id) {
+        if (!confirm("Delete this news item?")) return;
+
+        const formData = new FormData();
+        formData.append('id', id);
+
+        fetch('/musicshop/api/admin_delete_news.php', {
+            method: 'POST',
+            credentials: 'include',
+            body: formData
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (!data.ok) {
+                alert('Error deleting news: ' + (data.error || 'Unknown error'));
+                return;
+            }
+            if (editingNewsId === id) {
+                cancelNewsEdit();
+            }
+            loadAdminNews();
+        });
+    }
+
+    // ===== INIT =====
+    function initAdminPage() {
+        // Category change handlers
+        const catEl = document.getElementById("category");
+        const subEl = document.getElementById("subcategory");
+        if (catEl) {
+            catEl.addEventListener("change", () => {
+                populateSubcategories(catEl.value);
+                updateExtraFields();
+            });
+        }
+        if (subEl) {
+            subEl.addEventListener("change", updateExtraFields);
+        }
+
+        loadProductsList();
+        loadAllOrders();
+        loadAdminNews();
+    }
+</script>
+
+<script src="js/script.js"></script>
+</body>
+</html>
+

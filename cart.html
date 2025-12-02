@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cart - MusicShop</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-page: #f3f4f6;
+            --bg-header: #ffffff;
+            --bg-card: #ffffff;
+            --bg-card-soft: #f9fafb;
+            --accent: #ec4899;
+            --accent-soft: rgba(236, 72, 153, 0.08);
+            --accent-2: #6366f1;
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --border-subtle: #e5e7eb;
+            --radius-lg: 16px;
+            --radius-xl: 22px;
+            --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.06);
+        }
+
+        /* DARK THEME */
+        body.dark-theme {
+            --bg-page: #020617;
+            --bg-header: #020617;
+            --bg-card: #020617;
+            --bg-card-soft: #111827;
+            --accent: #ec4899;
+            --accent-2: #6366f1;
+            --accent-soft: rgba(236, 72, 153, 0.15);
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --border-subtle: #1f2937;
+            --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.8);
+            color: var(--text-main);
+        }
+        body.dark-theme .site-header {
+            border-bottom-color: var(--border-subtle);
+        }
+
+        body.cart-page {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: var(--bg-page);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* HEADER (same style as index/products) */
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            background: var(--bg-header);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .nav-inner {
+            max-width: 100%;
+            margin: 0;
+            padding: 12px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            box-sizing: border-box;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 999px;
+            background: radial-gradient(circle at 30% 20%, #f97316, #ec4899 40%, #6366f1 80%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 18px rgba(236, 72, 153, 0.35);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .brand-icon::after {
+            content: "";
+            position: absolute;
+            inset: 3px;
+            border-radius: inherit;
+            border: 1px solid rgba(248, 250, 252, 0.8);
+            opacity: 0.8;
+        }
+
+        .brand-icon span {
+            font-size: 22px;
+            position: relative;
+            color: #ffffff;
+        }
+
+        .brand-text h1 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .brand-text p {
+            margin: 0;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 14px;
+        }
+
+        .nav-links a {
+            padding: 6px 0;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -4px;
+            width: 0;
+            height: 2px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+            transition: width 0.25s ease;
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .nav-secondary {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .theme-toggle {
+            border-radius: 999px;
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-card-soft);
+            padding: 4px 8px;
+            font-size: 10px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .theme-toggle span {
+            font-size: 14px;
+        }
+
+        .user-status-pill {
+            min-width: 120px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            border: 1px solid var(--border-subtle);
+            font-size: 11px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            background: var(--bg-card);
+        }
+
+        .user-status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 999px;
+            background: #22c55e;
+        }
+
+        #userStatus {
+            font-size: 11px;
+            color: var(--text-main);
+        }
+
+        .logout-btn {
+            border: none;
+            border-radius: 999px;
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            background: linear-gradient(135deg, #f97316, #ef4444);
+            color: #f9fafb;
+            box-shadow: 0 8px 18px rgba(248, 113, 113, 0.4);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .logout-btn span {
+            font-size: 14px;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        /* MAIN LAYOUT */
+        main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .page-wrapper {
+            width: 100%;
+            max-width: 100%;
+            margin: 0;
+            padding: 22px 32px 32px;
+            box-sizing: border-box;
+            display: grid;
+            grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+            gap: 24px;
+            align-items: start;
+        }
+
+        @media (max-width: 900px) {
+            .page-wrapper {
+                grid-template-columns: minmax(0, 1fr);
+                padding: 18px 16px 24px;
+            }
+        }
+
+        .card {
+            border-radius: var(--radius-xl);
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            padding: 18px 18px 16px;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 10px;
+        }
+
+        .card-header h1,
+        .card-header h2 {
+            margin: 0;
+        }
+
+        .card-header span {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* CART LIST STYLING */
+        #cart_section {
+            margin: 0;
+        }
+
+        #cart_list {
+            margin-top: 10px;
+        }
+
+        .cart-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-subtle);
+            font-size: 13px;
+        }
+
+        .cart-item strong {
+            font-size: 14px;
+        }
+
+        .cart-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .cart-controls button {
+            border-radius: 999px;
+            border: 1px solid var(--border-subtle);
+            padding: 4px 8px;
+            font-size: 12px;
+            cursor: pointer;
+            background: var(--bg-card-soft);
+        }
+
+        .cart-controls .line-total {
+            margin-left: auto;
+            font-weight: 600;
+            color: #f97316;
+        }
+
+        #cart_total {
+            margin-top: 10px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .cart-footer-actions {
+            margin-top: 12px;
+        }
+
+        .btn-outline {
+            border-radius: 999px;
+            padding: 8px 14px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-card-soft);
+            color: var(--text-main);
+        }
+
+        .btn-outline:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 22px rgba(15, 23, 42, 0.12);
+        }
+
+        /* CHECKOUT FORM */
+        #checkout_form {
+            margin-top: 8px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            font-size: 13px;
+        }
+
+        #checkout_form label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--text-muted);
+        }
+
+        #checkout_form input,
+        #checkout_form textarea {
+            width: 100%;
+            box-sizing: border-box;
+            border-radius: 10px;
+            border: 1px solid var(--border-subtle);
+            padding: 7px 10px;
+            font-size: 13px;
+            background: var(--bg-card-soft);
+            color: var(--text-main);
+            outline: none;
+        }
+
+        #checkout_form textarea {
+            resize: vertical;
+        }
+
+        #place_order_btn {
+            margin-top: 6px;
+            border-radius: 999px;
+            border: none;
+            padding: 10px 18px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            background: linear-gradient(110deg, var(--accent), #f97316, var(--accent-2));
+            color: #f9fafb;
+            box-shadow: 0 12px 26px rgba(236, 72, 153, 0.35);
+            justify-self: flex-end;
+        }
+
+        #place_order_btn:hover {
+            transform: translateY(-1px);
+        }
+
+        /* FOOTER */
+        footer {
+            border-top: 1px solid var(--border-subtle);
+            padding: 10px 32px 14px;
+            font-size: 11px;
+            color: var(--text-muted);
+            box-sizing: border-box;
+            background: var(--bg-header);
+        }
+
+        .footer-inner {
+            max-width: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .footer-inner a {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body class="cart-page">
+
+<header class="site-header">
+    <div class="nav-inner">
+        <a href="index.html" class="brand">
+            <div class="brand-icon">
+                <span>♫</span>
+            </div>
+            <div class="brand-text">
+                <h1>MusicShop</h1>
+                <p>Instruments · Vinyls · Merch</p>
+            </div>
+        </a>
+
+        <nav class="nav-links">
+            <a href="products.html">Products</a>
+            <a href="favorites.html">Favorites</a>
+            <a href="cart.html" class="active">Cart</a>
+            <a href="orders.html">Orders</a>
+            <a href="news.html">News</a>
+            <a href="admin.html" id="adminLink" class="admin-only">Admin</a>
+        </nav>
+
+        <div class="nav-secondary">
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                <span id="themeIcon">🌞</span>
+            </button>
+
+            <div class="user-status-pill">
+                <div class="user-status-dot"></div>
+                <div id="userStatus">Not logged in.</div>
+            </div>
+
+            <button class="logout-btn" id="logoutBtn" style="display:none" onclick="logout()">
+                <span>⏏</span>
+                Logout
+            </button>
+        </div>
+    </div>
+</header>
+
+<main>
+    <div class="page-wrapper">
+        <!-- LEFT: CART CONTENT -->
+        <section class="card" id="cart_section">
+            <div class="card-header">
+                <h1>Your cart</h1>
+                <span>Review and adjust your items</span>
+            </div>
+
+            <div id="cart_list"></div>
+            <p id="cart_total"></p>
+
+            <div class="cart-footer-actions">
+                <button type="button" class="btn-outline" onclick="window.location.href='orders.html'">
+                    View recent orders
+                </button>
+            </div>
+        </section>
+
+        <!-- RIGHT: CHECKOUT FORM -->
+        <section class="card">
+            <div class="card-header">
+                <h2>Checkout details</h2>
+                <span>Fill in your delivery information</span>
+            </div>
+
+            <form id="checkout_form" onsubmit="event.preventDefault(); placeOrder();">
+                <div>
+                    <label for="chk_name">Full name*</label><br>
+                    <input type="text" id="chk_name" required>
+                </div>
+                <div>
+                    <label for="chk_email">Email (optional)</label><br>
+                    <input type="email" id="chk_email">
+                </div>
+                <div>
+                    <label for="chk_phone">Phone (optional)</label><br>
+                    <input type="text" id="chk_phone">
+                </div>
+                <div>
+                    <label for="chk_address">Address*</label><br>
+                    <input type="text" id="chk_address" required>
+                </div>
+                <div>
+                    <label for="chk_city">City*</label><br>
+                    <input type="text" id="chk_city" required>
+                </div>
+                <div>
+                    <label for="chk_postcode">Postcode*</label><br>
+                    <input type="text" id="chk_postcode" required>
+                </div>
+                <div>
+                    <label for="chk_country">Country*</label><br>
+                    <input type="text" id="chk_country" required>
+                </div>
+                <div>
+                    <label for="chk_note">Order note (optional)</label><br>
+                    <textarea id="chk_note" rows="3" placeholder="Any additional information"></textarea>
+                </div>
+
+                <button type="submit" id="place_order_btn">Place order</button>
+            </form>
+        </section>
+    </div>
+</main>
+
+<footer>
+    <div class="footer-inner">
+        <span>© <span id="year"></span> MusicShop. All rights reserved.</span>
+        <span>Built for your diploma project · <a href="admin.html" id="adminFooterLink" class="admin-only">Admin panel</a></span>
+    </div>
+</footer>
+
+<script>
+    function logout() {
+        fetch("/musicshop/api/logout.php", {
+            credentials: "include"
+        }).then(() => window.location = "index.html");
+    }
+
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const themeToggle = document.getElementById("themeToggle");
+        const themeIcon = document.getElementById("themeIcon");
+        const logoutBtn = document.getElementById("logoutBtn");
+
+        // THEME
+        function applyTheme(theme) {
+            if (theme === "dark") {
+                document.body.classList.add("dark-theme");
+                if (themeIcon) themeIcon.textContent = "🌙";
+            } else {
+                document.body.classList.remove("dark-theme");
+                if (themeIcon) themeIcon.textContent = "🌞";
+            }
+        }
+        const savedTheme = localStorage.getItem("theme");
+        applyTheme(savedTheme === "dark" ? "dark" : "light");
+
+        if (themeToggle) {
+            themeToggle.addEventListener("click", () => {
+                const isDark = document.body.classList.toggle("dark-theme");
+                localStorage.setItem("theme", isDark ? "dark" : "light");
+                if (themeIcon) themeIcon.textContent = isDark ? "🌙" : "🌞";
+            });
+        }
+
+        // Admin visibility
+        fetch("/musicshop/api/admin_check.php", { credentials: "include" })
+            .then(r => {
+                if (!r.ok) {
+                    document.querySelectorAll(".admin-only").forEach(el => el.style.display = "none");
+                } else {
+                    document.querySelectorAll(".admin-only").forEach(el => el.style.display = "");
+                }
+            })
+            .catch(() => {
+                document.querySelectorAll(".admin-only").forEach(el => el.style.display = "none");
+            });
+
+        // Login state
+        fetch("/musicshop/api/whoami.php", { credentials: "include" })
+            .then(r => r.ok ? r.json() : null)
+            .then(data => {
+                const loggedIn = data && data.logged_in;
+                if (loggedIn) {
+                    if (logoutBtn) logoutBtn.style.display = "inline-flex";
+                } else {
+                    if (logoutBtn) logoutBtn.style.display = "none";
+                }
+            })
+            .catch(() => {
+                if (logoutBtn) logoutBtn.style.display = "none";
+            });
+
+        // Render cart initially
+        renderCart();
+    });
+
+    // ----- Cart helpers (same logic as your original) -----
+    function getCart() {
+        try {
+            const raw = localStorage.getItem('musicshop_cart');
+            return raw ? JSON.parse(raw) : [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    function saveCart(cart) {
+        localStorage.setItem('musicshop_cart', JSON.stringify(cart));
+    }
+
+    function clearCart() {
+        localStorage.removeItem('musicshop_cart');
+    }
+
+    function renderCart() {
+        const cart = getCart();
+        const container = document.getElementById("cart_list");
+        const totalEl = document.getElementById("cart_total");
+
+        container.innerHTML = "";
+
+        if (cart.length === 0) {
+            container.textContent = "Your cart is empty.";
+            totalEl.textContent = "";
+            return;
+        }
+
+        let total = 0;
+
+        cart.forEach((item, index) => {
+            const lineTotal = item.price * item.quantity;
+            total += lineTotal;
+
+            const div = document.createElement("div");
+            div.className = "cart-item";
+            div.innerHTML = `
+                <strong>${item.name}</strong>
+                <div class="cart-controls">
+                    <button class="dec-btn" data-index="${index}">-</button>
+                    <span class="qty">${item.quantity}</span>
+                    <button class="inc-btn" data-index="${index}">+</button>
+                    <span class="line-total">€${lineTotal.toFixed(2)}</span>
+                    <button class="remove-btn" data-index="${index}">Remove</button>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+
+        totalEl.textContent = "Total: €" + total.toFixed(2);
+
+        // Increment quantity
+        container.querySelectorAll(".inc-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const idx = parseInt(btn.getAttribute("data-index"), 10);
+                changeQuantity(idx, +1);
+            });
+        });
+
+        // Decrement quantity
+        container.querySelectorAll(".dec-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const idx = parseInt(btn.getAttribute("data-index"), 10);
+                changeQuantity(idx, -1);
+            });
+        });
+
+        // Remove item completely
+        container.querySelectorAll(".remove-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const idx = parseInt(btn.getAttribute("data-index"), 10);
+                removeItem(idx);
+            });
+        });
+    }
+
+    function changeQuantity(index, delta) {
+        const cart = getCart();
+        if (!cart[index]) return;
+
+        cart[index].quantity += delta;
+
+        if (cart[index].quantity <= 0) {
+            cart.splice(index, 1);
+        }
+
+        saveCart(cart);
+        renderCart();
+    }
+
+    function removeItem(index) {
+        const cart = getCart();
+        if (!cart[index]) return;
+
+        cart.splice(index, 1);
+        saveCart(cart);
+        renderCart();
+    }
+
+    // ----- Place order with checkout fields -----
+    function placeOrder() {
+        const cart = getCart();
+        if (cart.length === 0) {
+            alert("Your cart is empty.");
+            return;
+        }
+
+        const name     = document.getElementById("chk_name").value.trim();
+        const email    = document.getElementById("chk_email").value.trim();
+        const phone    = document.getElementById("chk_phone").value.trim();
+        const address  = document.getElementById("chk_address").value.trim();
+        const city     = document.getElementById("chk_city").value.trim();
+        const postcode = document.getElementById("chk_postcode").value.trim();
+        const country  = document.getElementById("chk_country").value.trim();
+        const note     = document.getElementById("chk_note").value.trim();
+
+        if (!name || !address || !city || !postcode || !country) {
+            alert("Please fill in all required fields (marked with *).");
+            return;
+        }
+
+        const items = cart.map(it => ({
+            product_id: it.id,
+            quantity: it.quantity
+        }));
+
+        fetch('/musicshop/api/create_order.php', {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({
+                items,
+                name,
+                email,
+                phone,
+                address,
+                city,
+                postcode,
+                country,
+                note
+            })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (!data.ok) {
+                alert("Order failed: " + (data.error || "Unknown error"));
+                return;
+            }
+
+            alert("Order placed successfully. ID: " + data.order_id);
+            clearCart();
+            document.getElementById("checkout_form").reset();
+            renderCart();
+        })
+        .catch(err => {
+            console.error(err);
+            alert("Error placing order.");
+        });
+    }
+</script>
+
+<script src="js/script.js"></script>
+</body>
+</html>
+

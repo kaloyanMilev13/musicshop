@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Music News - MusicShop</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-page: #f3f4f6;
+            --bg-header: #ffffff;
+            --bg-card: #ffffff;
+            --bg-card-soft: #f9fafb;
+            --accent: #ec4899;
+            --accent-soft: rgba(236, 72, 153, 0.08);
+            --accent-2: #6366f1;
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --border-subtle: #e5e7eb;
+            --radius-lg: 16px;
+            --radius-xl: 22px;
+            --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.06);
+        }
+
+        /* DARK THEME */
+        body.dark-theme {
+            --bg-page: #020617;
+            --bg-header: #020617;
+            --bg-card: #020617;
+            --bg-card-soft: #111827;
+            --accent: #ec4899;
+            --accent-2: #6366f1;
+            --accent-soft: rgba(236, 72, 153, 0.15);
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --border-subtle: #1f2937;
+            --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.8);
+            color: var(--text-main);
+        }
+        body.dark-theme .site-header {
+            border-bottom-color: var(--border-subtle);
+        }
+
+        body.news-page {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: var(--bg-page);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* HEADER – same style as other pages */
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            background: var(--bg-header);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .nav-inner {
+            max-width: 100%;
+            margin: 0;
+            padding: 12px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            box-sizing: border-box;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 999px;
+            background: radial-gradient(circle at 30% 20%, #f97316, #ec4899 40%, #6366f1 80%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 18px rgba(236, 72, 153, 0.35);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .brand-icon::after {
+            content: "";
+            position: absolute;
+            inset: 3px;
+            border-radius: inherit;
+            border: 1px solid rgba(248, 250, 252, 0.8);
+            opacity: 0.8;
+        }
+
+        .brand-icon span {
+            font-size: 22px;
+            position: relative;
+            color: #ffffff;
+        }
+
+        .brand-text h1 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .brand-text p {
+            margin: 0;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 14px;
+        }
+
+        .nav-links a {
+            padding: 6px 0;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -4px;
+            width: 0;
+            height: 2px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+            transition: width 0.25s ease;
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .nav-secondary {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .theme-toggle {
+            border-radius: 999px;
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-card-soft);
+            padding: 4px 8px;
+            font-size: 10px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .theme-toggle span {
+            font-size: 14px;
+        }
+
+        .user-status-pill {
+            min-width: 120px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            border: 1px solid var(--border-subtle);
+            font-size: 11px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            background: var(--bg-card);
+        }
+
+        .user-status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 999px;
+            background: #22c55e;
+        }
+
+        #userStatus {
+            font-size: 11px;
+            color: var(--text-main);
+        }
+
+        .logout-btn {
+            border: none;
+            border-radius: 999px;
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            background: linear-gradient(135deg, #f97316, #ef4444);
+            color: #f9fafb;
+            box-shadow: 0 8px 18px rgba(248, 113, 113, 0.4);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .logout-btn span {
+            font-size: 14px;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        /* MAIN LAYOUT */
+        main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .page-wrapper {
+            width: 100%;
+            max-width: 100%;
+            margin: 0;
+            padding: 22px 32px 32px;
+            box-sizing: border-box;
+            display: grid;
+            grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.2fr);
+            gap: 24px;
+            align-items: start;
+        }
+
+        @media (max-width: 900px) {
+            .page-wrapper {
+                grid-template-columns: minmax(0, 1fr);
+                padding: 18px 16px 24px;
+            }
+        }
+
+        .card {
+            border-radius: var(--radius-xl);
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            padding: 18px 18px 16px;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .card-header h1,
+        .card-header h2 {
+            margin: 0;
+        }
+
+        .card-header span {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* LEFT: LIST + SEARCH */
+        .news-filters {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+            font-size: 12px;
+        }
+
+        .news-filters label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--text-muted);
+        }
+
+        .news-filters input[type="text"] {
+            border-radius: 999px;
+            border: 1px solid var(--border-subtle);
+            padding: 6px 10px;
+            font-size: 12px;
+            background: var(--bg-card-soft);
+            color: var(--text-main);
+            outline: none;
+        }
+
+        #news_list {
+            margin-top: 8px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .news-item-card {
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-card-soft);
+            padding: 10px 12px;
+            margin-bottom: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: box-shadow 0.15s, transform 0.15s, border-color 0.15s, background 0.15s;
+        }
+
+        .news-item-card:hover {
+            box-shadow: 0 10px 22px rgba(15, 23, 42, 0.12);
+            transform: translateY(-1px);
+            border-color: #cbd5f5;
+        }
+
+        .news-item-card.active {
+            border-color: var(--accent-2);
+            box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.3);
+            background: #eef2ff33;
+        }
+
+        .news-item-title {
+            margin: 0 0 2px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .news-item-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .news-item-excerpt {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* RIGHT: DETAIL VIEW */
+        .news-detail-title {
+            margin: 0 0 4px;
+            font-size: 20px;
+        }
+
+        .news-detail-meta {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .news-detail-content {
+            font-size: 14px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .news-detail-empty {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* FOOTER */
+        footer {
+            border-top: 1px solid var(--border-subtle);
+            padding: 10px 32px 14px;
+            font-size: 11px;
+            color: var(--text-muted);
+            box-sizing: border-box;
+            background: var(--bg-header);
+        }
+
+        .footer-inner {
+            max-width: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .footer-inner a {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body class="news-page">
+
+<header class="site-header">
+    <div class="nav-inner">
+        <a href="index.html" class="brand">
+            <div class="brand-icon">
+                <span>♫</span>
+            </div>
+            <div class="brand-text">
+                <h1>MusicShop</h1>
+                <p>Instruments · Vinyls · Merch</p>
+            </div>
+        </a>
+
+        <nav class="nav-links">
+            <a href="products.html">Products</a>
+            <a href="favorites.html">Favorites</a>
+            <a href="cart.html">Cart</a>
+            <a href="orders.html">Orders</a>
+            <a href="news.html" class="active">News</a>
+            <a href="admin.html" id="adminLink" class="admin-only">Admin</a>
+        </nav>
+
+        <div class="nav-secondary">
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                <span id="themeIcon">🌞</span>
+            </button>
+
+            <div class="user-status-pill">
+                <div class="user-status-dot"></div>
+                <div id="userStatus">Not logged in.</div>
+            </div>
+
+            <button class="logout-btn" id="logoutBtn" style="display:none" onclick="logout()">
+                <span>⏏</span>
+                Logout
+            </button>
+        </div>
+    </div>
+</header>
+
+<main>
+    <div class="page-wrapper">
+        <!-- LEFT: NEWS LIST + SEARCH -->
+        <section class="card">
+            <div class="card-header">
+                <h1>Music news</h1>
+                <span id="news_count_label">Loading...</span>
+            </div>
+
+            <div class="news-filters">
+                <label for="news_search">Search</label>
+                <input type="text" id="news_search" placeholder="Search by title or text…">
+            </div>
+
+            <div id="news_list">Loading…</div>
+        </section>
+
+        <!-- RIGHT: DETAIL VIEW -->
+        <section class="card">
+            <div class="card-header">
+                <h2>Details</h2>
+            </div>
+
+            <div id="news_detail_empty" class="news-detail-empty">
+                Select a news item from the left to read it in full.
+            </div>
+
+            <div id="news_detail" style="display:none;">
+                <h2 class="news-detail-title" id="detail_title"></h2>
+                <div class="news-detail-meta" id="detail_meta"></div>
+                <div class="news-detail-content" id="detail_content"></div>
+            </div>
+        </section>
+    </div>
+</main>
+
+<footer>
+    <div class="footer-inner">
+        <span>© <span id="year"></span> MusicShop. All rights reserved.</span>
+        <span>Built for your diploma project · <a href="admin.html" id="adminFooterLink" class="admin-only">Admin panel</a></span>
+    </div>
+</footer>
+
+<script>
+    function logout() {
+        fetch("/musicshop/api/logout.php", {
+            credentials: "include"
+        }).then(() => window.location = "index.html");
+    }
+
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    let ALL_NEWS = [];
+    let FILTERED_NEWS = [];
+    let ACTIVE_NEWS_ID = null;
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const themeToggle = document.getElementById("themeToggle");
+        const themeIcon = document.getElementById("themeIcon");
+        const logoutBtn = document.getElementById("logoutBtn");
+        const searchInput = document.getElementById("news_search");
+
+        // THEME
+        function applyTheme(theme) {
+            if (theme === "dark") {
+                document.body.classList.add("dark-theme");
+                if (themeIcon) themeIcon.textContent = "🌙";
+            } else {
+                document.body.classList.remove("dark-theme");
+                if (themeIcon) themeIcon.textContent = "🌞";
+            }
+        }
+
+        const savedTheme = localStorage.getItem("theme");
+        applyTheme(savedTheme === "dark" ? "dark" : "light");
+
+        if (themeToggle) {
+            themeToggle.addEventListener("click", () => {
+                const isDark = document.body.classList.toggle("dark-theme");
+                localStorage.setItem("theme", isDark ? "dark" : "light");
+                if (themeIcon) themeIcon.textContent = isDark ? "🌙" : "🌞";
+            });
+        }
+
+        // Admin visibility
+        fetch("/musicshop/api/admin_check.php", { credentials: "include" })
+            .then(r => {
+                if (!r.ok) {
+                    document.querySelectorAll(".admin-only").forEach(el => el.style.display = "none");
+                } else {
+                    document.querySelectorAll(".admin-only").forEach(el => el.style.display = "");
+                }
+            })
+            .catch(() => {
+                document.querySelectorAll(".admin-only").forEach(el => el.style.display = "none");
+            });
+
+        // Login state
+        fetch("/musicshop/api/whoami.php", { credentials: "include" })
+            .then(r => r.ok ? r.json() : null)
+            .then(data => {
+                const loggedIn = data && data.logged_in;
+                if (loggedIn) {
+                    if (logoutBtn) logoutBtn.style.display = "inline-flex";
+                } else {
+                    if (logoutBtn) logoutBtn.style.display = "none";
+                }
+            })
+            .catch(() => {
+                if (logoutBtn) logoutBtn.style.display = "none";
+            });
+
+        // Load news
+        loadNews();
+
+        // Client-side search
+        if (searchInput) {
+            searchInput.addEventListener("input", () => {
+                applySearchFilter(searchInput.value.trim());
+            });
+        }
+    });
+
+    // --- NEWS LOADING (uses your existing get_news.php) ---
+    function loadNews() {
+        fetch('/musicshop/api/get_news.php')
+            .then(r => r.json())
+            .then(data => {
+                const container = document.getElementById('news_list');
+                const countLabel = document.getElementById('news_count_label');
+
+                container.innerHTML = '';
+
+                if (!data.ok) {
+                    container.textContent = 'Error loading news.';
+                    if (countLabel) countLabel.textContent = 'Error';
+                    return;
+                }
+
+                if (!data.news || data.news.length === 0) {
+                    container.textContent = 'No news yet.';
+                    if (countLabel) countLabel.textContent = '0 articles';
+                    return;
+                }
+
+                ALL_NEWS = data.news;
+                FILTERED_NEWS = data.news.slice();
+                ACTIVE_NEWS_ID = null;
+
+                if (countLabel) {
+                    countLabel.textContent = FILTERED_NEWS.length + ' article' + (FILTERED_NEWS.length !== 1 ? 's' : '');
+                }
+
+                renderNewsList();
+
+                // Auto-select first news item for detail view
+                if (FILTERED_NEWS.length > 0) {
+                    showNewsDetail(FILTERED_NEWS[0].id);
+                }
+            })
+            .catch(() => {
+                const container = document.getElementById('news_list');
+                const countLabel = document.getElementById('news_count_label');
+                if (container) container.textContent = 'Error loading news.';
+                if (countLabel) countLabel.textContent = 'Error';
+            });
+    }
+
+    function applySearchFilter(query) {
+        const container = document.getElementById('news_list');
+        const countLabel = document.getElementById('news_count_label');
+        if (!ALL_NEWS.length) return;
+
+        if (!query) {
+            FILTERED_NEWS = ALL_NEWS.slice();
+        } else {
+            const q = query.toLowerCase();
+            FILTERED_NEWS = ALL_NEWS.filter(n =>
+                (n.title && n.title.toLowerCase().includes(q)) ||
+                (n.content && n.content.toLowerCase().includes(q))
+            );
+        }
+
+        if (countLabel) {
+            countLabel.textContent = FILTERED_NEWS.length + ' article' + (FILTERED_NEWS.length !== 1 ? 's' : '');
+        }
+
+        container.innerHTML = '';
+        if (FILTERED_NEWS.length === 0) {
+            container.textContent = 'No news match your search.';
+            document.getElementById('news_detail_empty').style.display = '';
+            document.getElementById('news_detail').style.display = 'none';
+            ACTIVE_NEWS_ID = null;
+            return;
+        }
+
+        renderNewsList();
+
+        // If active news is no longer in filtered list, reset
+        if (!FILTERED_NEWS.some(n => n.id === ACTIVE_NEWS_ID)) {
+            ACTIVE_NEWS_ID = FILTERED_NEWS[0].id;
+            showNewsDetail(ACTIVE_NEWS_ID);
+        } else {
+            highlightActiveCard();
+        }
+    }
+
+    function renderNewsList() {
+        const container = document.getElementById('news_list');
+        container.innerHTML = '';
+
+        FILTERED_NEWS.forEach(n => {
+            const div = document.createElement('div');
+            div.className = 'news-item-card';
+            div.dataset.id = n.id;
+
+            const createdAt = n.created_at || '';
+
+            // small snippet
+            let excerpt = n.content || '';
+            if (excerpt.length > 110) {
+                excerpt = excerpt.substring(0, 107) + '…';
+            }
+
+            div.innerHTML = `
+                <h3 class="news-item-title">${n.title}</h3>
+                <div class="news-item-meta">${createdAt}</div>
+                <p class="news-item-excerpt">${excerpt}</p>
+            `;
+
+            div.addEventListener('click', () => {
+                showNewsDetail(n.id);
+            });
+
+            container.appendChild(div);
+        });
+
+        highlightActiveCard();
+    }
+
+    function showNewsDetail(id) {
+        const news = ALL_NEWS.find(n => n.id === id);
+        if (!news) return;
+
+        ACTIVE_NEWS_ID = id;
+
+        const emptyBox = document.getElementById('news_detail_empty');
+        const detailBox = document.getElementById('news_detail');
+        const titleEl = document.getElementById('detail_title');
+        const metaEl = document.getElementById('detail_meta');
+        const contentEl = document.getElementById('detail_content');
+
+        if (emptyBox) emptyBox.style.display = 'none';
+        if (detailBox) detailBox.style.display = '';
+
+        if (titleEl) titleEl.textContent = news.title || '(No title)';
+        if (metaEl) metaEl.textContent = news.created_at || '';
+        if (contentEl) contentEl.textContent = news.content || '';
+
+        highlightActiveCard();
+    }
+
+    function highlightActiveCard() {
+        const cards = document.querySelectorAll('.news-item-card');
+        cards.forEach(card => {
+            if (String(card.dataset.id) === String(ACTIVE_NEWS_ID)) {
+                card.classList.add('active');
+            } else {
+                card.classList.remove('active');
+            }
+        });
+    }
+</script>
+
+<script src="js/script.js"></script>
+</body>
+</html>
+

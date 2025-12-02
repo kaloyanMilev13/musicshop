@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Favorites - MusicShop</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-page: #f3f4f6;
+            --bg-header: #ffffff;
+            --bg-card: #ffffff;
+            --bg-card-soft: #f9fafb;
+            --accent: #ec4899;
+            --accent-soft: rgba(236, 72, 153, 0.08);
+            --accent-2: #6366f1;
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --border-subtle: #e5e7eb;
+            --radius-lg: 16px;
+            --radius-xl: 22px;
+            --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.06);
+        }
+
+        /* DARK THEME (same idea as products/index) */
+        body.dark-theme {
+            --bg-page: #020617;
+            --bg-header: #020617;
+            --bg-card: #020617;
+            --bg-card-soft: #111827;
+            --accent: #ec4899;
+            --accent-2: #6366f1;
+            --accent-soft: rgba(236, 72, 153, 0.15);
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+            --border-subtle: #1f2937;
+            --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.8);
+            color: var(--text-main);
+        }
+        body.dark-theme .site-header {
+            border-bottom-color: var(--border-subtle);
+        }
+
+        body.favorites-page {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: var(--bg-page);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* HEADER (copied from products.html style) */
+        .site-header {
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            background: var(--bg-header);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .nav-inner {
+            max-width: 100%;
+            margin: 0;
+            padding: 12px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            box-sizing: border-box;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 999px;
+            background: radial-gradient(circle at 30% 20%, #f97316, #ec4899 40%, #6366f1 80%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 18px rgba(236, 72, 153, 0.35);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .brand-icon::after {
+            content: "";
+            position: absolute;
+            inset: 3px;
+            border-radius: inherit;
+            border: 1px solid rgba(248, 250, 252, 0.8);
+            opacity: 0.8;
+        }
+
+        .brand-icon span {
+            font-size: 22px;
+            position: relative;
+            color: #ffffff;
+        }
+
+        .brand-text h1 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .brand-text p {
+            margin: 0;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            font-size: 14px;
+        }
+
+        .nav-links a {
+            padding: 6px 0;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -4px;
+            width: 0;
+            height: 2px;
+            border-radius: 999px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-2));
+            transition: width 0.25s ease;
+        }
+
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+
+        .nav-secondary {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .theme-toggle {
+            border-radius: 999px;
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-card-soft);
+            padding: 4px 8px;
+            font-size: 10px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .theme-toggle span {
+            font-size: 14px;
+        }
+
+        .user-status-pill {
+            min-width: 120px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            border: 1px solid var(--border-subtle);
+            font-size: 11px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            background: var(--bg-card);
+        }
+
+        .user-status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 999px;
+            background: #22c55e;
+        }
+
+        #userStatus {
+            font-size: 11px;
+            color: var(--text-main);
+        }
+
+        .logout-btn {
+            border: none;
+            border-radius: 999px;
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            background: linear-gradient(135deg, #f97316, #ef4444);
+            color: #f9fafb;
+            box-shadow: 0 8px 18px rgba(248, 113, 113, 0.4);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .logout-btn span {
+            font-size: 14px;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        /* MAIN LAYOUT (favorites: full-width content) */
+        main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .page-wrapper {
+            width: 100%;
+            max-width: 100%;
+            margin: 0;
+            padding: 22px 32px 32px;
+            box-sizing: border-box;
+        }
+
+        /* On mobile, smaller padding */
+        @media (max-width: 900px) {
+            .page-wrapper {
+                padding: 18px 16px 24px;
+            }
+        }
+
+        .favorites-section {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .favorites-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 10px;
+        }
+
+        .favorites-header h2 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .favorites-header span {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* GRID + CARD like products */
+        #favorites_list {
+            min-height: 80px;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .product-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border-subtle);
+            padding: 12px 12px 10px;
+            box-shadow: 0 12px 26px rgba(15, 23, 42, 0.08);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 13px;
+        }
+
+        .product-card-heading {
+            display: flex;
+            justify-content: space-between;
+            gap: 6px;
+        }
+
+        .product-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .product-price {
+            font-weight: 700;
+            color: #f97316;
+        }
+
+        .product-meta {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .product-description {
+            font-size: 12px;
+            color: var(--text-muted);
+            max-height: 40px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .product-actions {
+            margin-top: 6px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .btn-secondary,
+        .btn-outline {
+            border-radius: 999px;
+            padding: 6px 10px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-card-soft);
+            color: var(--text-main);
+        }
+
+        .btn-secondary {
+            border-color: transparent;
+            background: linear-gradient(110deg, var(--accent), var(--accent-2));
+            color: #f9fafb;
+        }
+
+        .btn-secondary:hover,
+        .btn-outline:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 22px rgba(15, 23, 42, 0.12);
+        }
+
+        .empty-box {
+            font-size: 16px;
+            color: var(--text-muted);
+            padding: 20px;
+            text-align: center;
+        }
+
+        /* MODAL (same style as products, adapted for favorites) */
+        .product-modal {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 50;
+        }
+
+        .product-modal.show {
+            display: flex;
+        }
+
+        .product-modal-backdrop {
+            position: absolute;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.65);
+        }
+
+        .product-modal-dialog {
+            position: relative;
+            z-index: 1;
+            max-width: 520px;
+            width: 94%;
+            background: var(--bg-card);
+            border-radius: 20px;
+            border: 1px solid var(--border-subtle);
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.7);
+            padding: 18px 18px 16px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .modal-title {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .modal-subtitle {
+            margin: 0;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .modal-close {
+            border: none;
+            background: transparent;
+            font-size: 20px;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+
+        .modal-body {
+            font-size: 13px;
+            color: var(--text-main);
+            margin-top: 6px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .modal-description {
+            margin-top: 6px;
+            font-size: 13px;
+        }
+
+        .modal-meta-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            font-size: 12px;
+            margin-top: 4px;
+            color: var(--text-muted);
+        }
+
+        .modal-actions {
+            margin-top: 12px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        .modal-actions button {
+            border-radius: 999px;
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            border: 1px solid var(--border-subtle);
+            background: var(--bg-card-soft);
+            color: var(--text-main);
+        }
+
+        .modal-actions .primary {
+            border-color: transparent;
+            background: linear-gradient(110deg, var(--accent), var(--accent-2));
+            color: #f9fafb;
+        }
+
+        /* FOOTER */
+        footer {
+            border-top: 1px solid var(--border-subtle);
+            padding: 10px 32px 14px;
+            font-size: 11px;
+            color: var(--text-muted);
+            box-sizing: border-box;
+            background: var(--bg-header);
+        }
+
+        .footer-inner {
+            max-width: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .footer-inner a {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body class="favorites-page">
+
+<header class="site-header">
+    <div class="nav-inner">
+        <a href="index.html" class="brand">
+            <div class="brand-icon">
+                <span>♫</span>
+            </div>
+            <div class="brand-text">
+                <h1>MusicShop</h1>
+                <p>Instruments · Vinyls · Merch</p>
+            </div>
+        </a>
+
+        <nav class="nav-links">
+            <a href="products.html">Products</a>
+            <a href="favorites.html" class="active">Favorites</a>
+            <a href="cart.html">Cart</a>
+            <a href="orders.html">Orders</a>
+            <a href="news.html">News</a>
+            <a href="admin.html" id="adminLink" class="admin-only">Admin</a>
+        </nav>
+
+        <div class="nav-secondary">
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                <span id="themeIcon">🌞</span>
+            </button>
+
+            <div class="user-status-pill">
+                <div class="user-status-dot"></div>
+                <div id="userStatus">Not logged in.</div>
+            </div>
+
+            <button class="logout-btn" id="logoutBtn" style="display:none" onclick="logout()">
+                <span>⏏</span>
+                Logout
+            </button>
+        </div>
+    </div>
+</header>
+
+<main>
+    <div class="page-wrapper">
+        <section class="favorites-section">
+            <div class="favorites-header">
+                <h2>Your favorites</h2>
+                <span id="favoritesCountLabel"></span>
+            </div>
+
+            <div id="favorites_list">Loading...</div>
+        </section>
+    </div>
+</main>
+
+<!-- PRODUCT DETAIL MODAL (same blueprint style as products) -->
+<div id="productModal" class="product-modal">
+    <div class="product-modal-backdrop"></div>
+    <div class="product-modal-dialog">
+        <div class="modal-header">
+            <div>
+                <h3 class="modal-title" id="modalTitle"></h3>
+                <p class="modal-subtitle" id="modalSubtitle"></p>
+            </div>
+            <button type="button" class="modal-close" id="modalCloseBtn">&times;</button>
+        </div>
+
+        <div class="modal-body">
+            <div class="modal-meta-row" id="modalMetaRow"></div>
+            <p class="modal-description" id="modalDescription"></p>
+        </div>
+
+        <div class="modal-actions">
+            <button class="secondary" id="modalRemoveBtn">Remove from favorites</button>
+            <button class="primary" id="modalCartBtn">Add to cart</button>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div class="footer-inner">
+        <span>© <span id="year"></span> MusicShop. All rights reserved.</span>
+        <span>Built for your diploma project · <a href="admin.html" id="adminFooterLink" class="admin-only">Admin panel</a></span>
+    </div>
+</footer>
+
+<script>
+    function logout() {
+        fetch("/musicshop/api/logout.php", {
+            credentials: "include"
+        }).then(() => window.location = "index.html");
+    }
+
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    let currentModalProduct = null;
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const themeToggle = document.getElementById("themeToggle");
+        const themeIcon = document.getElementById("themeIcon");
+        const logoutBtn = document.getElementById("logoutBtn");
+
+        // THEME (same logic as index/products)
+        function applyTheme(theme) {
+            if (theme === "dark") {
+                document.body.classList.add("dark-theme");
+                if (themeIcon) themeIcon.textContent = "🌙";
+            } else {
+                document.body.classList.remove("dark-theme");
+                if (themeIcon) themeIcon.textContent = "🌞";
+            }
+        }
+        const savedTheme = localStorage.getItem("theme");
+        applyTheme(savedTheme === "dark" ? "dark" : "light");
+
+        if (themeToggle) {
+            themeToggle.addEventListener("click", () => {
+                const isDark = document.body.classList.toggle("dark-theme");
+                localStorage.setItem("theme", isDark ? "dark" : "light");
+                if (themeIcon) themeIcon.textContent = isDark ? "🌙" : "🌞";
+            });
+        }
+
+        // ADMIN visibility via admin_check.php
+        fetch("/musicshop/api/admin_check.php", { credentials: "include" })
+            .then(r => {
+                if (!r.ok) {
+                    document.querySelectorAll(".admin-only").forEach(el => el.style.display = "none");
+                } else {
+                    document.querySelectorAll(".admin-only").forEach(el => el.style.display = "");
+                }
+            })
+            .catch(() => {
+                document.querySelectorAll(".admin-only").forEach(el => el.style.display = "none");
+            });
+
+        // LOGIN state via whoami.php
+        fetch("/musicshop/api/whoami.php", { credentials: "include" })
+            .then(r => r.ok ? r.json() : null)
+            .then(data => {
+                const loggedIn = data && data.logged_in;
+                if (loggedIn) {
+                    if (logoutBtn) logoutBtn.style.display = "inline-flex";
+                } else {
+                    if (logoutBtn) logoutBtn.style.display = "none";
+                }
+            })
+            .catch(() => {
+                if (logoutBtn) logoutBtn.style.display = "none";
+            });
+
+        // Modal wiring
+        const modal = document.getElementById("productModal");
+        const backdrop = document.querySelector(".product-modal-backdrop");
+        const closeBtn = document.getElementById("modalCloseBtn");
+        const removeBtn = document.getElementById("modalRemoveBtn");
+        const cartBtn = document.getElementById("modalCartBtn");
+
+        function closeProductModal() {
+            if (!modal) return;
+            modal.classList.remove("show");
+            currentModalProduct = null;
+        }
+
+        if (backdrop) backdrop.addEventListener("click", closeProductModal);
+        if (closeBtn) closeBtn.addEventListener("click", closeProductModal);
+
+        if (removeBtn) {
+            removeBtn.addEventListener("click", () => {
+                if (currentModalProduct) {
+                    removeFavorite(currentModalProduct.id);
+                    closeProductModal();
+                }
+            });
+        }
+
+        if (cartBtn) {
+            cartBtn.addEventListener("click", () => {
+                if (currentModalProduct) {
+                    const safeName = (currentModalProduct.name || "").replace(/"/g, '&quot;').replace(/'/g, "\\'");
+                    addToCart(currentModalProduct.id, safeName, currentModalProduct.price);
+                    closeProductModal();
+                }
+            });
+        }
+
+        // Load favorites after everything is wired
+        loadFavorites();
+    });
+
+    // --- CART HELPERS (same as products/orders) ---
+    function getCart() {
+        try {
+            const raw = localStorage.getItem('musicshop_cart');
+            return raw ? JSON.parse(raw) : [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    function saveCart(cart) {
+        localStorage.setItem('musicshop_cart', JSON.stringify(cart));
+    }
+
+    function addToCart(id, name, price) {
+        const cart = getCart();
+        const existing = cart.find(item => item.id === id);
+
+        if (existing) {
+            existing.quantity += 1;
+        } else {
+            cart.push({
+                id: id,
+                name: name,
+                price: Number(price),
+                quantity: 1
+            });
+        }
+
+        saveCart(cart);
+        alert("Added to cart.");
+    }
+
+    function removeFavorite(productId) {
+        fetch('/musicshop/api/remove_favorite.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ product_id: productId })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (!data.ok) {
+                alert('Failed to remove from favorites: ' + (data.error || 'Unknown error'));
+                return;
+            }
+            loadFavorites();
+        })
+        .catch(() => alert('Error removing from favorites.'));
+    }
+
+    // --- MODAL OPEN ---
+    function openProductModal(p) {
+        currentModalProduct = p;
+
+        const modal = document.getElementById("productModal");
+        if (!modal) return;
+
+        const titleEl = document.getElementById("modalTitle");
+        const subtitleEl = document.getElementById("modalSubtitle");
+        const metaRow = document.getElementById("modalMetaRow");
+        const descEl = document.getElementById("modalDescription");
+
+        if (titleEl) titleEl.textContent = p.name || "Product details";
+
+        const subtitleParts = [];
+        if (p.artist) subtitleParts.push(p.artist);
+        if (p.category) subtitleParts.push(p.category);
+        if (p.genre) subtitleParts.push(p.genre);
+        if (p.music_genre) subtitleParts.push(p.music_genre);
+        if (subtitleEl) subtitleEl.textContent = subtitleParts.join(" · ");
+
+        if (metaRow) {
+            metaRow.innerHTML = "";
+            const priceSpan = document.createElement("span");
+            priceSpan.textContent = "Price: €" + p.price;
+            metaRow.appendChild(priceSpan);
+
+            if (p.category) {
+                const c = document.createElement("span");
+                c.textContent = "Main: " + p.category;
+                metaRow.appendChild(c);
+            }
+            if (p.genre) {
+                const g = document.createElement("span");
+                g.textContent = "Subcategory: " + p.genre;
+                metaRow.appendChild(g);
+            }
+            if (p.music_genre) {
+                const mg = document.createElement("span");
+                mg.textContent = "Music genre: " + p.music_genre;
+                metaRow.appendChild(mg);
+            }
+        }
+
+        if (descEl) {
+            descEl.textContent = p.description || "No description available for this product.";
+        }
+
+        modal.classList.add("show");
+    }
+
+    // --- LOAD FAVORITES ---
+    function loadFavorites() {
+        fetch('/musicshop/api/get_favorites.php', { credentials: 'include' })
+            .then(r => r.json())
+            .then(data => {
+                const container = document.getElementById("favorites_list");
+                const countLabel = document.getElementById("favoritesCountLabel");
+                container.innerHTML = "";
+
+                if (!data.ok) {
+                    container.innerHTML = '<div class="empty-box">Error loading favorites.</div>';
+                    if (countLabel) countLabel.textContent = "";
+                    return;
+                }
+
+                if (!data.favorites || data.favorites.length === 0) {
+                    container.innerHTML = '<div class="empty-box">You have no favorites yet.</div>';
+                    if (countLabel) countLabel.textContent = "0 items";
+                    return;
+                }
+
+                if (countLabel) {
+                    countLabel.textContent = data.favorites.length + " item" + (data.favorites.length !== 1 ? "s" : "");
+                }
+
+                const grid = document.createElement("div");
+                grid.className = "product-grid";
+
+                data.favorites.forEach(p => {
+                    const card = document.createElement("div");
+                    card.className = "product-card";
+
+                    const safeName = (p.name || '').replace(/"/g, '&quot;').replace(/'/g, "\\'");
+
+                    card.innerHTML = `
+                        <div class="product-card-heading">
+                            <div class="product-name">${p.name || "Unnamed product"}</div>
+                            <div class="product-price">€${Number(p.price).toFixed(2)}</div>
+                        </div>
+                        <div class="product-meta">
+                            ${p.artist ? p.artist + " · " : ""}
+                            ${p.category || "-"}${p.genre ? " · " + p.genre : ""}${p.music_genre ? " · " + p.music_genre : ""}
+                        </div>
+                        <div class="product-description">
+                            ${p.description || "No description available."}
+                        </div>
+                        <div class="product-actions">
+                            <button class="btn-secondary view-details">View details</button>
+                            <button class="btn-outline cart-btn">Add to cart</button>
+                            <button class="btn-outline remove-btn">Remove</button>
+                        </div>
+                    `;
+
+                    const viewBtn = card.querySelector(".view-details");
+                    const cartBtn = card.querySelector(".cart-btn");
+                    const removeBtn = card.querySelector(".remove-btn");
+
+                    if (viewBtn) viewBtn.addEventListener("click", () => openProductModal(p));
+                    if (cartBtn) cartBtn.addEventListener("click", () => addToCart(p.id, safeName, p.price));
+                    if (removeBtn) removeBtn.addEventListener("click", () => removeFavorite(p.id));
+
+                    grid.appendChild(card);
+                });
+
+                container.appendChild(grid);
+            })
+            .catch(() => {
+                document.getElementById("favorites_list").innerHTML =
+                    '<div class="empty-box">Error loading favorites.</div>';
+                const countLabel = document.getElementById("favoritesCountLabel");
+                if (countLabel) countLabel.textContent = "";
+            });
+    }
+</script>
+
+<script src="js/script.js"></script>
+</body>
+</html>
+

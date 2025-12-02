@@ -1,0 +1,5 @@
+body { font-family: sans-serif; padding: 20px; }
+section { margin-bottom: 30px; }
+input { display: block; margin: 5px 0; padding: 5px; width: 200px; }
+button { padding: 5px 10px; }
+pre { background: #f0f0f0; padding: 10px; }

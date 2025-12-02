@@ -1,0 +1,44 @@
+musicshop/
+│
+├── index.html
+├── login.html - ne moga da izteglq - naprawen e now 20.nov.2025
+├── register.html
+├── products.html
+├── favorites.html
+├── orders.html
+├── admin.html
+├── news.html
+│
+├── css/
+│   └── style.css
+│
+├── js/
+│   └── script.js
+│
+├── api/
+│   ├── db.php
+│   ├── login.php
+│   ├── logout.php
+│   ├── register.php   ❗  - prenapraweno - 20.nov.2025
+│   ├── whoami.php
+│   ├── admin_check.php
+│   │
+│   ├── products.php
+│   ├── get_product.php
+│   ├── admin_add_product.php
+│   ├── admin_edit_product.php
+│   ├── admin_delete_product.php
+│   │
+│   ├── add_favorite.php
+│   ├── remove_favorite.php
+│   ├── get_favorites.php
+│   │
+│   ├── create_order.php
+│   ├── get_orders.php
+│   ├── get_all_orders.php     prenapraweno
+│   │
+│   ├── get_news.php         ❗ (missing — admin/news.html uses it!)
+│   ├── admin_add_news.php   ❗ missing
+│   ├── admin_delete_news.php ❗ missing
+│
+└── images/ (optional folder — NOT uploaded but referenced in admin)
