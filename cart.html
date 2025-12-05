@@ -6,423 +6,7 @@
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <style>
-        :root {
-            --bg-page: #f3f4f6;
-            --bg-header: #ffffff;
-            --bg-card: #ffffff;
-            --bg-card-soft: #f9fafb;
-            --accent: #ec4899;
-            --accent-soft: rgba(236, 72, 153, 0.08);
-            --accent-2: #6366f1;
-            --text-main: #111827;
-            --text-muted: #6b7280;
-            --border-subtle: #e5e7eb;
-            --radius-lg: 16px;
-            --radius-xl: 22px;
-            --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.06);
-        }
-
-        /* DARK THEME */
-        body.dark-theme {
-            --bg-page: #020617;
-            --bg-header: #020617;
-            --bg-card: #020617;
-            --bg-card-soft: #111827;
-            --accent: #ec4899;
-            --accent-2: #6366f1;
-            --accent-soft: rgba(236, 72, 153, 0.15);
-            --text-main: #f9fafb;
-            --text-muted: #9ca3af;
-            --border-subtle: #1f2937;
-            --shadow-soft: 0 18px 40px rgba(15, 23, 42, 0.8);
-            color: var(--text-main);
-        }
-        body.dark-theme .site-header {
-            border-bottom-color: var(--border-subtle);
-        }
-
-        body.cart-page {
-            margin: 0;
-            min-height: 100vh;
-            font-family: "Poppins", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            background: var(--bg-page);
-            color: var(--text-main);
-            display: flex;
-            flex-direction: column;
-        }
-
-        a {
-            color: inherit;
-            text-decoration: none;
-        }
-
-        /* HEADER (same style as index/products) */
-        .site-header {
-            position: sticky;
-            top: 0;
-            z-index: 20;
-            background: var(--bg-header);
-            border-bottom: 1px solid var(--border-subtle);
-        }
-
-        .nav-inner {
-            max-width: 100%;
-            margin: 0;
-            padding: 12px 32px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-            box-sizing: border-box;
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .brand-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 999px;
-            background: radial-gradient(circle at 30% 20%, #f97316, #ec4899 40%, #6366f1 80%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 8px 18px rgba(236, 72, 153, 0.35);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .brand-icon::after {
-            content: "";
-            position: absolute;
-            inset: 3px;
-            border-radius: inherit;
-            border: 1px solid rgba(248, 250, 252, 0.8);
-            opacity: 0.8;
-        }
-
-        .brand-icon span {
-            font-size: 22px;
-            position: relative;
-            color: #ffffff;
-        }
-
-        .brand-text h1 {
-            margin: 0;
-            font-size: 20px;
-            font-weight: 600;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-        }
-
-        .brand-text p {
-            margin: 0;
-            font-size: 11px;
-            color: var(--text-muted);
-        }
-
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            font-size: 14px;
-        }
-
-        .nav-links a {
-            padding: 6px 0;
-            position: relative;
-        }
-
-        .nav-links a::after {
-            content: "";
-            position: absolute;
-            left: 0;
-            bottom: -4px;
-            width: 0;
-            height: 2px;
-            border-radius: 999px;
-            background: linear-gradient(90deg, var(--accent), var(--accent-2));
-            transition: width 0.25s ease;
-        }
-
-        .nav-links a:hover::after,
-        .nav-links a.active::after {
-            width: 100%;
-        }
-
-        .nav-secondary {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .theme-toggle {
-            border-radius: 999px;
-            border: 1px solid var(--border-subtle);
-            background: var(--bg-card-soft);
-            padding: 4px 8px;
-            font-size: 10px;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .theme-toggle span {
-            font-size: 14px;
-        }
-
-        .user-status-pill {
-            min-width: 120px;
-            padding: 4px 10px;
-            border-radius: 999px;
-            border: 1px solid var(--border-subtle);
-            font-size: 11px;
-            color: var(--text-muted);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            white-space: nowrap;
-            background: var(--bg-card);
-        }
-
-        .user-status-dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 999px;
-            background: #22c55e;
-        }
-
-        #userStatus {
-            font-size: 11px;
-            color: var(--text-main);
-        }
-
-        .logout-btn {
-            border: none;
-            border-radius: 999px;
-            padding: 6px 14px;
-            font-size: 12px;
-            font-weight: 500;
-            cursor: pointer;
-            background: linear-gradient(135deg, #f97316, #ef4444);
-            color: #f9fafb;
-            box-shadow: 0 8px 18px rgba(248, 113, 113, 0.4);
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .logout-btn span {
-            font-size: 14px;
-        }
-
-        .logout-btn:hover {
-            transform: translateY(-1px);
-        }
-
-        /* MAIN LAYOUT */
-        main {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            padding: 0;
-        }
-
-        .page-wrapper {
-            width: 100%;
-            max-width: 100%;
-            margin: 0;
-            padding: 22px 32px 32px;
-            box-sizing: border-box;
-            display: grid;
-            grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-            gap: 24px;
-            align-items: start;
-        }
-
-        @media (max-width: 900px) {
-            .page-wrapper {
-                grid-template-columns: minmax(0, 1fr);
-                padding: 18px 16px 24px;
-            }
-        }
-
-        .card {
-            border-radius: var(--radius-xl);
-            background: var(--bg-card);
-            border: 1px solid var(--border-subtle);
-            padding: 18px 18px 16px;
-            box-shadow: var(--shadow-soft);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            margin-bottom: 10px;
-        }
-
-        .card-header h1,
-        .card-header h2 {
-            margin: 0;
-        }
-
-        .card-header span {
-            font-size: 12px;
-            color: var(--text-muted);
-        }
-
-        /* CART LIST STYLING */
-        #cart_section {
-            margin: 0;
-        }
-
-        #cart_list {
-            margin-top: 10px;
-        }
-
-        .cart-item {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border-subtle);
-            font-size: 13px;
-        }
-
-        .cart-item strong {
-            font-size: 14px;
-        }
-
-        .cart-controls {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .cart-controls button {
-            border-radius: 999px;
-            border: 1px solid var(--border-subtle);
-            padding: 4px 8px;
-            font-size: 12px;
-            cursor: pointer;
-            background: var(--bg-card-soft);
-        }
-
-        .cart-controls .line-total {
-            margin-left: auto;
-            font-weight: 600;
-            color: #f97316;
-        }
-
-        #cart_total {
-            margin-top: 10px;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .cart-footer-actions {
-            margin-top: 12px;
-        }
-
-        .btn-outline {
-            border-radius: 999px;
-            padding: 8px 14px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            border: 1px solid var(--border-subtle);
-            background: var(--bg-card-soft);
-            color: var(--text-main);
-        }
-
-        .btn-outline:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 10px 22px rgba(15, 23, 42, 0.12);
-        }
-
-        /* CHECKOUT FORM */
-        #checkout_form {
-            margin-top: 8px;
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
-            font-size: 13px;
-        }
-
-        #checkout_form label {
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            color: var(--text-muted);
-        }
-
-        #checkout_form input,
-        #checkout_form textarea {
-            width: 100%;
-            box-sizing: border-box;
-            border-radius: 10px;
-            border: 1px solid var(--border-subtle);
-            padding: 7px 10px;
-            font-size: 13px;
-            background: var(--bg-card-soft);
-            color: var(--text-main);
-            outline: none;
-        }
-
-        #checkout_form textarea {
-            resize: vertical;
-        }
-
-        #place_order_btn {
-            margin-top: 6px;
-            border-radius: 999px;
-            border: none;
-            padding: 10px 18px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            background: linear-gradient(110deg, var(--accent), #f97316, var(--accent-2));
-            color: #f9fafb;
-            box-shadow: 0 12px 26px rgba(236, 72, 153, 0.35);
-            justify-self: flex-end;
-        }
-
-        #place_order_btn:hover {
-            transform: translateY(-1px);
-        }
-
-        /* FOOTER */
-        footer {
-            border-top: 1px solid var(--border-subtle);
-            padding: 10px 32px 14px;
-            font-size: 11px;
-            color: var(--text-muted);
-            box-sizing: border-box;
-            background: var(--bg-header);
-        }
-
-        .footer-inner {
-            max-width: 100%;
-            margin: 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .footer-inner a {
-            font-size: 11px;
-            color: var(--text-muted);
-        }
-    </style>
+ 
 </head>
 <body class="cart-page">
 
@@ -451,6 +35,8 @@
             <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
                 <span id="themeIcon">🌞</span>
             </button>
+
+            <button class="login-btn-header" id="loginBtn" onclick="window.location='login.html'" style="display:none">Log In</button>
 
             <div class="user-status-pill">
                 <div class="user-status-dot"></div>
@@ -481,6 +67,9 @@
                 <button type="button" class="btn-outline" onclick="window.location.href='orders.html'">
                     View recent orders
                 </button>
+                <button type="button" class="btn-outline" onclick="window.location.href='products.html'">
+                    Browse products
+                </button>
             </div>
         </section>
 
@@ -497,12 +86,12 @@
                     <input type="text" id="chk_name" required>
                 </div>
                 <div>
-                    <label for="chk_email">Email (optional)</label><br>
-                    <input type="email" id="chk_email">
+                    <label for="chk_email">Email*</label><br>
+                    <input type="email" id="chk_email" required>
                 </div>
                 <div>
-                    <label for="chk_phone">Phone (optional)</label><br>
-                    <input type="text" id="chk_phone">
+                    <label for="chk_phone">Phone*</label><br>
+                    <input type="text" id="chk_phone" required>
                 </div>
                 <div>
                     <label for="chk_address">Address*</label><br>
@@ -518,7 +107,18 @@
                 </div>
                 <div>
                     <label for="chk_country">Country*</label><br>
-                    <input type="text" id="chk_country" required>
+                    <select id="chk_country" required>
+                        <option value="" disabled selected>Select your country</option>
+                        <option value="Germany">Germany</option>
+                        <option value="Austria">Austria</option>
+                        <option value="Switzerland">Switzerland</option>
+                        <option value="France">France</option>
+                        <option value="Italy">Italy</option>
+                        <option value="Netherlands">Netherlands</option>
+                        <option value="Belgium">Belgium</option>
+                        <option value="Spain">Spain</option>
+                        <option value="Other">Other</option>
+                    </select>
                 </div>
                 <div>
                     <label for="chk_note">Order note (optional)</label><br>
@@ -590,15 +190,20 @@
         fetch("/musicshop/api/whoami.php", { credentials: "include" })
             .then(r => r.ok ? r.json() : null)
             .then(data => {
+                const loginBtn = document.getElementById("loginBtn");
                 const loggedIn = data && data.logged_in;
                 if (loggedIn) {
                     if (logoutBtn) logoutBtn.style.display = "inline-flex";
+                    if (loginBtn) loginBtn.style.display = "none";
                 } else {
                     if (logoutBtn) logoutBtn.style.display = "none";
+                    if (loginBtn) loginBtn.style.display = "inline-flex";
                 }
             })
             .catch(() => {
                 if (logoutBtn) logoutBtn.style.display = "none";
+                const loginBtn = document.getElementById("loginBtn");
+                if (loginBtn) loginBtn.style.display = "inline-flex";
             });
 
         // Render cart initially
@@ -750,8 +355,15 @@
                 note
             })
         })
-        .then(r => r.json())
+        .then(r => {
+            if (r.status === 401) {
+                window.location.href = "login.html";
+                return null;
+            }
+            return r.json();
+        })
         .then(data => {
+            if (!data) return;
             if (!data.ok) {
                 alert("Order failed: " + (data.error || "Unknown error"));
                 return;
@@ -772,4 +384,3 @@
 <script src="js/script.js"></script>
 </body>
 </html>
-

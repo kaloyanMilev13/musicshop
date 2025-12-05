@@ -24,6 +24,7 @@ try {
             'title'      => $row['title'],
             'content'    => $row['content'],
             'created_at' => $row['created_at'],
+            'image_url'  => "images/news/placeholder.jpg"
         ];
     }
 
@@ -38,4 +39,3 @@ try {
         'error' => $e->getMessage()
     ]);
 }
-

@@ -3,8 +3,8 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Nov 21, 2025 at 08:23 AM
--- Server version: 12.0.2-MariaDB
+-- Generation Time: Dec 05, 2025 at 08:08 AM
+-- Server version: 12.1.2-MariaDB
 -- PHP Version: 8.4.15
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
@@ -20,8 +20,6 @@ SET time_zone = "+00:00";
 --
 -- Database: `musicshop`
 --
-CREATE DATABASE IF NOT EXISTS `musicshop` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-USE `musicshop`;
 
 -- --------------------------------------------------------
 
@@ -41,8 +39,8 @@ CREATE TABLE `favorites` (
 --
 
 INSERT INTO `favorites` (`id`, `user_id`, `product_id`, `created_at`) VALUES
-(1, 1, 1, '2025-11-20 16:19:41'),
-(3, 1, 2, '2025-11-20 21:58:25');
+(3, 1, 2, '2025-11-20 21:58:25'),
+(5, 1, 14, '2025-11-25 11:37:44');
 
 -- --------------------------------------------------------
 
@@ -56,6 +54,14 @@ CREATE TABLE `news` (
   `content` text NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `news`
+--
+
+INSERT INTO `news` (`id`, `title`, `content`, `created_at`) VALUES
+(1, 'sdqwwc', 'dc', '2025-11-27 08:16:54'),
+(2, 'ciac', 'jfewioco', '2025-11-27 08:17:05');
 
 -- --------------------------------------------------------
 
@@ -83,7 +89,8 @@ CREATE TABLE `orders` (
 --
 
 INSERT INTO `orders` (`id`, `user_id`, `total_price`, `customer_name`, `customer_email`, `customer_phone`, `shipping_address`, `shipping_city`, `shipping_postcode`, `shipping_country`, `customer_note`, `created_at`) VALUES
-(1, 1, 999.99, 'kaloyan', '', '', 'sofia', 'sofia', '1750', 'bg', '', '2025-11-20 16:21:10');
+(1, 1, 999.99, 'kaloyan', '', '', 'sofia', 'sofia', '1750', 'bg', '', '2025-11-20 16:21:10'),
+(2, 1, 1541.97, 'kaloyan', 'kala@abv.gb', '', 'mladost', 'sofia', '1740', 'bg', 'helo hi fries', '2025-11-25 08:18:09');
 
 -- --------------------------------------------------------
 
@@ -104,7 +111,10 @@ CREATE TABLE `order_items` (
 --
 
 INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `quantity`, `unit_price`) VALUES
-(1, 1, 1, 1, 999.99);
+(1, 1, 1, 1, 999.99),
+(2, 2, 9, 2, 13.49),
+(3, 2, 16, 1, 15.99),
+(4, 2, 2, 1, 1499.00);
 
 -- --------------------------------------------------------
 
@@ -138,7 +148,7 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id`, `name`, `artist`, `category`, `genre`, `price`, `stock`, `description`, `image_url`, `format`, `music_genre`, `size`, `color`, `merch_type`, `instrument_subtype`, `accessory_type`, `created_at`, `updated_at`) VALUES
-(1, 'Fender Stratocaster', 'Fender', 'Instruments', 'Guitars', 999.99, 5, 'Legendary electric guitar with classic single-coil tones.', 'images/strat.jpg', NULL, NULL, NULL, 'Sunburst', NULL, 'Electric Guitar', NULL, '2025-11-20 16:19:14', NULL),
+(1, 'Fender Stratocaster', 'Fender', 'Instruments', 'Guitars', 999.99, 6, 'Legendary electric guitar with classic single-coil tones.', 'images/strat.jpg', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-11-20 16:19:14', '2025-11-26 10:17:04'),
 (2, 'Gibson Les Paul Standard', 'Gibson', 'Instruments', 'Guitars', 1499.00, 3, 'Iconic rock guitar with thick, warm tone.', 'images/lespaul.jpg', NULL, NULL, NULL, 'Cherry', NULL, 'Electric Guitar', NULL, '2025-11-20 16:19:14', NULL),
 (3, 'Yamaha P-45 Digital Piano', 'Yamaha', 'Instruments', 'Keyboards', 499.00, 7, '88-key digital piano with weighted action.', 'images/p45.jpg', NULL, NULL, NULL, 'Black', NULL, 'Piano', NULL, '2025-11-20 16:19:14', NULL),
 (4, 'Pearl Drum Kit EXX725S', 'Pearl', 'Instruments', 'Drums', 799.00, 2, 'Complete drum kit perfect for beginners and advanced players.', 'images/drumkit.jpg', NULL, NULL, NULL, 'Black', NULL, 'Drum Set', NULL, '2025-11-20 16:19:14', NULL),
@@ -154,7 +164,7 @@ INSERT INTO `products` (`id`, `name`, `artist`, `category`, `genre`, `price`, `s
 (14, 'AC/DC Keychain', 'AC/DC', 'Merch', 'Accessories', 4.99, 50, 'High quality band logo keychain.', 'images/keychain.jpg', NULL, NULL, NULL, 'Silver', 'Keychain', NULL, NULL, '2025-11-20 16:19:14', NULL),
 (15, 'Nirvana Cap', 'Nirvana', 'Merch', 'Clothing', 24.99, 14, 'Adjustable black cap with iconic smiley face.', 'images/cap.jpg', NULL, NULL, 'M', 'Black', 'Cap', NULL, NULL, '2025-11-20 16:19:14', NULL),
 (16, 'Guitar Stand', NULL, 'Other', 'Accessories', 15.99, 40, 'Universal stand for acoustic and electric guitars.', 'images/stand.jpg', NULL, NULL, NULL, 'Black', NULL, NULL, 'Stand', '2025-11-20 16:19:14', NULL),
-(17, 'Instrument Cable 3m', NULL, 'Other', 'Cables', 9.99, 60, 'Durable 3-meter jack cable.', 'images/cable.jpg', NULL, NULL, NULL, 'Black', NULL, NULL, 'Cable', '2025-11-20 16:19:14', NULL),
+(17, 'Instrument Cable 3m', '', 'Other', 'Cables', 9.99, 60, 'Durable 3-meter jack cable.', 'images/cable.jpg', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-11-20 16:19:14', '2025-11-27 08:49:19'),
 (18, 'Microphone Pop Filter', NULL, 'Other', 'Accessories', 12.99, 22, 'Perfect for home recording studios.', 'images/popfilter.jpg', NULL, NULL, NULL, 'Black', NULL, NULL, 'Pop Filter', '2025-11-20 16:19:14', NULL),
 (19, 'Studio Headphones', NULL, 'Other', 'Audio', 89.99, 10, 'Closed-back monitoring headphones.', 'images/headphones.jpg', NULL, NULL, NULL, 'Black', NULL, NULL, 'Headphones', '2025-11-20 16:19:14', NULL),
 (20, 'USB Audio Interface', NULL, 'Other', 'Recording', 129.99, 6, '2-input USB audio interface for home studios.', 'images/interface.jpg', NULL, NULL, NULL, 'Red', NULL, NULL, 'Interface', '2025-11-20 16:19:14', NULL);
@@ -243,25 +253,25 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `favorites`
 --
 ALTER TABLE `favorites`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `news`
 --
 ALTER TABLE `news`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `products`

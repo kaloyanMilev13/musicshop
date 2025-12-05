@@ -1,48 +1,151 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Register - MusicShop</title>
     <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="auth-page">
 
-<h2>Register</h2>
+<header class="site-header">
+    <div class="nav-inner">
+        <a href="index.html" class="brand">
+            <div class="brand-icon">
+                <span>♫</span>
+            </div>
+            <div class="brand-text">
+                <h1>MusicShop</h1>
+                <p>Instruments · Vinyls · Merch</p>
+            </div>
+        </a>
 
-<form id="regForm">
-    <input type="text" id="username" placeholder="Username" required><br>
-    <input type="email" id="email" placeholder="Email" required><br>
-    <input type="password" id="password" placeholder="Password" required><br>
-    <button type="submit">Register</button>
-</form>
+        <div class="nav-right">
+            <a href="index.html">← Back to home</a>
+        </div>
+    </div>
+</header>
 
-<div id="result"></div>
+<main>
+    <div class="login-wrapper">
+        <!-- Left: pitch -->
+        <section class="login-hero">
+            <h2>Join MusicShop</h2>
+            <p>Create an account to save favorites, place orders, and follow the latest news.</p>
+            <ul>
+                <li>Track your orders and reorder in one click.</li>
+                <li>Favorite instruments, vinyls, and merch.</li>
+                <li>Stay up to date with new drops and events.</li>
+            </ul>
+        </section>
+
+        <!-- Right: register card -->
+        <section class="login-card">
+            <h2>Create account</h2>
+            <p class="subtitle">It only takes a moment.</p>
+
+            <div id="errorBox"></div>
+
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input
+                    type="text"
+                    id="username"
+                    placeholder="Your display name"
+                    autocomplete="username"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="name@example.com"
+                    autocomplete="email"
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Create a password"
+                    autocomplete="new-password"
+                >
+            </div>
+
+            <button class="login-btn" onclick="doRegister()">Sign up</button>
+
+            <div class="login-footer">
+                Already have an account?
+                <a href="login.html">Log in here</a>
+            </div>
+        </section>
+    </div>
+</main>
+
+<footer>
+    <div class="footer-inner">
+        <span>© <span id="year"></span> MusicShop. All rights reserved.</span>
+        <span>Need help? <a href="login.html">Log in</a></span>
+    </div>
+</footer>
 
 <script>
-document.getElementById("regForm").addEventListener("submit", function(e) {
-    e.preventDefault();
-
-    const payload = {
-        username: document.getElementById("username").value,
-        email: document.getElementById("email").value,
-        password: document.getElementById("password").value
-    };
-
-    fetch("/musicshop/api/register.php", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(payload)
-    })
-    .then(r => r.json())
-    .then(data => {
-        if (data.ok) {
-            document.getElementById("result").innerText = "Registered.";
-            setTimeout(() => window.location = "login.html", 800);
+    document.addEventListener("DOMContentLoaded", function () {
+        const savedTheme = localStorage.getItem("theme");
+        if (savedTheme === "dark") {
+            document.body.classList.add("dark-theme");
         } else {
-            document.getElementById("result").innerText = "Error: " + data.error;
+            document.body.classList.remove("dark-theme");
+        }
+
+        document.getElementById("year").textContent = new Date().getFullYear();
+    });
+
+    function doRegister() {
+        const username = document.getElementById("username").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value.trim();
+        const errorBox = document.getElementById("errorBox");
+
+        errorBox.style.display = "none";
+
+        if (!username || !email || !password) {
+            errorBox.textContent = "Please fill in all fields.";
+            errorBox.style.display = "block";
+            return;
+        }
+
+        fetch("/musicshop/api/register.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ username, email, password })
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (!data.ok) {
+                errorBox.textContent = data.error || "Registration failed.";
+                errorBox.style.display = "block";
+            } else {
+                window.location.href = "login.html";
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            errorBox.textContent = "Network or server error.";
+            errorBox.style.display = "block";
+        });
+    }
+
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            doRegister();
         }
     });
-});
 </script>
 
 </body>

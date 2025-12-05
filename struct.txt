@@ -42,3 +42,8 @@ musicshop/
 │   ├── admin_delete_news.php ❗ missing
 │
 └── images/ (optional folder — NOT uploaded but referenced in admin)
+
+
+
+
+04.12 -  w momenta wersiqta na index e gore-dolu stabilna

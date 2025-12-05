@@ -5,7 +5,6 @@ header('Content-Type: application/json');
 require 'db.php';
 
 try {
-    // Adjust column names if your table is slightly different
     $sql = "
         SELECT 
             id,
@@ -27,6 +26,7 @@ try {
             'title'      => $row['title'],
             'content'    => $row['content'],
             'created_at' => $row['created_at'],
+            'image_url'  => "images/news/placeholder.jpg"
         ];
     }
 
@@ -38,7 +38,6 @@ try {
     http_response_code(500);
     echo json_encode([
         'ok'    => false,
-        'error' => $e->getMessage()
+        'error' => 'Internal server error'
     ]);
 }
-

@@ -4,6 +4,7 @@ header('Content-Type: application/json');
 
 session_start();
 if (!isset($_SESSION['user_id'])) {
+    http_response_code(401);
     echo json_encode(["ok" => false, "error" => "Not logged in"]);
     exit;
 }
@@ -28,8 +29,8 @@ $postcode = trim($data['postcode'] ?? '');
 $country  = trim($data['country']  ?? '');
 $note     = trim($data['note']     ?? '');
 
-if ($name === '' || $address === '' || $city === '' || $postcode === '' || $country === '') {
-    echo json_encode(["ok" => false, "error" => "Please fill in all required address fields."]);
+if ($name === '' || $email === '' || $phone === '' || $address === '' || $city === '' || $postcode === '' || $country === '') {
+    echo json_encode(["ok" => false, "error" => "Please fill in all required fields (name, email, phone, full address)."]);
     exit;
 }
 
