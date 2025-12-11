@@ -5,6 +5,34 @@
     <title>Admin - MusicShop</title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .login-btn-header {
+            background: #ffffff;
+            color: #222222;
+            border: 1px solid #e6e6e6;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .login-btn-header:hover {
+            background: #e6e6e6;
+            border-color: #d0d0d0;
+        }
+
+        body.dark-theme .login-btn-header {
+            background: #2a2a2a;
+            color: #f5f5f5;
+            border-color: #3a3a3a;
+        }
+
+        body.dark-theme .login-btn-header:hover {
+            background: #333333;
+            border-color: #4a4a4a;
+        }
+    </style>
 
  
 </head>
@@ -95,12 +123,12 @@
 
                     <div class="form-group">
                         <label for="price">Price (€)</label>
-                        <input id="price" type="number" step="0.01" placeholder="e.g. 19.99">
+                        <input id="price" type="number" step="0.01" min="0" placeholder="e.g. 19.99">
                     </div>
 
                     <div class="form-group">
                         <label for="stock">Stock</label>
-                        <input id="stock" type="number" placeholder="Available quantity">
+                        <input id="stock" type="number" min="0" placeholder="Available quantity">
                     </div>
 
                     <div class="form-group">
@@ -238,6 +266,19 @@
 
     // ===== THEME / ADMIN CHECK / LOGIN STATE =====
     document.addEventListener("DOMContentLoaded", function () {
+        // Enforce non-negative price/stock live
+        ["price","stock"].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener("input", () => {
+                    const val = parseFloat(el.value);
+                    if (isNaN(val) || val < 0) {
+                        el.value = "";
+                    }
+                });
+            }
+        });
+
         const themeToggle = document.getElementById("themeToggle");
         const themeIcon = document.getElementById("themeIcon");
         const logoutBtn = document.getElementById("logoutBtn");
@@ -487,8 +528,8 @@
             artist: document.getElementById("artist").value,
             category: document.getElementById("category").value,
             genre: document.getElementById("subcategory").value,
-            price: parseFloat(document.getElementById("price").value),
-            stock: parseInt(document.getElementById("stock").value),
+            price: Math.max(0, parseFloat(document.getElementById("price").value)),
+            stock: Math.max(0, parseInt(document.getElementById("stock").value)),
             description: document.getElementById("description").value,
             image_url: document.getElementById("image_url").value,
             format: document.getElementById("format")?.value || null,
@@ -502,6 +543,11 @@
 
         if (!payload.name || !payload.category) {
             alert("Name and main category are required.");
+            return;
+        }
+
+        if (isNaN(payload.price) || payload.price < 0 || isNaN(payload.stock) || payload.stock < 0) {
+            alert("Price and stock must be valid non-negative numbers.");
             return;
         }
 

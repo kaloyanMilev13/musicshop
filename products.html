@@ -5,6 +5,57 @@
     <title>Products - MusicShop</title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Explicit button styling to ensure readability */
+        .login-btn-header {
+            background: #ffffff;
+            color: #222222;
+            border: 1px solid #e6e6e6;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .login-btn-header:hover {
+            background: #e6e6e6;
+            border-color: #d0d0d0;
+        }
+
+        body.dark-theme .login-btn-header {
+            background: #2a2a2a;
+            color: #f5f5f5;
+            border-color: #3a3a3a;
+        }
+
+        body.dark-theme .login-btn-header:hover {
+            background: #333333;
+            border-color: #4a4a4a;
+        }
+
+        .btn-apply {
+            background: #ffffff;
+            color: #222222;
+            border: 1px solid #e6e6e6;
+        }
+
+        .btn-apply:hover {
+            background: #e6e6e6;
+            border-color: #d0d0d0;
+        }
+
+        body.dark-theme .btn-apply {
+            background: #2a2a2a;
+            color: #f5f5f5;
+            border-color: #3a3a3a;
+        }
+
+        body.dark-theme .btn-apply:hover {
+            background: #333333;
+            border-color: #4a4a4a;
+        }
+    </style>
 
 
 </head>
@@ -25,6 +76,7 @@
         <nav class="nav-links">
             <a href="products.html" class="active">Products</a>
             <a href="favorites.html">Favorites</a>
+            <a href="cart.html">Cart</a>
             <a href="orders.html">Orders</a>
             <a href="news.html">News</a>
             <a href="admin.html" id="adminLink" class="admin-only">Admin</a>
@@ -293,6 +345,83 @@
         }
     }
 
+    // Cart + favorites helpers (shared logic with index/product pages)
+    function getCart() {
+        try {
+            const raw = localStorage.getItem("musicshop_cart");
+            return raw ? JSON.parse(raw) : [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    function saveCart(cart) {
+        localStorage.setItem("musicshop_cart", JSON.stringify(cart));
+    }
+
+    function addToCart(id, name, price) {
+        const cart = getCart();
+        const existing = cart.find(item => item.id === id);
+
+        if (existing) {
+            existing.quantity += 1;
+        } else {
+            cart.push({
+                id: id,
+                name: name,
+                price: Number(price),
+                quantity: 1
+            });
+        }
+
+        saveCart(cart);
+        alert("Added to cart.");
+    }
+
+    function addFavorite(productId) {
+        return fetch("/musicshop/api/add_favorite.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ product_id: productId })
+        })
+            .then(r => r.json())
+            .then(data => {
+                if (!data.ok) {
+                    alert("Failed: " + (data.error || "Unknown error"));
+                    return false;
+                }
+                alert("Added to favorites");
+                return true;
+            })
+            .catch(() => {
+                alert("Error adding to favorites.");
+                return false;
+            });
+    }
+
+    function removeFavorite(productId) {
+        return fetch("/musicshop/api/remove_favorite.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify({ product_id: productId })
+        })
+            .then(r => r.json())
+            .then(data => {
+                if (!data.ok) {
+                    alert("Failed: " + (data.error || "Unknown error"));
+                    return false;
+                }
+                alert("Removed from favorites");
+                return true;
+            })
+            .catch(() => {
+                alert("Error removing from favorites.");
+                return false;
+            });
+    }
+
     function loadProducts() {
         const category = document.getElementById("filter_category").value;
         const subcategory = document.getElementById("filter_subcategory").value;
@@ -362,22 +491,32 @@
                             ${p.description || "No description available."}
                         </div>
                         <div class="product-actions">
-                            <button class="btn-secondary view-details">View details</button>
+                            <a class="btn-secondary view-details" href="product.html?id=${p.id}">View details</a>
                             <button class="btn-outline fav-btn">Add to favorites</button>
                             <button class="btn-outline cart-btn">Add to cart</button>
                         </div>
                     `;
 
                     // Attach actions
-                    const viewBtn = card.querySelector(".view-details");
                     const favBtn = card.querySelector(".fav-btn");
                     const cartBtn = card.querySelector(".cart-btn");
 
-                    if (viewBtn) {
-                        viewBtn.addEventListener("click", () => openProductModal(p));
-                    }
                     if (favBtn) {
-                        favBtn.addEventListener("click", () => addFavorite(p.id));
+                        let isFavorite = Number(p.is_favorite) === 1;
+                        const setFavLabel = () => {
+                            favBtn.textContent = isFavorite ? "Remove from favorites" : "Add to favorites";
+                        };
+                        setFavLabel();
+
+                        favBtn.addEventListener("click", () => {
+                            const action = isFavorite ? removeFavorite : addFavorite;
+                            action(p.id).then(ok => {
+                                if (ok) {
+                                    isFavorite = !isFavorite;
+                                    setFavLabel();
+                                }
+                            });
+                        });
                     }
                     if (cartBtn) {
                         cartBtn.addEventListener("click", () => addToCart(p.id, safeName, p.price));
@@ -394,92 +533,7 @@
             });
     }
 
-    // --- Modal functions ---
-    function openProductModal(p) {
-        currentModalProduct = p;
-        const modal = document.getElementById("productModal");
-        if (!modal) return;
-
-        const titleEl = document.getElementById("modalTitle");
-        const subtitleEl = document.getElementById("modalSubtitle");
-        const metaRow = document.getElementById("modalMetaRow");
-        const descEl = document.getElementById("modalDescription");
-
-        if (titleEl) titleEl.textContent = p.name || "Product details";
-        const subtitleParts = [];
-        if (p.artist) subtitleParts.push(p.artist);
-        if (p.category) subtitleParts.push(p.category);
-        if (p.genre) subtitleParts.push(p.genre);
-        if (p.music_genre) subtitleParts.push(p.music_genre);
-        if (subtitleEl) subtitleEl.textContent = subtitleParts.join(" · ");
-
-        if (metaRow) {
-            metaRow.innerHTML = "";
-            const priceSpan = document.createElement("span");
-            priceSpan.textContent = "Price: €" + p.price;
-            metaRow.appendChild(priceSpan);
-
-            if (p.category) {
-                const c = document.createElement("span");
-                c.textContent = "Main: " + p.category;
-                metaRow.appendChild(c);
-            }
-            if (p.genre) {
-                const g = document.createElement("span");
-                g.textContent = "Subcategory: " + p.genre;
-                metaRow.appendChild(g);
-            }
-            if (p.music_genre) {
-                const mg = document.createElement("span");
-                mg.textContent = "Music genre: " + p.music_genre;
-                metaRow.appendChild(mg);
-            }
-        }
-
-        if (descEl) {
-            descEl.textContent = p.description || "No description available for this product.";
-        }
-
-        modal.classList.add("show");
-    }
-
-    function closeProductModal() {
-        const modal = document.getElementById("productModal");
-        if (!modal) return;
-        modal.classList.remove("show");
-        currentModalProduct = null;
-    }
-
     document.addEventListener("DOMContentLoaded", () => {
-        // Modal buttons
-        const modal = document.getElementById("productModal");
-        const backdrop = document.querySelector(".product-modal-backdrop");
-        const closeBtn = document.getElementById("modalCloseBtn");
-        const favBtn = document.getElementById("modalFavBtn");
-        const cartBtn = document.getElementById("modalCartBtn");
-
-        if (backdrop) {
-            backdrop.addEventListener("click", closeProductModal);
-        }
-        if (closeBtn) {
-            closeBtn.addEventListener("click", closeProductModal);
-        }
-        if (favBtn) {
-            favBtn.addEventListener("click", () => {
-                if (currentModalProduct) {
-                    addFavorite(currentModalProduct.id);
-                }
-            });
-        }
-        if (cartBtn) {
-            cartBtn.addEventListener("click", () => {
-                if (currentModalProduct) {
-                    const safeName = (currentModalProduct.name || "").replace(/"/g, '&quot;').replace(/'/g, "\\'");
-                    addToCart(currentModalProduct.id, safeName, currentModalProduct.price);
-                }
-            });
-        }
-
         // Filters
         document.getElementById("filter_category").addEventListener("change", () => {
             populateSubcategories();
@@ -495,60 +549,6 @@
         updateMusicGenreVisibility();
         loadProducts();
     });
-
-    // --- Cart helpers (unchanged from your original) ---
-    function getCart() {
-        try {
-            const raw = localStorage.getItem('musicshop_cart');
-            return raw ? JSON.parse(raw) : [];
-        } catch (e) {
-            return [];
-        }
-    }
-
-    function saveCart(cart) {
-        localStorage.setItem('musicshop_cart', JSON.stringify(cart));
-    }
-
-    function addToCart(id, name, price) {
-        const cart = getCart();
-
-        const existing = cart.find(item => item.id === id);
-        if (existing) {
-            existing.quantity += 1;
-        } else {
-            cart.push({
-                id: id,
-                name: name,
-                price: Number(price),
-                quantity: 1
-            });
-        }
-
-        saveCart(cart);
-        alert("Added to cart.");
-    }
-
-    function addFavorite(productId) {
-        fetch('/musicshop/api/add_favorite.php', {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            credentials: "include",
-            body: JSON.stringify({ product_id: productId })
-        })
-        .then(r => r.json())
-        .then(data => {
-            if (!data.ok) {
-                alert("Failed: " + (data.error || "Unknown error"));
-            } else {
-                alert("Added to favorites");
-            }
-        })
-        .catch(err => {
-            console.error(err);
-            alert("Error adding to favorites.");
-        });
-    }
 </script>
 
 <!-- your global script if you have extra logic -->

@@ -5,6 +5,46 @@
     <title>Cart - MusicShop</title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Ensure readable cart items in dark theme */
+        body.dark-theme .cart-item {
+            color: #e6e6e6 !important;
+        }
+        body.dark-theme .cart-item strong {
+            color: #ffffff !important;
+        }
+        body.dark-theme .cart-item .qty,
+        body.dark-theme .cart-item .line-total {
+            color: #dcdcdc !important;
+        }
+
+        .login-btn-header {
+            background: #ffffff;
+            color: #222222;
+            border: 1px solid #e6e6e6;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .login-btn-header:hover {
+            background: #e6e6e6;
+            border-color: #d0d0d0;
+        }
+
+        body.dark-theme .login-btn-header {
+            background: #2a2a2a;
+            color: #f5f5f5;
+            border-color: #3a3a3a;
+        }
+
+        body.dark-theme .login-btn-header:hover {
+            background: #333333;
+            border-color: #4a4a4a;
+        }
+    </style>
 
  
 </head>
@@ -252,11 +292,12 @@
             div.innerHTML = `
                 <strong>${item.name}</strong>
                 <div class="cart-controls">
-                    <button class="dec-btn" data-index="${index}">-</button>
+                    <button class="btn-outline view-btn" data-id="${item.id}">View product</button>
+                    <button class="btn-outline dec-btn" data-index="${index}">-</button>
                     <span class="qty">${item.quantity}</span>
-                    <button class="inc-btn" data-index="${index}">+</button>
+                    <button class="btn-outline inc-btn" data-index="${index}">+</button>
                     <span class="line-total">€${lineTotal.toFixed(2)}</span>
-                    <button class="remove-btn" data-index="${index}">Remove</button>
+                    <button class="btn-outline remove-btn" data-index="${index}">Remove</button>
                 </div>
             `;
             container.appendChild(div);
@@ -277,6 +318,15 @@
             btn.addEventListener("click", () => {
                 const idx = parseInt(btn.getAttribute("data-index"), 10);
                 changeQuantity(idx, -1);
+            });
+        });
+
+        container.querySelectorAll(".view-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const pid = btn.getAttribute("data-id");
+                if (pid) {
+                    window.location = "product.html?id=" + pid;
+                }
             });
         });
 

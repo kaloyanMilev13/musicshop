@@ -5,6 +5,28 @@
     <title>Register - MusicShop</title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Local override to guarantee dark surfaces on auth layout */
+        body.dark-theme .login-hero,
+        body.dark-theme .login-card {
+            background: #1b1b1b !important;
+            color: #e6e6e6 !important;
+            border: 1px solid #2a2a2a !important;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.35) !important;
+        }
+
+        body.dark-theme .login-hero h2,
+        body.dark-theme .login-card h2 {
+            color: #ffffff !important;
+        }
+
+        body.dark-theme .login-hero p,
+        body.dark-theme .login-hero li,
+        body.dark-theme .login-card .subtitle,
+        body.dark-theme .login-footer {
+            color: #c8c8c8 !important;
+        }
+    </style>
 </head>
 <body class="auth-page">
 
@@ -21,6 +43,9 @@
         </a>
 
         <div class="nav-right">
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                <span id="themeIcon">🌞</span>
+            </button>
             <a href="index.html">← Back to home</a>
         </div>
     </div>
@@ -95,11 +120,24 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+        const themeToggle = document.getElementById("themeToggle");
+        const themeIcon = document.getElementById("themeIcon");
         const savedTheme = localStorage.getItem("theme");
         if (savedTheme === "dark") {
             document.body.classList.add("dark-theme");
+            if (themeIcon) themeIcon.textContent = "🌜";
         } else {
             document.body.classList.remove("dark-theme");
+            if (themeIcon) themeIcon.textContent = "🌞";
+        }
+
+        if (themeToggle) {
+            themeToggle.addEventListener("click", () => {
+                document.body.classList.toggle("dark-theme");
+                const isDark = document.body.classList.contains("dark-theme");
+                if (themeIcon) themeIcon.textContent = isDark ? "🌜" : "🌞";
+                localStorage.setItem("theme", isDark ? "dark" : "light");
+            });
         }
 
         document.getElementById("year").textContent = new Date().getFullYear();

@@ -5,6 +5,46 @@
     <title>Your Orders - MusicShop</title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Ensure readable totals in dark theme */
+        body.dark-theme .order-total {
+            color: #ffffff !important;
+        }
+        body.dark-theme .order-items li {
+            color: #e6e6e6 !important;
+        }
+        body.dark-theme .order-id,
+        body.dark-theme .order-date {
+            color: #f5f5f5 !important;
+        }
+
+        .login-btn-header {
+            background: #ffffff;
+            color: #222222;
+            border: 1px solid #e6e6e6;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .login-btn-header:hover {
+            background: #e6e6e6;
+            border-color: #d0d0d0;
+        }
+
+        body.dark-theme .login-btn-header {
+            background: #2a2a2a;
+            color: #f5f5f5;
+            border-color: #3a3a3a;
+        }
+
+        body.dark-theme .login-btn-header:hover {
+            background: #333333;
+            border-color: #4a4a4a;
+        }
+    </style>
 
 
 </head>

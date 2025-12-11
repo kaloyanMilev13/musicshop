@@ -41,9 +41,38 @@ musicshop/
 │   ├── admin_add_news.php   ❗ missing
 │   ├── admin_delete_news.php ❗ missing
 │
-└── images/ (optional folder — NOT uploaded but referenced in admin)
+└── images/
+	/products/wsichki snimki za producti
+	/news/wishcki snimki za nowini
+	/other/drugi snimki
 
 
 
 
 04.12 -  w momenta wersiqta na index e gore-dolu stabilna
+--------------------------------------------------------------
+
+05.12 - izkluchitelnoo mnogo promeni. dizainut weche se priblijawa kum finalen stage. ima blueprint page-owe za producti. ima snimki za tqh. ostawat oshte neshta kato: uprawlenie na nowinite, adminski panel, overall cwetowe
+
+• - Dark theme readability improved further: headings, product prices, hero titles, and
+    brand titles now switch to light colors when dark mode is active.
+  - Product browsing flows now go to a dedicated detail page instead of the modal:
+      - products.html “View details” links to product.html?id=....
+      - favorites.html “View details” also links to the same.
+      - Cart items include a “View product” button that opens product.html?id=<id>.
+  - Added a redesigned product detail blueprint at product.html: two-column layout (image
+    + details), large price, meta tags, and add-to-cart/favorite actions. It’s driven
+    by api/products.php?id=... and uses the site’s shared styling. Responsive on smaller
+    screens.
+  - Kept modal code only where still needed; products/favorites no longer trigger it.
+
+  Now every product has a single detail page (product.html?id=123), and text should remain
+  readable in dark mode.
+
+codex resume 019aed9e-08d0-7f20-9cfb-44cce61b1992
+
+------------------------------------------------------------------------------------
+08.12.2025  - login.html i register.html kato sa w dark theme ostawat beli s bql text. - codex resume 019aed9e-08d0-7f20-9cfb-44cce61b1992
+
+
+
