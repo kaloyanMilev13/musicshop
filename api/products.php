@@ -8,7 +8,7 @@ $params = [];
 $types = "";
 
 $selectFavorite = $userId
-    ? ", CASE WHEN f.user_id IS NULL THEN 0 ELSE 1 END AS is_favorite"
+    ? ", CASE WHEN f.product_id IS NULL THEN 0 ELSE 1 END AS is_favorite"
     : ", 0 AS is_favorite";
 
 $sql = "SELECT 
@@ -18,7 +18,8 @@ $sql = "SELECT
         FROM products p";
 
 if ($userId) {
-    $sql .= " LEFT JOIN favorites f ON f.product_id = p.id AND f.user_id = ?";
+    // Join against a distinct list to avoid duplicate products when favorites table has duplicates
+    $sql .= " LEFT JOIN (SELECT DISTINCT product_id FROM favorites WHERE user_id = ?) f ON f.product_id = p.id";
     $params[] = $userId;
     $types .= "i";
 }

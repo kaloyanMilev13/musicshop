@@ -106,10 +106,15 @@
                 Select a news item from the left to read it in full.
             </div>
 
-            <div id="news_detail" style="display:none;">
-                <h2 class="news-detail-title" id="detail_title"></h2>
-                <div class="news-detail-meta" id="detail_meta"></div>
-                <div class="news-detail-content" id="detail_content"></div>
+            <div id="news_detail" class="news-detail" style="display:none;">
+                <div class="news-hero" id="detail_image_wrapper">
+                    <img id="detail_image" src="images/news/placeholder.jpg" alt="News cover">
+                </div>
+                <div class="news-detail-body">
+                    <h2 class="news-detail-title" id="detail_title"></h2>
+                    <div class="news-detail-meta" id="detail_meta"></div>
+                    <div class="news-detail-content" id="detail_content"></div>
+                </div>
             </div>
         </section>
     </div>
@@ -207,6 +212,28 @@
         }
     });
 
+    // --- NEWS HELPERS ---
+    function getNewsImageUrl(news) {
+        const raw = (news && typeof news.image_url === "string") ? news.image_url.trim() : "";
+        if (!raw) return "images/news/placeholder.jpg";
+        if (raw.toLowerCase().startsWith("javascript:")) return "images/news/placeholder.jpg";
+        return raw;
+    }
+
+    function buildExcerpt(text, max = 140) {
+        if (!text) return "";
+        const normalized = text.replace(/\s+/g, " ").trim();
+        if (normalized.length <= max) return normalized;
+        return normalized.slice(0, max - 1) + "…";
+    }
+
+    function formatNewsDate(value) {
+        if (!value) return "";
+        const d = new Date(value);
+        if (Number.isNaN(d.getTime())) return value;
+        return d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+    }
+
     // --- NEWS LOADING (uses your existing get_news.php) ---
     function loadNews() {
         fetch('/musicshop/api/get_news.php')
@@ -214,6 +241,7 @@
             .then(data => {
                 const container = document.getElementById('news_list');
                 const countLabel = document.getElementById('news_count_label');
+                if (!container) return;
 
                 container.innerHTML = '';
 
@@ -255,7 +283,7 @@
     function applySearchFilter(query) {
         const container = document.getElementById('news_list');
         const countLabel = document.getElementById('news_count_label');
-        if (!ALL_NEWS.length) return;
+        if (!ALL_NEWS.length || !container) return;
 
         if (!query) {
             FILTERED_NEWS = ALL_NEWS.slice();
@@ -274,8 +302,10 @@
         container.innerHTML = '';
         if (FILTERED_NEWS.length === 0) {
             container.textContent = 'No news match your search.';
-            document.getElementById('news_detail_empty').style.display = '';
-            document.getElementById('news_detail').style.display = 'none';
+            const emptyDetail = document.getElementById('news_detail_empty');
+            const detailBox = document.getElementById('news_detail');
+            if (emptyDetail) emptyDetail.style.display = '';
+            if (detailBox) detailBox.style.display = 'none';
             ACTIVE_NEWS_ID = null;
             return;
         }
@@ -293,32 +323,55 @@
 
     function renderNewsList() {
         const container = document.getElementById('news_list');
+        if (!container) return;
         container.innerHTML = '';
 
         FILTERED_NEWS.forEach(n => {
-            const div = document.createElement('div');
-            div.className = 'news-item-card';
-            div.dataset.id = n.id;
+            const card = document.createElement('article');
+            card.className = 'news-item-card';
+            card.dataset.id = n.id;
+            card.setAttribute('tabindex', '0');
 
-            const createdAt = n.created_at || '';
+            const thumbWrap = document.createElement('div');
+            thumbWrap.className = 'news-thumb';
+            const img = document.createElement('img');
+            img.src = getNewsImageUrl(n);
+            img.alt = n.title ? `${n.title} cover` : 'News thumbnail';
+            thumbWrap.appendChild(img);
 
-            // small snippet
-            let excerpt = n.content || '';
-            if (excerpt.length > 110) {
-                excerpt = excerpt.substring(0, 107) + '…';
-            }
+            const body = document.createElement('div');
+            body.className = 'news-item-body';
 
-            div.innerHTML = `
-                <h3 class="news-item-title">${n.title}</h3>
-                <div class="news-item-meta">${createdAt}</div>
-                <p class="news-item-excerpt">${excerpt}</p>
-            `;
+            const title = document.createElement('h3');
+            title.className = 'news-item-title';
+            title.textContent = n.title || '(No title)';
 
-            div.addEventListener('click', () => {
+            const meta = document.createElement('div');
+            meta.className = 'news-item-meta';
+            meta.textContent = formatNewsDate(n.created_at);
+
+            const excerpt = document.createElement('p');
+            excerpt.className = 'news-item-excerpt';
+            excerpt.textContent = buildExcerpt(n.content);
+
+            body.appendChild(title);
+            body.appendChild(meta);
+            body.appendChild(excerpt);
+
+            card.appendChild(thumbWrap);
+            card.appendChild(body);
+
+            card.addEventListener('click', () => {
                 showNewsDetail(n.id);
             });
+            card.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    showNewsDetail(n.id);
+                }
+            });
 
-            container.appendChild(div);
+            container.appendChild(card);
         });
 
         highlightActiveCard();
@@ -335,13 +388,20 @@
         const titleEl = document.getElementById('detail_title');
         const metaEl = document.getElementById('detail_meta');
         const contentEl = document.getElementById('detail_content');
+        const imageWrap = document.getElementById('detail_image_wrapper');
+        const imageEl = document.getElementById('detail_image');
 
         if (emptyBox) emptyBox.style.display = 'none';
         if (detailBox) detailBox.style.display = '';
 
         if (titleEl) titleEl.textContent = news.title || '(No title)';
-        if (metaEl) metaEl.textContent = news.created_at || '';
+        if (metaEl) metaEl.textContent = formatNewsDate(news.created_at);
         if (contentEl) contentEl.textContent = news.content || '';
+        if (imageWrap && imageEl) {
+            imageEl.src = getNewsImageUrl(news);
+            imageEl.alt = news.title ? `${news.title} cover` : 'News cover image';
+            imageWrap.style.display = '';
+        }
 
         highlightActiveCard();
     }
