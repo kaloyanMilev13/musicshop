@@ -614,6 +614,15 @@ textarea:focus {
     margin-top: auto;
 }
 
+.carousel-item-actions button {
+    border: none;
+    border-radius: 6px;
+    padding: 0.65rem 0.9rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
 .carousel-item-actions button.primary {
     background: var(--accent);
     color: #fff;
@@ -1028,6 +1037,78 @@ textarea:focus {
     justify-content: space-between;
     color: var(--muted);
     margin-bottom: 0.5rem;
+}
+
+.admin-list-header {
+    align-items: center;
+}
+
+.admin-list-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.admin-search-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin: 1rem 0;
+    flex-wrap: wrap;
+}
+
+.admin-search-row {
+    align-items: flex-end;
+}
+
+.admin-search-field {
+    flex: 1;
+    min-width: 240px;
+}
+
+.admin-search-field input {
+    padding: 0.6rem 0.75rem;
+}
+
+.admin-product-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+    background: var(--card);
+    margin-bottom: 0.75rem;
+    box-shadow: var(--shadow);
+}
+
+.admin-product-main {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.admin-product-title {
+    padding: 0.45rem 0.85rem;
+    font-size: 0.95rem;
+}
+
+.admin-product-meta {
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.admin-product-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+body.dark-theme .admin-search-row input {
+    background: #2a2a2a;
+    color: #f5f5f5;
+    border-color: #3a3a3a;
 }
 
 .orders-list,

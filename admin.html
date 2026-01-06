@@ -196,11 +196,20 @@
 
                 <!-- PRODUCT LIST -->
                 <div class="product-list-container">
-                    <div class="product-list-header">
-                        <span>Existing products</span>
-                        <span id="productCountLabel"></span>
+                    <div class="product-list-header admin-list-header">
+                        <div class="admin-list-meta">
+                            <span>Existing products</span>
+                            <span id="productCountLabel"></span>
+                        </div>
+                        <a class="btn-outline" href="admin_products.html">See all</a>
                     </div>
-                    <div id="productList">Loading...</div>
+                    <div class="carousel-container admin-product-carousel">
+                        <button class="carousel-btn prev" id="adminProductPrevBtn" type="button">‹</button>
+                        <div class="carousel-track" id="adminProductTrack">
+                            <div class="home-empty" style="padding:1.5rem;">Loading...</div>
+                        </div>
+                        <button class="carousel-btn next" id="adminProductNextBtn" type="button">›</button>
+                    </div>
                 </div>
             </div>
         </section>
@@ -350,6 +359,7 @@
 
     let editId = null;          // current product edit id (null = add mode)
     let editingNewsId = null;   // current news edit id (null = add mode)
+    let adminCarousel = null;
 
     function populateSubcategories(mainCat, selectedSub = "") {
         const sub = document.getElementById("subcategory");
@@ -402,27 +412,161 @@
         }
     }
 
+    function renderAdminCarouselItem(p) {
+        const item = document.createElement("div");
+        item.className = "carousel-item";
+
+        if (p.image_url) {
+            const img = document.createElement("img");
+            img.src = p.image_url;
+            img.alt = p.name || "Product image";
+            item.appendChild(img);
+        } else {
+            const placeholder = document.createElement("div");
+            placeholder.className = "carousel-item-placeholder";
+            placeholder.textContent = "No Image";
+            item.appendChild(placeholder);
+        }
+
+        const body = document.createElement("div");
+        body.className = "carousel-item-body";
+
+        const title = document.createElement("div");
+        title.className = "carousel-item-title";
+        title.textContent = p.name || "Unnamed product";
+
+        const price = document.createElement("div");
+        price.className = "carousel-item-price";
+        price.textContent = "€" + Number(p.price).toFixed(2);
+
+        const meta = document.createElement("div");
+        meta.className = "carousel-item-meta";
+        const metaParts = [];
+        if (p.artist) metaParts.push(p.artist);
+        if (p.category) metaParts.push(p.category);
+        if (p.genre) metaParts.push(p.genre);
+        if (p.music_genre) metaParts.push(p.music_genre);
+        if (p.stock !== undefined && p.stock !== null) metaParts.push("Stock: " + p.stock);
+        meta.textContent = metaParts.join(" · ") || "-";
+
+        const actions = document.createElement("div");
+        actions.className = "carousel-item-actions";
+
+        const editBtn = document.createElement("button");
+        editBtn.type = "button";
+        editBtn.className = "btn-outline";
+        editBtn.textContent = "Edit";
+        editBtn.addEventListener("click", () => editProduct(p.id));
+
+        const delBtn = document.createElement("button");
+        delBtn.type = "button";
+        delBtn.className = "btn-primary";
+        delBtn.textContent = "Delete";
+        delBtn.addEventListener("click", () => deleteProduct(p.id));
+
+        actions.appendChild(editBtn);
+        actions.appendChild(delBtn);
+
+        body.appendChild(title);
+        body.appendChild(price);
+        body.appendChild(meta);
+        body.appendChild(actions);
+        item.appendChild(body);
+
+        return item;
+    }
+
+    function getAdminCarouselStep(track) {
+        const item = track.querySelector(".carousel-item");
+        const itemWidth = item ? item.getBoundingClientRect().width : 280;
+        const styles = getComputedStyle(track);
+        const gap = parseFloat(styles.columnGap || styles.gap || 24) || 24;
+        return itemWidth + gap;
+    }
+
+    function getAdminItemsPerView(track, step) {
+        const containerWidth = track.parentElement.clientWidth;
+        return Math.max(1, Math.floor(containerWidth / step));
+    }
+
+    function updateAdminCarouselButtons() {
+        if (!adminCarousel) return;
+
+        const step = getAdminCarouselStep(adminCarousel.track);
+        const perView = getAdminItemsPerView(adminCarousel.track, step);
+        const maxIndex = Math.max(0, adminCarousel.total - perView);
+
+        adminCarousel.index = Math.min(adminCarousel.index, maxIndex);
+        adminCarousel.track.style.transform = `translateX(-${adminCarousel.index * step}px)`;
+
+        const prev = document.getElementById("adminProductPrevBtn");
+        const next = document.getElementById("adminProductNextBtn");
+        if (prev) prev.disabled = adminCarousel.index === 0;
+        if (next) next.disabled = adminCarousel.index >= maxIndex;
+    }
+
+    function moveAdminCarousel(direction) {
+        if (!adminCarousel) return;
+
+        const step = getAdminCarouselStep(adminCarousel.track);
+        const perView = getAdminItemsPerView(adminCarousel.track, step);
+        const maxIndex = Math.max(0, adminCarousel.total - perView);
+
+        adminCarousel.index = Math.max(0, Math.min(adminCarousel.index + direction, maxIndex));
+        adminCarousel.track.style.transform = `translateX(-${adminCarousel.index * step}px)`;
+        updateAdminCarouselButtons();
+    }
+
+    function setAdminCarouselMessage(message) {
+        const track = document.getElementById("adminProductTrack");
+        if (!track) return;
+        track.innerHTML = "";
+        const empty = document.createElement("div");
+        empty.className = "home-empty";
+        empty.style.padding = "1.5rem";
+        empty.textContent = message;
+        track.appendChild(empty);
+        const prev = document.getElementById("adminProductPrevBtn");
+        const next = document.getElementById("adminProductNextBtn");
+        if (prev) prev.disabled = true;
+        if (next) next.disabled = true;
+        adminCarousel = null;
+    }
+
+    function initAdminCarousel(products) {
+        const track = document.getElementById("adminProductTrack");
+        if (!track) return;
+
+        if (!products || products.length === 0) {
+            setAdminCarouselMessage("No products yet.");
+            return;
+        }
+
+        track.innerHTML = "";
+        products.forEach(p => track.appendChild(renderAdminCarouselItem(p)));
+        adminCarousel = { track, index: 0, total: products.length };
+        updateAdminCarouselButtons();
+    }
+
     function loadProductsList() {
         fetch("/musicshop/api/products.php", {
             credentials: "include"
         })
         .then(r => r.json())
         .then(data => {
-            const box = document.getElementById("productList");
             const countLabel = document.getElementById("productCountLabel");
-            if (!box) return;
-
-            box.innerHTML = "";
+            const track = document.getElementById("adminProductTrack");
+            if (!track) return;
 
             if (!data.ok) {
-                box.innerText = "Error: " + data.error;
+                setAdminCarouselMessage("Error: " + data.error);
                 if (countLabel) countLabel.textContent = "";
                 return;
             }
 
             if (!data.products || data.products.length === 0) {
-                box.innerText = "No products yet.";
                 if (countLabel) countLabel.textContent = "0 products";
+                setAdminCarouselMessage("No products yet.");
                 return;
             }
 
@@ -430,41 +574,7 @@
                 countLabel.textContent = data.products.length + " product" + (data.products.length !== 1 ? "s" : "");
             }
 
-            data.products.forEach(p => {
-                const row = document.createElement("div");
-                row.className = "productRow";
-
-                const main = document.createElement("div");
-                main.className = "productRow-main";
-                main.innerHTML = `
-                    <div class="productRow-name">${p.name}</div>
-                    <div class="productRow-meta">
-                        €${p.price} · ${(p.category || "-")} / ${(p.genre || "-")}
-                    </div>
-                `;
-
-                const actions = document.createElement("div");
-                actions.className = "productRow-actions";
-
-                const editBtn = document.createElement("button");
-                editBtn.className = "btn-outline";
-                editBtn.type = "button";
-                editBtn.textContent = "Edit";
-                editBtn.addEventListener("click", () => editProduct(p.id));
-
-                const delBtn = document.createElement("button");
-                delBtn.className = "btn-outline";
-                delBtn.type = "button";
-                delBtn.textContent = "Delete";
-                delBtn.addEventListener("click", () => deleteProduct(p.id));
-
-                actions.appendChild(editBtn);
-                actions.appendChild(delBtn);
-
-                row.appendChild(main);
-                row.appendChild(actions);
-                box.appendChild(row);
-            });
+            initAdminCarousel(data.products);
         });
     }
 
@@ -839,9 +949,22 @@
             subEl.addEventListener("change", updateExtraFields);
         }
 
+        const prevBtn = document.getElementById("adminProductPrevBtn");
+        const nextBtn = document.getElementById("adminProductNextBtn");
+        if (prevBtn) prevBtn.addEventListener("click", () => moveAdminCarousel(-1));
+        if (nextBtn) nextBtn.addEventListener("click", () => moveAdminCarousel(1));
+        window.addEventListener("resize", updateAdminCarouselButtons);
+
         loadProductsList();
         loadAllOrders();
         loadAdminNews();
+
+        const editParam = new URLSearchParams(window.location.search).get("edit");
+        if (editParam && /^\d+$/.test(editParam)) {
+            editProduct(Number(editParam));
+            const formTop = document.querySelector(".product-form-grid");
+            if (formTop) formTop.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
     }
 </script>
 
