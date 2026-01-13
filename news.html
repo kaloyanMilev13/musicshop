@@ -81,10 +81,9 @@
 
 <main>
     <div class="page-wrapper">
-        <!-- LEFT: NEWS LIST + SEARCH -->
-        <section class="card">
-            <div class="card-header">
-                <h1>Music news</h1>
+        <section class="filter-card">
+            <div class="filter-header">
+                <h1>News</h1>
                 <span id="news_count_label">Loading...</span>
             </div>
 
@@ -92,30 +91,14 @@
                 <label for="news_search">Search</label>
                 <input type="text" id="news_search" placeholder="Search by title or text…">
             </div>
-
-            <div id="news_list">Loading…</div>
         </section>
 
-        <!-- RIGHT: DETAIL VIEW -->
-        <section class="card">
-            <div class="card-header">
-                <h2>Details</h2>
+        <section class="news-section">
+            <div class="products-header">
+                <h2>Latest stories</h2>
+                <span>Fresh updates and announcements</span>
             </div>
-
-            <div id="news_detail_empty" class="news-detail-empty">
-                Select a news item from the left to read it in full.
-            </div>
-
-            <div id="news_detail" class="news-detail" style="display:none;">
-                <div class="news-hero" id="detail_image_wrapper">
-                    <img id="detail_image" src="images/news/placeholder.jpg" alt="News cover">
-                </div>
-                <div class="news-detail-body">
-                    <h2 class="news-detail-title" id="detail_title"></h2>
-                    <div class="news-detail-meta" id="detail_meta"></div>
-                    <div class="news-detail-content" id="detail_content"></div>
-                </div>
-            </div>
+            <div id="news_list" class="news-grid">Loading…</div>
         </section>
     </div>
 </main>
@@ -138,8 +121,6 @@
 
     let ALL_NEWS = [];
     let FILTERED_NEWS = [];
-    let ACTIVE_NEWS_ID = null;
-
     document.addEventListener("DOMContentLoaded", function () {
         const themeToggle = document.getElementById("themeToggle");
         const themeIcon = document.getElementById("themeIcon");
@@ -234,6 +215,21 @@
         return d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
     }
 
+    function estimateReadTime(text) {
+        if (!text) return "";
+        const words = text.trim().split(/\s+/).length;
+        const minutes = Math.max(1, Math.round(words / 200));
+        return `${minutes} min read`;
+    }
+
+    function formatNewsMeta(news) {
+        if (!news) return "";
+        const date = formatNewsDate(news.created_at);
+        const readTime = estimateReadTime(news.content || "");
+        if (date && readTime) return `${date} • ${readTime}`;
+        return date || readTime;
+    }
+
     // --- NEWS LOADING (uses your existing get_news.php) ---
     function loadNews() {
         fetch('/musicshop/api/get_news.php')
@@ -259,18 +255,12 @@
 
                 ALL_NEWS = data.news;
                 FILTERED_NEWS = data.news.slice();
-                ACTIVE_NEWS_ID = null;
 
                 if (countLabel) {
                     countLabel.textContent = FILTERED_NEWS.length + ' article' + (FILTERED_NEWS.length !== 1 ? 's' : '');
                 }
 
                 renderNewsList();
-
-                // Auto-select first news item for detail view
-                if (FILTERED_NEWS.length > 0) {
-                    showNewsDetail(FILTERED_NEWS[0].id);
-                }
             })
             .catch(() => {
                 const container = document.getElementById('news_list');
@@ -302,23 +292,10 @@
         container.innerHTML = '';
         if (FILTERED_NEWS.length === 0) {
             container.textContent = 'No news match your search.';
-            const emptyDetail = document.getElementById('news_detail_empty');
-            const detailBox = document.getElementById('news_detail');
-            if (emptyDetail) emptyDetail.style.display = '';
-            if (detailBox) detailBox.style.display = 'none';
-            ACTIVE_NEWS_ID = null;
             return;
         }
 
         renderNewsList();
-
-        // If active news is no longer in filtered list, reset
-        if (!FILTERED_NEWS.some(n => n.id === ACTIVE_NEWS_ID)) {
-            ACTIVE_NEWS_ID = FILTERED_NEWS[0].id;
-            showNewsDetail(ACTIVE_NEWS_ID);
-        } else {
-            highlightActiveCard();
-        }
     }
 
     function renderNewsList() {
@@ -328,92 +305,57 @@
 
         FILTERED_NEWS.forEach(n => {
             const card = document.createElement('article');
-            card.className = 'news-item-card';
+            card.className = 'news-card';
             card.dataset.id = n.id;
             card.setAttribute('tabindex', '0');
 
-            const thumbWrap = document.createElement('div');
-            thumbWrap.className = 'news-thumb';
             const img = document.createElement('img');
+            img.className = 'news-card-thumb';
             img.src = getNewsImageUrl(n);
             img.alt = n.title ? `${n.title} cover` : 'News thumbnail';
-            thumbWrap.appendChild(img);
 
             const body = document.createElement('div');
-            body.className = 'news-item-body';
+            body.className = 'news-card-body';
 
             const title = document.createElement('h3');
-            title.className = 'news-item-title';
+            title.className = 'news-card-title';
             title.textContent = n.title || '(No title)';
 
             const meta = document.createElement('div');
-            meta.className = 'news-item-meta';
-            meta.textContent = formatNewsDate(n.created_at);
+            meta.className = 'news-card-meta';
+            meta.textContent = formatNewsMeta(n);
 
             const excerpt = document.createElement('p');
-            excerpt.className = 'news-item-excerpt';
-            excerpt.textContent = buildExcerpt(n.content);
+            excerpt.className = 'news-card-excerpt';
+            excerpt.textContent = buildExcerpt(n.content, 140);
+
+            const readMore = document.createElement('a');
+            readMore.className = 'news-card-link';
+            readMore.href = `news_item.html?id=${encodeURIComponent(n.id)}`;
+            readMore.textContent = 'Read full article';
+            readMore.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
 
             body.appendChild(title);
             body.appendChild(meta);
             body.appendChild(excerpt);
+            body.appendChild(readMore);
 
-            card.appendChild(thumbWrap);
+            card.appendChild(img);
             card.appendChild(body);
 
             card.addEventListener('click', () => {
-                showNewsDetail(n.id);
+                window.location = `news_item.html?id=${encodeURIComponent(n.id)}`;
             });
             card.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
-                    showNewsDetail(n.id);
+                    window.location = `news_item.html?id=${encodeURIComponent(n.id)}`;
                 }
             });
 
             container.appendChild(card);
-        });
-
-        highlightActiveCard();
-    }
-
-    function showNewsDetail(id) {
-        const news = ALL_NEWS.find(n => n.id === id);
-        if (!news) return;
-
-        ACTIVE_NEWS_ID = id;
-
-        const emptyBox = document.getElementById('news_detail_empty');
-        const detailBox = document.getElementById('news_detail');
-        const titleEl = document.getElementById('detail_title');
-        const metaEl = document.getElementById('detail_meta');
-        const contentEl = document.getElementById('detail_content');
-        const imageWrap = document.getElementById('detail_image_wrapper');
-        const imageEl = document.getElementById('detail_image');
-
-        if (emptyBox) emptyBox.style.display = 'none';
-        if (detailBox) detailBox.style.display = '';
-
-        if (titleEl) titleEl.textContent = news.title || '(No title)';
-        if (metaEl) metaEl.textContent = formatNewsDate(news.created_at);
-        if (contentEl) contentEl.textContent = news.content || '';
-        if (imageWrap && imageEl) {
-            imageEl.src = getNewsImageUrl(news);
-            imageEl.alt = news.title ? `${news.title} cover` : 'News cover image';
-            imageWrap.style.display = '';
-        }
-
-        highlightActiveCard();
-    }
-
-    function highlightActiveCard() {
-        const cards = document.querySelectorAll('.news-item-card');
-        cards.forEach(card => {
-            if (String(card.dataset.id) === String(ACTIVE_NEWS_ID)) {
-                card.classList.add('active');
-            } else {
-                card.classList.remove('active');
-            }
         });
     }
 </script>

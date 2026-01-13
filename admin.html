@@ -236,22 +236,36 @@
                     </div>
                 </div>
 
-                <div class="news-form">
-                    <div class="news-form-row">
+                <div class="product-form-grid news-form-grid">
+                    <div class="form-group">
                         <label for="news_title">Title</label>
                         <input type="text" id="news_title" placeholder="News title">
                     </div>
-                    <div class="news-form-row">
+                    <div class="form-group news-form-full">
                         <label for="news_content">Content</label>
                         <textarea id="news_content" placeholder="Full news content..."></textarea>
                     </div>
-                    <div class="news-form-actions">
-                        <button class="btn-outline" id="newsCancelBtn" type="button" style="display:none;" onclick="cancelNewsEdit()">Cancel</button>
-                        <button class="btn-secondary" type="button" onclick="saveNews()" id="newsSaveBtn">Add news</button>
-                    </div>
+                </div>
+                <div class="news-form-actions">
+                    <button class="btn-outline" id="newsCancelBtn" type="button" style="display:none;" onclick="cancelNewsEdit()">Cancel</button>
+                    <button class="btn-secondary" type="button" onclick="saveNews()" id="newsSaveBtn">Add news</button>
                 </div>
 
-                <div id="admin_news_list">Loading...</div>
+                <div class="product-list-container">
+                    <div class="product-list-header admin-list-header">
+                        <div class="admin-list-meta">
+                            <span>Existing news</span>
+                            <span id="newsCountLabel"></span>
+                        </div>
+                    </div>
+                    <div class="carousel-container admin-news-carousel">
+                        <button class="carousel-btn prev" id="adminNewsPrevBtn" type="button">‹</button>
+                        <div class="carousel-track" id="adminNewsTrack">
+                            <div class="home-empty" style="padding:1.5rem;">Loading...</div>
+                        </div>
+                        <button class="carousel-btn next" id="adminNewsNextBtn" type="button">›</button>
+                    </div>
+                </div>
             </div>
         </section>
     </div>
@@ -360,6 +374,7 @@
     let editId = null;          // current product edit id (null = add mode)
     let editingNewsId = null;   // current news edit id (null = add mode)
     let adminCarousel = null;
+    let adminNewsCarousel = null;
 
     function populateSubcategories(mainCat, selectedSub = "") {
         const sub = document.getElementById("subcategory");
@@ -783,68 +798,160 @@
     }
 
     // ===== NEWS ADMIN (rewritten: no inline onclick, proper JS events) =====
+    function truncateText(text, max = 160) {
+        if (!text) return "";
+        const normalized = text.replace(/\s+/g, " ").trim();
+        if (normalized.length <= max) return normalized;
+        return normalized.slice(0, max - 1) + "…";
+    }
+
+    function getNewsImageUrl(news) {
+        const raw = (news && typeof news.image_url === "string") ? news.image_url.trim() : "";
+        if (!raw) return "images/news/placeholder.jpg";
+        if (raw.toLowerCase().startsWith("javascript:")) return "images/news/placeholder.jpg";
+        return raw;
+    }
+
+    function renderAdminNewsCarouselItem(n) {
+        const item = document.createElement("div");
+        item.className = "carousel-item";
+
+        const img = document.createElement("img");
+        img.src = getNewsImageUrl(n);
+        img.alt = n.title ? `${n.title} cover` : "News image";
+        item.appendChild(img);
+
+        const body = document.createElement("div");
+        body.className = "carousel-item-body";
+
+        const title = document.createElement("div");
+        title.className = "carousel-item-title";
+        title.textContent = n.title || "Untitled news";
+
+        const meta = document.createElement("div");
+        meta.className = "carousel-item-meta";
+        meta.textContent = n.created_at || "-";
+
+        const excerpt = document.createElement("div");
+        excerpt.className = "admin-news-excerpt";
+        excerpt.textContent = truncateText(n.content, 140);
+
+        const actions = document.createElement("div");
+        actions.className = "carousel-item-actions";
+
+        const editBtn = document.createElement("button");
+        editBtn.type = "button";
+        editBtn.className = "btn-outline";
+        editBtn.textContent = "Edit";
+        editBtn.addEventListener("click", () => startNewsEdit(n));
+
+        const delBtn = document.createElement("button");
+        delBtn.type = "button";
+        delBtn.className = "btn-primary";
+        delBtn.textContent = "Delete";
+        delBtn.addEventListener("click", () => deleteNews(n.id));
+
+        actions.appendChild(editBtn);
+        actions.appendChild(delBtn);
+
+        body.appendChild(title);
+        body.appendChild(meta);
+        body.appendChild(excerpt);
+        body.appendChild(actions);
+        item.appendChild(body);
+
+        return item;
+    }
+
+    function updateAdminNewsCarouselButtons() {
+        if (!adminNewsCarousel) return;
+
+        const step = getAdminCarouselStep(adminNewsCarousel.track);
+        const perView = getAdminItemsPerView(adminNewsCarousel.track, step);
+        const maxIndex = Math.max(0, adminNewsCarousel.total - perView);
+
+        adminNewsCarousel.index = Math.min(adminNewsCarousel.index, maxIndex);
+        adminNewsCarousel.track.style.transform = `translateX(-${adminNewsCarousel.index * step}px)`;
+
+        const prev = document.getElementById("adminNewsPrevBtn");
+        const next = document.getElementById("adminNewsNextBtn");
+        if (prev) prev.disabled = adminNewsCarousel.index === 0;
+        if (next) next.disabled = adminNewsCarousel.index >= maxIndex;
+    }
+
+    function moveAdminNewsCarousel(direction) {
+        if (!adminNewsCarousel) return;
+
+        const step = getAdminCarouselStep(adminNewsCarousel.track);
+        const perView = getAdminItemsPerView(adminNewsCarousel.track, step);
+        const maxIndex = Math.max(0, adminNewsCarousel.total - perView);
+
+        adminNewsCarousel.index = Math.max(0, Math.min(adminNewsCarousel.index + direction, maxIndex));
+        adminNewsCarousel.track.style.transform = `translateX(-${adminNewsCarousel.index * step}px)`;
+        updateAdminNewsCarouselButtons();
+    }
+
+    function setAdminNewsCarouselMessage(message) {
+        const track = document.getElementById("adminNewsTrack");
+        if (!track) return;
+        track.innerHTML = "";
+        const empty = document.createElement("div");
+        empty.className = "home-empty";
+        empty.style.padding = "1.5rem";
+        empty.textContent = message;
+        track.appendChild(empty);
+        const prev = document.getElementById("adminNewsPrevBtn");
+        const next = document.getElementById("adminNewsNextBtn");
+        if (prev) prev.disabled = true;
+        if (next) next.disabled = true;
+        adminNewsCarousel = null;
+    }
+
+    function initAdminNewsCarousel(newsItems) {
+        const track = document.getElementById("adminNewsTrack");
+        if (!track) return;
+
+        if (!newsItems || newsItems.length === 0) {
+            setAdminNewsCarouselMessage("No news yet.");
+            return;
+        }
+
+        track.innerHTML = "";
+        newsItems.forEach(n => track.appendChild(renderAdminNewsCarouselItem(n)));
+        adminNewsCarousel = { track, index: 0, total: newsItems.length };
+        updateAdminNewsCarouselButtons();
+    }
+
     function loadAdminNews() {
         fetch('/musicshop/api/get_news.php')
             .then(r => r.json())
             .then(data => {
-                const container = document.getElementById('admin_news_list');
+                const container = document.getElementById('adminNewsTrack');
+                const countLabel = document.getElementById('newsCountLabel');
                 if (!container) return;
-                container.innerHTML = '';
 
                 if (!data.ok) {
-                    container.textContent = 'Error loading news.';
+                    setAdminNewsCarouselMessage('Error loading news.');
+                    if (countLabel) countLabel.textContent = 'Error';
                     return;
                 }
 
                 if (!data.news || data.news.length === 0) {
-                    container.textContent = 'No news yet.';
+                    setAdminNewsCarouselMessage('No news yet.');
+                    if (countLabel) countLabel.textContent = '0 items';
                     return;
                 }
 
-                data.news.forEach(n => {
-                    const div = document.createElement('div');
-                    div.className = 'news-item';
+                if (countLabel) {
+                    countLabel.textContent = data.news.length + ' item' + (data.news.length !== 1 ? 's' : '');
+                }
 
-                    const titleEl = document.createElement('h3');
-                    titleEl.textContent = n.title;
-
-                    const metaEl = document.createElement('p');
-                    const small = document.createElement('small');
-                    small.textContent = n.created_at;
-                    metaEl.appendChild(small);
-
-                    const contentEl = document.createElement('p');
-                    contentEl.textContent = n.content;
-
-                    const actions = document.createElement('div');
-                    actions.className = 'news-item-actions';
-
-                    const editBtn = document.createElement('button');
-                    editBtn.type = 'button';
-                    editBtn.className = 'btn-outline';
-                    editBtn.textContent = 'Edit';
-                    editBtn.addEventListener('click', () => startNewsEdit(n));
-
-                    const delBtn = document.createElement('button');
-                    delBtn.type = 'button';
-                    delBtn.className = 'btn-outline';
-                    delBtn.textContent = 'Delete';
-                    delBtn.addEventListener('click', () => deleteNews(n.id));
-
-                    actions.appendChild(editBtn);
-                    actions.appendChild(delBtn);
-
-                    div.appendChild(titleEl);
-                    div.appendChild(metaEl);
-                    div.appendChild(contentEl);
-                    div.appendChild(actions);
-
-                    container.appendChild(div);
-                });
+                initAdminNewsCarousel(data.news);
             })
             .catch(() => {
-                const container = document.getElementById('admin_news_list');
-                if (container) container.textContent = 'Error loading news.';
+                setAdminNewsCarouselMessage('Error loading news.');
+                const countLabel = document.getElementById('newsCountLabel');
+                if (countLabel) countLabel.textContent = 'Error';
             });
     }
 
@@ -953,7 +1060,15 @@
         const nextBtn = document.getElementById("adminProductNextBtn");
         if (prevBtn) prevBtn.addEventListener("click", () => moveAdminCarousel(-1));
         if (nextBtn) nextBtn.addEventListener("click", () => moveAdminCarousel(1));
-        window.addEventListener("resize", updateAdminCarouselButtons);
+        window.addEventListener("resize", () => {
+            updateAdminCarouselButtons();
+            updateAdminNewsCarouselButtons();
+        });
+
+        const newsPrevBtn = document.getElementById("adminNewsPrevBtn");
+        const newsNextBtn = document.getElementById("adminNewsNextBtn");
+        if (newsPrevBtn) newsPrevBtn.addEventListener("click", () => moveAdminNewsCarousel(-1));
+        if (newsNextBtn) newsNextBtn.addEventListener("click", () => moveAdminNewsCarousel(1));
 
         loadProductsList();
         loadAllOrders();

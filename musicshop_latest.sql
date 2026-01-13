@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Dec 05, 2025 at 08:08 AM
+-- Generation Time: Jan 13, 2026 at 09:09 AM
 -- Server version: 12.1.2-MariaDB
--- PHP Version: 8.4.15
+-- PHP Version: 8.5.1
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -40,7 +40,9 @@ CREATE TABLE `favorites` (
 
 INSERT INTO `favorites` (`id`, `user_id`, `product_id`, `created_at`) VALUES
 (3, 1, 2, '2025-11-20 21:58:25'),
-(5, 1, 14, '2025-11-25 11:37:44');
+(5, 1, 14, '2025-11-25 11:37:44'),
+(6, 1, 1, '2025-12-11 14:54:32'),
+(7, 1, 3, '2025-12-11 14:54:58');
 
 -- --------------------------------------------------------
 
@@ -61,7 +63,10 @@ CREATE TABLE `news` (
 
 INSERT INTO `news` (`id`, `title`, `content`, `created_at`) VALUES
 (1, 'sdqwwc', 'dc', '2025-11-27 08:16:54'),
-(2, 'ciac', 'jfewioco', '2025-11-27 08:17:05');
+(2, 'ciac', 'jfewioco', '2025-11-27 08:17:05'),
+(3, 'nowina 1', 'nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_', '2026-01-13 08:55:58'),
+(4, 'nowina2', 'nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_', '2026-01-13 08:56:10'),
+(5, 'nowina3', 'ноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсд', '2026-01-13 08:56:40');
 
 -- --------------------------------------------------------
 
@@ -148,7 +153,7 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`id`, `name`, `artist`, `category`, `genre`, `price`, `stock`, `description`, `image_url`, `format`, `music_genre`, `size`, `color`, `merch_type`, `instrument_subtype`, `accessory_type`, `created_at`, `updated_at`) VALUES
-(1, 'Fender Stratocaster', 'Fender', 'Instruments', 'Guitars', 999.99, 6, 'Legendary electric guitar with classic single-coil tones.', 'images/strat.jpg', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-11-20 16:19:14', '2025-11-26 10:17:04'),
+(1, 'Fender Stratocaster', 'Fender', 'Instruments', 'Guitars', 999.99, 6, 'Legendary electric guitar with classic single-coil tones.', 'images/strat.jpg', NULL, NULL, NULL, NULL, NULL, 'Electric', NULL, '2025-11-20 16:19:14', '2026-01-06 08:47:54'),
 (2, 'Gibson Les Paul Standard', 'Gibson', 'Instruments', 'Guitars', 1499.00, 3, 'Iconic rock guitar with thick, warm tone.', 'images/lespaul.jpg', NULL, NULL, NULL, 'Cherry', NULL, 'Electric Guitar', NULL, '2025-11-20 16:19:14', NULL),
 (3, 'Yamaha P-45 Digital Piano', 'Yamaha', 'Instruments', 'Keyboards', 499.00, 7, '88-key digital piano with weighted action.', 'images/p45.jpg', NULL, NULL, NULL, 'Black', NULL, 'Piano', NULL, '2025-11-20 16:19:14', NULL),
 (4, 'Pearl Drum Kit EXX725S', 'Pearl', 'Instruments', 'Drums', 799.00, 2, 'Complete drum kit perfect for beginners and advanced players.', 'images/drumkit.jpg', NULL, NULL, NULL, 'Black', NULL, 'Drum Set', NULL, '2025-11-20 16:19:14', NULL),
@@ -167,7 +172,8 @@ INSERT INTO `products` (`id`, `name`, `artist`, `category`, `genre`, `price`, `s
 (17, 'Instrument Cable 3m', '', 'Other', 'Cables', 9.99, 60, 'Durable 3-meter jack cable.', 'images/cable.jpg', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-11-20 16:19:14', '2025-11-27 08:49:19'),
 (18, 'Microphone Pop Filter', NULL, 'Other', 'Accessories', 12.99, 22, 'Perfect for home recording studios.', 'images/popfilter.jpg', NULL, NULL, NULL, 'Black', NULL, NULL, 'Pop Filter', '2025-11-20 16:19:14', NULL),
 (19, 'Studio Headphones', NULL, 'Other', 'Audio', 89.99, 10, 'Closed-back monitoring headphones.', 'images/headphones.jpg', NULL, NULL, NULL, 'Black', NULL, NULL, 'Headphones', '2025-11-20 16:19:14', NULL),
-(20, 'USB Audio Interface', NULL, 'Other', 'Recording', 129.99, 6, '2-input USB audio interface for home studios.', 'images/interface.jpg', NULL, NULL, NULL, 'Red', NULL, NULL, 'Interface', '2025-11-20 16:19:14', NULL);
+(20, 'USB Audio Interface', NULL, 'Other', 'Recording', 129.99, 6, '2-input USB audio interface for home studios.', 'images/interface.jpg', NULL, NULL, NULL, 'Red', NULL, NULL, 'Interface', '2025-11-20 16:19:14', NULL),
+(21, 'test product za id page', '', 'Instruments', 'Basses', 20.00, 3, '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-13 09:02:57', NULL);
 
 -- --------------------------------------------------------
 
@@ -190,7 +196,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `email`, `password_hash`, `role`, `is_admin`, `created_at`) VALUES
-(1, 'admin', 'admin@shop.com', '$2y$12$x9AbPXrgAeYICKd4rAOZgO3auA8Ai2yVoF/Vj6s4zHQlJAcMRGPoO', 'admin', 0, '2025-11-20 16:04:39');
+(1, 'admin', 'admin@shop.com', '$2y$12$x9AbPXrgAeYICKd4rAOZgO3auA8Ai2yVoF/Vj6s4zHQlJAcMRGPoO', 'admin', 0, '2025-11-20 16:04:39'),
+(2, 'kala', 'kala@abv.bg', '$2y$12$TAnrw17/qRAAywcS52D/dOmmJsWG.OqVxEOOHHw3waHfrJWb8LkrK', 'user', 0, '2025-12-23 07:13:00');
 
 --
 -- Indexes for dumped tables
@@ -253,13 +260,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `favorites`
 --
 ALTER TABLE `favorites`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `news`
 --
 ALTER TABLE `news`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `orders`
@@ -277,13 +284,13 @@ ALTER TABLE `order_items`
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Constraints for dumped tables

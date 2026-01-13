@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>News Story - MusicShop</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .login-btn-header {
+            background: #ffffff;
+            color: #222222;
+            border: 1px solid #e6e6e6;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.2s ease, border-color 0.2s ease;
+        }
+
+        .login-btn-header:hover {
+            background: #e6e6e6;
+            border-color: #d0d0d0;
+        }
+
+        body.dark-theme .login-btn-header {
+            background: #2a2a2a;
+            color: #f5f5f5;
+            border-color: #3a3a3a;
+        }
+
+        body.dark-theme .login-btn-header:hover {
+            background: #333333;
+            border-color: #4a4a4a;
+        }
+    </style>
+</head>
+<body class="news-detail-page">
+
+<header class="site-header">
+    <div class="nav-inner">
+        <a href="index.html" class="brand">
+            <div class="brand-icon">
+                <span>♫</span>
+            </div>
+            <div class="brand-text">
+                <h1>MusicShop</h1>
+                <p>Instruments · Vinyls · Merch</p>
+            </div>
+        </a>
+
+        <nav class="nav-links">
+            <a href="products.html">Products</a>
+            <a href="favorites.html">Favorites</a>
+            <a href="cart.html">Cart</a>
+            <a href="orders.html">Orders</a>
+            <a href="news.html" class="active">News</a>
+            <a href="admin.html" id="adminLink" class="admin-only">Admin</a>
+        </nav>
+
+        <div class="nav-secondary">
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                <span id="themeIcon">🌞</span>
+            </button>
+
+            <button class="login-btn-header" id="loginBtn" onclick="window.location='login.html'" style="display:none">Log In</button>
+
+            <div class="user-status-pill">
+                <div class="user-status-dot"></div>
+                <div id="userStatus">Not logged in.</div>
+            </div>
+
+            <button class="logout-btn" id="logoutBtn" style="display:none" onclick="logout()">
+                <span>⏏</span>
+                Logout
+            </button>
+        </div>
+    </div>
+</header>
+
+<main>
+    <div class="page-wrapper">
+        <section class="card news-article">
+            <div class="news-article-top">
+                <a class="news-crumb" href="news.html">← Back to newsroom</a>
+                <div class="news-kicker">MusicShop News</div>
+                <h1 id="detail_title">Loading...</h1>
+                <p class="news-subtitle" id="detail_subtitle"></p>
+                <div class="news-article-meta" id="detail_meta"></div>
+            </div>
+
+            <div class="news-article-media" id="detail_image_wrapper">
+                <img id="detail_image" src="images/news/placeholder.jpg" alt="News cover">
+            </div>
+
+            <div class="news-article-body">
+                <div class="news-article-content" id="detail_content"></div>
+            </div>
+        </section>
+    </div>
+</main>
+
+<footer>
+    <div class="footer-inner">
+        <span>© <span id="year"></span> MusicShop. All rights reserved.</span>
+        <span>Built for your diploma project · <a href="admin.html" id="adminFooterLink" class="admin-only">Admin panel</a></span>
+    </div>
+</footer>
+
+<script>
+    function logout() {
+        fetch("/musicshop/api/logout.php", {
+            credentials: "include"
+        }).then(() => window.location = "index.html");
+    }
+
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    function getNewsImageUrl(news) {
+        const raw = (news && typeof news.image_url === "string") ? news.image_url.trim() : "";
+        if (!raw) return "images/news/placeholder.jpg";
+        if (raw.toLowerCase().startsWith("javascript:")) return "images/news/placeholder.jpg";
+        return raw;
+    }
+
+    function formatNewsDate(value) {
+        if (!value) return "";
+        const d = new Date(value);
+        if (Number.isNaN(d.getTime())) return value;
+        return d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
+    }
+
+    function estimateReadTime(text) {
+        if (!text) return "";
+        const words = text.trim().split(/\s+/).length;
+        const minutes = Math.max(1, Math.round(words / 200));
+        return `${minutes} min read`;
+    }
+
+    function formatNewsMeta(news) {
+        if (!news) return "";
+        const date = formatNewsDate(news.created_at);
+        const readTime = estimateReadTime(news.content || "");
+        if (date && readTime) return `${date} • ${readTime}`;
+        return date || readTime;
+    }
+
+    function buildExcerpt(text, max = 180) {
+        if (!text) return "";
+        const normalized = text.replace(/\s+/g, " ").trim();
+        if (normalized.length <= max) return normalized;
+        return normalized.slice(0, max - 1) + "…";
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const themeToggle = document.getElementById("themeToggle");
+        const themeIcon = document.getElementById("themeIcon");
+        const logoutBtn = document.getElementById("logoutBtn");
+
+        function applyTheme(theme) {
+            if (theme === "dark") {
+                document.body.classList.add("dark-theme");
+                if (themeIcon) themeIcon.textContent = "🌙";
+            } else {
+                document.body.classList.remove("dark-theme");
+                if (themeIcon) themeIcon.textContent = "🌞";
+            }
+        }
+
+        const savedTheme = localStorage.getItem("theme");
+        applyTheme(savedTheme === "dark" ? "dark" : "light");
+
+        if (themeToggle) {
+            themeToggle.addEventListener("click", () => {
+                const isDark = document.body.classList.toggle("dark-theme");
+                localStorage.setItem("theme", isDark ? "dark" : "light");
+                if (themeIcon) themeIcon.textContent = isDark ? "🌙" : "🌞";
+            });
+        }
+
+        fetch("/musicshop/api/admin_check.php", { credentials: "include" })
+            .then(r => {
+                if (!r.ok) {
+                    document.querySelectorAll(".admin-only").forEach(el => el.style.display = "none");
+                } else {
+                    document.querySelectorAll(".admin-only").forEach(el => el.style.display = "");
+                }
+            })
+            .catch(() => {
+                document.querySelectorAll(".admin-only").forEach(el => el.style.display = "none");
+            });
+
+        fetch("/musicshop/api/whoami.php", { credentials: "include" })
+            .then(r => r.ok ? r.json() : null)
+            .then(data => {
+                const loginBtn = document.getElementById("loginBtn");
+                const loggedIn = data && data.logged_in;
+                if (loggedIn) {
+                    if (logoutBtn) logoutBtn.style.display = "inline-flex";
+                    if (loginBtn) loginBtn.style.display = "none";
+                } else {
+                    if (logoutBtn) logoutBtn.style.display = "none";
+                    if (loginBtn) loginBtn.style.display = "inline-flex";
+                }
+            })
+            .catch(() => {
+                if (logoutBtn) logoutBtn.style.display = "none";
+                const loginBtn = document.getElementById("loginBtn");
+                if (loginBtn) loginBtn.style.display = "inline-flex";
+            });
+
+        loadNewsDetail();
+    });
+
+    function loadNewsDetail() {
+        const titleEl = document.getElementById("detail_title");
+        const metaEl = document.getElementById("detail_meta");
+        const contentEl = document.getElementById("detail_content");
+        const subtitleEl = document.getElementById("detail_subtitle");
+        const imageEl = document.getElementById("detail_image");
+
+        const params = new URLSearchParams(window.location.search);
+        const newsId = params.get("id");
+
+        if (!newsId) {
+            if (titleEl) titleEl.textContent = "Story not found";
+            if (metaEl) metaEl.textContent = "";
+            if (subtitleEl) subtitleEl.textContent = "";
+            if (contentEl) contentEl.textContent = "We could not find this news article.";
+            return;
+        }
+
+        fetch("/musicshop/api/get_news.php")
+            .then(r => r.json())
+            .then(data => {
+                if (!data.ok || !Array.isArray(data.news)) {
+                    throw new Error("Invalid response");
+                }
+
+                const news = data.news.find(item => String(item.id) === String(newsId));
+                if (!news) {
+                    if (titleEl) titleEl.textContent = "Story not found";
+                    if (metaEl) metaEl.textContent = "";
+                    if (subtitleEl) subtitleEl.textContent = "";
+                    if (contentEl) contentEl.textContent = "We could not find this news article.";
+                    return;
+                }
+
+                document.title = `${news.title || "News Story"} - MusicShop`;
+
+                if (titleEl) titleEl.textContent = news.title || "(No title)";
+                if (metaEl) metaEl.textContent = formatNewsMeta(news);
+                if (subtitleEl) subtitleEl.textContent = buildExcerpt(news.content, 180);
+                if (contentEl) contentEl.textContent = news.content || "";
+                if (imageEl) {
+                    imageEl.src = getNewsImageUrl(news);
+                    imageEl.alt = news.title ? `${news.title} cover` : "News cover";
+                }
+            })
+            .catch(() => {
+                if (titleEl) titleEl.textContent = "Story not found";
+                if (metaEl) metaEl.textContent = "";
+                if (subtitleEl) subtitleEl.textContent = "";
+                if (contentEl) contentEl.textContent = "We could not load this news article.";
+            });
+    }
+</script>
+
+<script src="js/script.js"></script>
+</body>
+</html>
