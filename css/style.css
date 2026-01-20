@@ -551,6 +551,7 @@ textarea:focus {
     position: relative;
     overflow: hidden;
     border-radius: 12px;
+    isolation: isolate;
 }
 
 .carousel-track {
@@ -558,6 +559,8 @@ textarea:focus {
     gap: 1.5rem;
     transition: transform 0.4s ease;
     padding: 0 1rem;
+    position: relative;
+    z-index: 0;
 }
 
 .carousel-item {
@@ -569,6 +572,8 @@ textarea:focus {
     display: flex;
     flex-direction: column;
     transition: transform 0.2s ease;
+    position: relative;
+    z-index: 0;
 }
 
 .carousel-item:hover {
@@ -648,6 +653,8 @@ textarea:focus {
     display: flex;
     align-items: center;
     justify-content: center;
+    z-index: 2;
+    pointer-events: auto;
 }
 
 .carousel-btn.prev { left: 12px; }
@@ -656,6 +663,26 @@ textarea:focus {
 .carousel-btn:disabled {
     opacity: 0.35;
     cursor: not-allowed;
+}
+
+/* Admin carousel layout (buttons sit beside the viewport) */
+.admin-page .carousel-container {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 0.75rem;
+    overflow: visible;
+}
+
+.admin-page .carousel-viewport {
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.admin-page .carousel-btn {
+    position: static;
+    transform: none;
+    z-index: 1;
 }
 
 .home-empty {
@@ -1135,6 +1162,20 @@ textarea:focus {
     gap: 1.5rem;
 }
 
+.admin-page .page-wrapper.admin-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    max-width: 860px;
+    width: 100%;
+}
+
+.admin-middle-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+}
+
 .product-form-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -1459,6 +1500,15 @@ footer {
 /* Responsive */
 @media (max-width: 900px) {
     .home-page .page-wrapper {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-page .page-wrapper.admin-layout {
+        max-width: 100%;
+        gap: 24px;
+    }
+
+    .admin-middle-row {
         grid-template-columns: 1fr;
     }
 

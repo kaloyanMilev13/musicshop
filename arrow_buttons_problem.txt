@@ -1,0 +1,13 @@
+Issue: In admin.html, the carousel previous buttons (admin-product-carousel and admin-news-carousel) render behind the carousel items and are not clickable in Firefox.
+
+Observed behavior:
+- The previous button is hidden at first.
+- After scrolling forward, only the tip of the previous button is visible, but it sits behind the left-most carousel item and cannot be clicked.
+- The next button does not have this issue.
+
+Current state:
+- Both admin carousels show the problem (products and news).
+- Issue reproduces in Firefox.
+
+Expected behavior:
+- Previous button should be fully visible and clickable, matching index.html carousel behavior.
