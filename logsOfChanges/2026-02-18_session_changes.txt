@@ -1,0 +1,155 @@
+ Log saved to logsOfChanges/2026-02-18_session_changes.txt.
+Token usage: total=129,721 input=111,828 (+ 1,264,384 cached) output=17,893 (reasoning 3,904)
+To continue this session, run codex resume 019c6f56-db7a-7680-af97-c4e2f04c8ca7
+
+Session Change Log - MusicShop
+Date: 2026-02-18
+Scope: Full detailed log of all modifications made during this session
+
+Summary (high level)
+1) Security and admin order access:
+- Tightened server-side authorization for the admin orders API.
+- Added CSRF token exposure to support state-changing admin actions.
+
+2) Admin orders functionality:
+- Added admin CSV export endpoint for all orders.
+- Added admin UI “Export as Excel” button to trigger CSV download.
+- Added admin delete single order and delete all orders capabilities, with CSRF enforcement.
+- Improved order card readability and separation (initially via CSS, later placed inline in admin.html as requested).
+
+3) User orders functionality:
+- Added user-only “Export to Excel” button on orders page.
+- Added CSV export endpoint for the current user’s orders.
+
+Detailed changes (chronological)
+
+A) api/get_all_orders.php
+- Reworked to enforce admin-only access on the backend.
+  - Added session_start() at top and json response header.
+  - Added require '_auth.php' and require 'db.php'.
+  - Replaced previous “logged in only” check with requireAdmin().
+- Adjusted error handling:
+  - Removed direct DB error output to clients.
+  - Now returns a generic “Internal server error” via jsonError() on query failure.
+- Purpose:
+  - Aligns with AGENTS security rules: admin-only and no raw DB errors.
+
+B) api/export_orders_csv.php (new)
+- New admin-only endpoint to export ALL orders as CSV (Excel-compatible).
+- Behavior:
+  - requireAdmin() enforced.
+  - Loads orders and their items similar to get_all_orders.php.
+  - Streams CSV with headers and a filename pattern: orders-YYYY-MM-DD.csv.
+  - Each row includes order metadata and an “Items” column with name/qty/price summary.
+- Notes:
+  - Export uses text/csv; this is the typical Excel-friendly format without external libs.
+
+C) admin.html (admin orders export button + logic)
+- UI changes:
+  - Added button to the orders header: “Export as Excel”.
+- JS changes:
+  - Added exportOrdersCsv() that fetches /musicshop/api/export_orders_csv.php
+    and triggers client-side download.
+  - Hooked the button to the export function in initAdminPage().
+
+D) css/admin.css (orders readability improvements)
+- Added visible order card styling (admin order cards only):
+  - Thicker borders, box-shadow, gradient background.
+  - Accent stripe using ::before.
+  - Increased spacing between cards.
+  - Clearer separators between sections and items.
+  - Dark theme adjustments for contrast.
+
+E) admin.html (orders readability moved inline as requested)
+- Added inline CSS in the <style> block to ensure changes are inside admin.html:
+  - .admin-order-card (border, shadow, spacing)
+  - .admin-order-divider (visible separator lines)
+  - Dark theme variants for both.
+- Template changes:
+  - Inserted divider lines between header, meta, and items sections.
+
+F) api/whoami.php
+- Added require '_auth.php'.
+- Extended response for logged-in users:
+  - Added csrf_token via getCsrfToken().
+- Purpose:
+  - Enables CSRF-protected admin actions via JS.
+
+G) api/admin_delete_order.php (new)
+- New admin-only endpoint to delete a single order.
+- Security:
+  - requireAdmin(), requirePost(), requireCsrf().
+- Transactional delete:
+  - Deletes order_items then orders row in a transaction.
+  - Returns { ok: true, deleted: bool }.
+
+H) api/admin_delete_all_orders.php (new)
+- New admin-only endpoint to delete ALL orders.
+- Security:
+  - requireAdmin(), requirePost(), requireCsrf().
+- Transactional delete:
+  - Deletes order_items then orders; commits or rolls back on failure.
+
+I) admin.html (delete controls + CSRF token usage)
+- UI changes:
+  - Added “Delete all orders” button in the orders header.
+  - Added “Delete order” button on each order card.
+- JS changes:
+  - Captures csrf_token from whoami() and stores in csrfToken variable.
+  - Added deleteOrder(orderId) to POST to admin_delete_order.php with X-CSRF-Token header.
+  - Added deleteAllOrders() to POST to admin_delete_all_orders.php with X-CSRF-Token header.
+  - Wired both buttons to their handlers.
+- Styling:
+  - Added .admin-order-controls inline style in admin.html for button alignment.
+
+J) orders.html (user export button + logic)
+- UI changes:
+  - Added “Export to Excel” button to the orders header.
+  - Wrapped header title+subtitle in a <div> to allow header actions on the right.
+- JS changes:
+  - Added exportMyOrdersCsv() to fetch /musicshop/api/export_my_orders_csv.php
+    and trigger client-side CSV download.
+  - Attached click handler to the new button.
+- Styling:
+  - Added .orders-header-actions inline style for header layout alignment.
+
+K) api/export_my_orders_csv.php (new)
+- New endpoint to export ONLY the current user’s orders as CSV.
+- Security:
+  - requireLogin() enforced; uses session user_id.
+- Data:
+  - Loads orders by user_id via prepared statement.
+  - Loads order items in a second query and merges into orders.
+- Output:
+  - CSV with user-specific data and “Items” column summary.
+  - Filename pattern: my-orders-YYYY-MM-DD.csv.
+
+Files created in this session
+- /srv/http/musicshop/api/export_orders_csv.php
+- /srv/http/musicshop/api/admin_delete_order.php
+- /srv/http/musicshop/api/admin_delete_all_orders.php
+- /srv/http/musicshop/api/export_my_orders_csv.php
+- /srv/http/musicshop/logsOfChanges/2026-02-18_session_changes.txt (this file)
+
+Files modified in this session
+- /srv/http/musicshop/api/get_all_orders.php
+- /srv/http/musicshop/admin.html
+- /srv/http/musicshop/css/admin.css
+- /srv/http/musicshop/api/whoami.php
+- /srv/http/musicshop/orders.html
+
+User-facing behavior changes
+- Admin panel:
+  - “All orders” section now has export, delete-all, and per-order delete actions.
+  - Orders list has stronger separation and divider lines (inline CSS in admin.html).
+- User orders page:
+  - “Export to Excel” button exports only the logged-in user’s orders.
+
+Security changes
+- get_all_orders.php now requires admin, removing exposure to non-admin users.
+- Added CSRF token exposure via whoami.php for admin order deletion actions.
+- New admin delete endpoints enforce POST + CSRF + requireAdmin().
+
+Notes / open considerations
+- Export files are CSV (Excel-compatible). If true .xlsx is desired, a PHP library would be needed.
+- Some other existing state-changing endpoints in the repo may still be missing CSRF checks; this session only added CSRF to new order deletion endpoints.

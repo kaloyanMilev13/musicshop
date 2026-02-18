@@ -2,6 +2,8 @@
 session_start();
 header('Content-Type: application/json');
 
+require '_auth.php';
+
 if (!isset($_SESSION['user_id'])) {
     echo json_encode(['logged_in' => false]);
     exit;
@@ -10,5 +12,6 @@ if (!isset($_SESSION['user_id'])) {
 echo json_encode([
     'logged_in' => true,
     'user_id' => $_SESSION['user_id'],
-    'role' => $_SESSION['role']
+    'role' => $_SESSION['role'],
+    'csrf_token' => getCsrfToken()
 ]);

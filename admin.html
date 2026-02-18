@@ -32,6 +32,37 @@
             background: #333333;
             border-color: #4a4a4a;
         }
+
+        /* Order readability (admin.html scoped) */
+        .admin-order-card {
+            border: 2px solid rgba(0, 0, 0, 0.15);
+            border-radius: 12px;
+            padding: 1rem 1.1rem;
+            background: #ffffff;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+            margin-bottom: 1.25rem;
+        }
+
+        .admin-order-divider {
+            height: 1px;
+            background: rgba(0, 0, 0, 0.12);
+            margin: 0.75rem 0;
+        }
+
+        .admin-order-controls {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+        }
+
+        body.dark-theme .admin-order-card {
+            background: #1e1e1e;
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        body.dark-theme .admin-order-divider {
+            background: rgba(255, 255, 255, 0.12);
+        }
     </style>
 
  
@@ -272,6 +303,10 @@
                         <h2>All orders</h2>
                         <span>Admin view of every order</span>
                     </div>
+                    <div class="admin-order-actions">
+                        <button class="btn-outline" id="exportOrdersBtn" type="button">Export as Excel</button>
+                        <button class="btn-secondary" id="deleteAllOrdersBtn" type="button">Delete all orders</button>
+                    </div>
                 </div>
                 <div id="admin_orders" class="orders-list">Loading orders...</div>
             </div>
@@ -294,6 +329,8 @@
     }
 
     document.getElementById("year").textContent = new Date().getFullYear();
+
+    let csrfToken = "";
 
     // ===== THEME / ADMIN CHECK / LOGIN STATE =====
     document.addEventListener("DOMContentLoaded", function () {
@@ -353,6 +390,7 @@
                 const loginBtn = document.getElementById("loginBtn");
                 const loggedIn = data && data.logged_in;
                 if (loggedIn) {
+                    csrfToken = data.csrf_token || "";
                     if (logoutBtn) logoutBtn.style.display = "inline-flex";
                     if (loginBtn) loginBtn.style.display = "none";
                 } else {
@@ -747,6 +785,100 @@
     }
 
     // ===== ORDERS ADMIN =====
+    async function deleteOrder(orderId) {
+        if (!csrfToken) {
+            alert('Missing CSRF token. Please refresh the page.');
+            return;
+        }
+        if (!confirm(`Delete order #${orderId}? This cannot be undone.`)) return;
+
+        try {
+            const resp = await fetch('/musicshop/api/admin_delete_order.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': csrfToken
+                },
+                credentials: 'include',
+                body: JSON.stringify({ id: orderId })
+            });
+            const data = await resp.json().catch(() => null);
+            if (!resp.ok || !data || !data.ok) {
+                alert('Delete failed: ' + ((data && data.error) || 'Unknown error'));
+                return;
+            }
+            loadAllOrders();
+        } catch (err) {
+            alert('Delete failed.');
+        }
+    }
+
+    async function deleteAllOrders() {
+        if (!csrfToken) {
+            alert('Missing CSRF token. Please refresh the page.');
+            return;
+        }
+        if (!confirm('Delete ALL orders? This cannot be undone.')) return;
+
+        try {
+            const resp = await fetch('/musicshop/api/admin_delete_all_orders.php', {
+                method: 'POST',
+                headers: { 'X-CSRF-Token': csrfToken },
+                credentials: 'include'
+            });
+            const data = await resp.json().catch(() => null);
+            if (!resp.ok || !data || !data.ok) {
+                alert('Delete failed: ' + ((data && data.error) || 'Unknown error'));
+                return;
+            }
+            loadAllOrders();
+        } catch (err) {
+            alert('Delete failed.');
+        }
+    }
+
+    async function exportOrdersCsv() {
+        const btn = document.getElementById('exportOrdersBtn');
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = 'Exporting...';
+        }
+
+        try {
+            const resp = await fetch('/musicshop/api/export_orders_csv.php', { credentials: 'include' });
+            if (!resp.ok) {
+                let message = 'Export failed.';
+                try {
+                    const data = await resp.json();
+                    if (data && data.error) message = data.error;
+                } catch (err) {
+                    const text = await resp.text();
+                    if (text) message = text;
+                }
+                alert(message);
+                return;
+            }
+
+            const blob = await resp.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            const date = new Date().toISOString().slice(0, 10);
+            a.download = `orders-${date}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+        } catch (err) {
+            alert('Export failed.');
+        } finally {
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = 'Export as Excel';
+            }
+        }
+    }
+
     async function loadAllOrders() {
         const el = document.getElementById('admin_orders');
         if (!el) return;
@@ -788,6 +920,7 @@
                         <strong>Order #${order.id}</strong>
                         <span>${order.created_at}</span>
                     </div>
+                    <div class="admin-order-divider"></div>
                     <div class="admin-order-meta">
                         <div><strong>User:</strong> ${order.username || ''} ${order.email ? '('+order.email+')' : ''}</div>
                         <div><strong>Customer:</strong> ${order.customer_name || '-'}${order.customer_email ? ' ('+order.customer_email+')' : ''}${order.customer_phone ? ', '+order.customer_phone : ''}</div>
@@ -795,9 +928,17 @@
                         ${order.customer_note ? `<div><strong>Note:</strong> ${order.customer_note}</div>` : ''}
                         <div><strong>Total:</strong> €${Number(order.total_price).toFixed(2)}</div>
                     </div>
-                    ${items ? `<ul class="admin-order-items">${items}</ul>` : ''}
+                    ${items ? `<div class="admin-order-divider"></div><ul class="admin-order-items">${items}</ul>` : ''}
+                    <div class="admin-order-controls">
+                        <button class="btn-secondary delete-order-btn" data-order-id="${order.id}" type="button">Delete order</button>
+                    </div>
                 `;
                 el.appendChild(div);
+
+                const delBtn = div.querySelector('.delete-order-btn');
+                if (delBtn) {
+                    delBtn.addEventListener('click', () => deleteOrder(order.id));
+                }
             });
         } catch (err) {
             console.error(err);
@@ -1077,6 +1218,12 @@
         const newsNextBtn = document.getElementById("adminNewsNextBtn");
         if (newsPrevBtn) newsPrevBtn.addEventListener("click", () => moveAdminNewsCarousel(-1));
         if (newsNextBtn) newsNextBtn.addEventListener("click", () => moveAdminNewsCarousel(1));
+
+        const exportBtn = document.getElementById("exportOrdersBtn");
+        if (exportBtn) exportBtn.addEventListener("click", exportOrdersCsv);
+
+        const deleteAllBtn = document.getElementById("deleteAllOrdersBtn");
+        if (deleteAllBtn) deleteAllBtn.addEventListener("click", deleteAllOrders);
 
         loadProductsList();
         loadAllOrders();

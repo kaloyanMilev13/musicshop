@@ -1,14 +1,13 @@
 <?php
-// /musicshop/api/get_all_orders.php
+// /musicshop/api/export_orders_csv.php
 session_start();
-header('Content-Type: application/json');
 
 require '_auth.php';
 require 'db.php';
 
 requireAdmin();
 
-// 2) Load orders + user info
+// 1) Load orders + user info
 $sql = "
     SELECT
         o.id,
@@ -57,10 +56,10 @@ while ($row = $res->fetch_assoc()) {
     ];
 }
 
-// 3) Load order items if there are any orders
+// 2) Load order items if there are any orders
 if (!empty($orders)) {
     $ids = array_map('intval', array_keys($orders));
-    $idsList = implode(',', $ids); // safe because all are ints
+    $idsList = implode(',', $ids);
 
     $sqlItems = "
         SELECT
@@ -79,7 +78,9 @@ if (!empty($orders)) {
     if ($resItems) {
         while ($r = $resItems->fetch_assoc()) {
             $oid = (int)$r['order_id'];
-            if (!isset($orders[$oid])) continue;
+            if (!isset($orders[$oid])) {
+                continue;
+            }
 
             $orders[$oid]["items"][] = [
                 "product_id" => (int)$r['product_id'],
@@ -91,8 +92,53 @@ if (!empty($orders)) {
     }
 }
 
-// 4) Return JSON
-echo json_encode([
-    "ok" => true,
-    "orders" => array_values($orders)
+// 3) Output CSV
+$date = date('Y-m-d');
+header('Content-Type: text/csv; charset=utf-8');
+header('Content-Disposition: attachment; filename="orders-' . $date . '.csv"');
+
+$out = fopen('php://output', 'w');
+fputcsv($out, [
+    'Order ID',
+    'User ID',
+    'Username',
+    'Account Email',
+    'Total Price',
+    'Created At',
+    'Customer Name',
+    'Customer Email',
+    'Customer Phone',
+    'Shipping Address',
+    'Shipping City',
+    'Shipping Postcode',
+    'Shipping Country',
+    'Customer Note',
+    'Items'
 ]);
+
+foreach ($orders as $order) {
+    $items = [];
+    foreach ($order['items'] as $item) {
+        $items[] = $item['name'] . ' x' . $item['quantity'] . ' @ ' . number_format($item['unit_price'], 2);
+    }
+
+    fputcsv($out, [
+        $order['id'],
+        $order['user_id'],
+        $order['username'],
+        $order['email'],
+        number_format($order['total_price'], 2),
+        $order['created_at'],
+        $order['customer_name'],
+        $order['customer_email'],
+        $order['customer_phone'],
+        $order['shipping_address'],
+        $order['shipping_city'],
+        $order['shipping_postcode'],
+        $order['shipping_country'],
+        $order['customer_note'],
+        implode('; ', $items)
+    ]);
+}
+
+fclose($out);

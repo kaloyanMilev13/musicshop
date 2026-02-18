@@ -18,6 +18,12 @@
             color: #f5f5f5 !important;
         }
 
+        .orders-header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
         .login-btn-header {
             background: #ffffff;
             color: #222222;
@@ -96,8 +102,13 @@
         <!-- LEFT: ORDER HISTORY -->
         <section class="card">
             <div class="card-header">
-                <h1>Your orders</h1>
-                <span>History of all placed orders</span>
+                <div>
+                    <h1>Your orders</h1>
+                    <span>History of all placed orders</span>
+                </div>
+                <div class="orders-header-actions">
+                    <button class="btn-outline" id="exportMyOrdersBtn" type="button">Export to Excel</button>
+                </div>
             </div>
 
             <div id="orders_list">Loading...</div>
@@ -260,6 +271,51 @@
             document.getElementById("orders_list").textContent = "Error loading orders.";
         });
     }
+
+    async function exportMyOrdersCsv() {
+        const btn = document.getElementById('exportMyOrdersBtn');
+        if (btn) {
+            btn.disabled = true;
+            btn.textContent = 'Exporting...';
+        }
+
+        try {
+            const resp = await fetch('/musicshop/api/export_my_orders_csv.php', { credentials: 'include' });
+            if (!resp.ok) {
+                let message = 'Export failed.';
+                try {
+                    const data = await resp.json();
+                    if (data && data.error) message = data.error;
+                } catch (err) {
+                    const text = await resp.text();
+                    if (text) message = text;
+                }
+                alert(message);
+                return;
+            }
+
+            const blob = await resp.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            const date = new Date().toISOString().slice(0, 10);
+            a.download = `my-orders-${date}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+        } catch (err) {
+            alert('Export failed.');
+        } finally {
+            if (btn) {
+                btn.disabled = false;
+                btn.textContent = 'Export to Excel';
+            }
+        }
+    }
+
+    const exportBtn = document.getElementById('exportMyOrdersBtn');
+    if (exportBtn) exportBtn.addEventListener('click', exportMyOrdersCsv);
 </script>
 
 <script src="js/script.js"></script>
