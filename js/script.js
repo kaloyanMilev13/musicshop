@@ -3,10 +3,12 @@ function checkLogin() {
         .then(r => r.json())
         .then(data => {
             const el = document.getElementById("userStatus");
+            if (!el) return;
             if (data.logged_in) {
-                el.innerHTML = `Logged in as user #${data.user_id} (${data.role})`;
+                const username = (data.username || "").trim() || `User #${data.user_id}`;
+                el.textContent = data.role === "admin" ? `${username} [Admin]` : username;
             } else {
-                el.innerHTML = "Not logged in.";
+                el.textContent = "Не сте влезли.";
             }
         })
         .catch(err => console.error(err));

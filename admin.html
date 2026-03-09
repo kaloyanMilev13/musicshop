@@ -63,6 +63,39 @@
         body.dark-theme .admin-order-divider {
             background: rgba(255, 255, 255, 0.12);
         }
+
+        .brand-icon {
+            width: 48px;
+            height: 48px;
+            margin-right: 0.6rem;
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .brand-icon img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: contain;
+        }
+
+        .brand-icon .brand-logo-dark {
+            display: none;
+        }
+
+        .nav-links a {
+            white-space: nowrap;
+        }
+
+        body.dark-theme .brand-icon .brand-logo-light {
+            display: none;
+        }
+
+        body.dark-theme .brand-icon .brand-logo-dark {
+            display: block;
+        }
     </style>
 
  
@@ -72,8 +105,9 @@
 <header class="site-header">
     <div class="nav-inner">
         <a href="index.html" class="brand">
-            <div class="brand-icon">
-                <span>♫</span>
+            <div class="brand-icon" aria-hidden="true">
+                <img src="images/logo_black.png" alt="" class="brand-logo-light">
+                <img src="images/logo_white.png" alt="" class="brand-logo-dark">
             </div>
             <div class="brand-text">
                 <h1>MusicShop</h1>
@@ -1277,7 +1311,7 @@
     }
 </script>
 
-<script src="js/script.js"></script>
+<script src="js/script.js?v=20260309"></script>
 </body>
 </html>
 
