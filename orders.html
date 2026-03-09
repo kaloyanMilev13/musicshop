@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bg">
 <head>
     <meta charset="UTF-8">
-    <title>Your Orders - MusicShop</title>
+    <title>Твоите поръчки - MusicShop</title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -64,34 +64,34 @@
             </div>
             <div class="brand-text">
                 <h1>MusicShop</h1>
-                <p>Instruments · Vinyls · Merch</p>
+                <p>Инструменти · Плочи · Мърч</p>
             </div>
         </a>
 
         <nav class="nav-links">
-            <a href="products.html">Products</a>
-            <a href="favorites.html">Favorites</a>
-            <a href="cart.html">Cart</a>
-            <a href="orders.html" class="active">Orders</a>
-            <a href="news.html">News</a>
-            <a href="admin.html" id="adminLink" class="admin-only">Admin</a>
+            <a href="products.html">Продукти</a>
+            <a href="favorites.html">Любими</a>
+            <a href="cart.html">Количка</a>
+            <a href="orders.html" class="active">Поръчки</a>
+            <a href="news.html">Новини</a>
+            <a href="admin.html" id="adminLink" class="admin-only">Админ</a>
         </nav>
 
         <div class="nav-secondary">
-            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+            <button class="theme-toggle" id="themeToggle" aria-label="Смени темата">
                 <span id="themeIcon">🌞</span>
             </button>
 
-            <button class="login-btn-header" id="loginBtn" onclick="window.location='login.html'" style="display:none">Log In</button>
+            <button class="login-btn-header" id="loginBtn" onclick="window.location='login.html'" style="display:none">Вход</button>
 
             <div class="user-status-pill">
                 <div class="user-status-dot"></div>
-                <div id="userStatus">Not logged in.</div>
+                <div id="userStatus">Не сте влезли.</div>
             </div>
 
             <button class="logout-btn" id="logoutBtn" style="display:none" onclick="logout()">
                 <span>⏏</span>
-                Logout
+                Изход
             </button>
         </div>
     </div>
@@ -103,31 +103,31 @@
         <section class="card">
             <div class="card-header">
                 <div>
-                    <h1>Your orders</h1>
-                    <span>History of all placed orders</span>
+                    <h1>Твоите поръчки</h1>
+                    <span>История на всички направени поръчки</span>
                 </div>
                 <div class="orders-header-actions">
-                    <button class="btn-outline" id="exportMyOrdersBtn" type="button">Export to Excel</button>
+                    <button class="btn-outline" id="exportMyOrdersBtn" type="button">Експортирай в Excel</button>
                 </div>
             </div>
 
-            <div id="orders_list">Loading...</div>
+            <div id="orders_list">Зареждане...</div>
         </section>
 
         <!-- RIGHT: CTA -->
         <aside class="card orders-side-card">
             <div class="card-header">
-                <h2>Make a new order</h2>
+                <h2>Направи нова поръчка</h2>
             </div>
             <p>
-                Ready for something new? Add items to your cart and place a fresh order.
+                Готов ли си за нещо ново? Добави артикули в количката и направи нова поръчка.
             </p>
             <button type="button" class="btn-primary" onclick="window.location.href='cart.html'">
-                Go to cart
+                Към количката
             </button>
 
             <p class="orders-empty-hint">
-                Tip: You can always review your recent orders here after checkout.
+                Съвет: След завършване на поръчка винаги можеш да я прегледаш тук.
             </p>
         </aside>
     </div>
@@ -135,8 +135,8 @@
 
 <footer>
     <div class="footer-inner">
-        <span>© <span id="year"></span> MusicShop. All rights reserved.</span>
-        <span>Built for your diploma project · <a href="admin.html" id="adminFooterLink" class="admin-only">Admin panel</a></span>
+        <span>© <span id="year"></span> MusicShop. Всички права запазени.</span>
+        <span id="footerSecondary">Нямаш профил? <a href="register.html">Създай такъв</a></span>
     </div>
 </footer>
 
@@ -194,19 +194,24 @@
             .then(r => r.ok ? r.json() : null)
             .then(data => {
                 const loginBtn = document.getElementById("loginBtn");
+                const footerSecondary = document.getElementById("footerSecondary");
                 const loggedIn = data && data.logged_in;
                 if (loggedIn) {
                     if (logoutBtn) logoutBtn.style.display = "inline-flex";
                     if (loginBtn) loginBtn.style.display = "none";
+                    if (footerSecondary) footerSecondary.textContent = "Калоян Милев - Димпломен Проект";
                 } else {
                     if (logoutBtn) logoutBtn.style.display = "none";
                     if (loginBtn) loginBtn.style.display = "inline-flex";
+                    if (footerSecondary) footerSecondary.innerHTML = 'Нямаш профил? <a href="register.html">Създай такъв</a>';
                 }
             })
             .catch(() => {
                 if (logoutBtn) logoutBtn.style.display = "none";
                 const loginBtn = document.getElementById("loginBtn");
+                const footerSecondary = document.getElementById("footerSecondary");
                 if (loginBtn) loginBtn.style.display = "inline-flex";
+                if (footerSecondary) footerSecondary.innerHTML = 'Нямаш профил? <a href="register.html">Създай такъв</a>';
             });
 
         // Load orders once everything is ready
@@ -224,12 +229,12 @@
             container.innerHTML = "";
 
             if (!data.ok) {
-                container.textContent = "Error loading orders: " + (data.error || "");
+                container.textContent = "Грешка при зареждане на поръчките: " + (data.error || "");
                 return;
             }
 
             if (!data.orders || data.orders.length === 0) {
-                container.innerHTML = "<p>You have no orders yet.</p>";
+                container.innerHTML = "<p>Все още нямаш поръчки.</p>";
                 return;
             }
 
@@ -248,18 +253,18 @@
 
                 div.innerHTML = `
                     <div class="order-header-row">
-                        <div class="order-id">Order #${order.id}</div>
+                        <div class="order-id">Поръчка #${order.id}</div>
                         <div class="order-date">${order.created_at}</div>
                     </div>
                     <div class="order-meta">
-                        <div><strong>Name:</strong> ${order.customer_name || '-'}</div>
-                        <div><strong>Address:</strong> ${order.shipping_address || ''}, ${order.shipping_city || ''} ${order.shipping_postcode || ''}, ${order.shipping_country || ''}</div>
+                        <div><strong>Име:</strong> ${order.customer_name || '-'}</div>
+                        <div><strong>Адрес:</strong> ${order.shipping_address || ''}, ${order.shipping_city || ''} ${order.shipping_postcode || ''}, ${order.shipping_country || ''}</div>
                     </div>
                     <ul class="order-items">
                         ${itemsHtml}
                     </ul>
                     <div class="order-total">
-                        Total: €${Number(order.total_price).toFixed(2)}
+                        Общо: €${Number(order.total_price).toFixed(2)}
                     </div>
                 `;
 
@@ -268,7 +273,7 @@
         })
         .catch(err => {
             console.error(err);
-            document.getElementById("orders_list").textContent = "Error loading orders.";
+            document.getElementById("orders_list").textContent = "Грешка при зареждане на поръчките.";
         });
     }
 
@@ -276,13 +281,13 @@
         const btn = document.getElementById('exportMyOrdersBtn');
         if (btn) {
             btn.disabled = true;
-            btn.textContent = 'Exporting...';
+            btn.textContent = 'Експортиране...';
         }
 
         try {
             const resp = await fetch('/musicshop/api/export_my_orders_csv.php', { credentials: 'include' });
             if (!resp.ok) {
-                let message = 'Export failed.';
+                let message = 'Експортирането е неуспешно.';
                 try {
                     const data = await resp.json();
                     if (data && data.error) message = data.error;
@@ -305,11 +310,11 @@
             a.remove();
             URL.revokeObjectURL(url);
         } catch (err) {
-            alert('Export failed.');
+            alert('Експортирането е неуспешно.');
         } finally {
             if (btn) {
                 btn.disabled = false;
-                btn.textContent = 'Export to Excel';
+                btn.textContent = 'Експортирай в Excel';
             }
         }
     }

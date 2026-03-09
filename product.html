@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bg">
 <head>
     <meta charset="UTF-8">
-    <title>Product - MusicShop</title>
+    <title>Продукт - MusicShop</title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -54,34 +54,34 @@
             </div>
             <div class="brand-text">
                 <h1>MusicShop</h1>
-                <p>Instruments · Vinyls · Merch</p>
+                <p>Инструменти · Плочи · Мърч</p>
             </div>
         </a>
 
         <nav class="nav-links">
-            <a href="products.html" class="active">Products</a>
-            <a href="favorites.html">Favorites</a>
-            <a href="cart.html">Cart</a>
-            <a href="orders.html">Orders</a>
-            <a href="news.html">News</a>
-            <a href="admin.html" id="adminLink" class="admin-only">Admin</a>
+            <a href="products.html" class="active">Продукти</a>
+            <a href="favorites.html">Любими</a>
+            <a href="cart.html">Количка</a>
+            <a href="orders.html">Поръчки</a>
+            <a href="news.html">Новини</a>
+            <a href="admin.html" id="adminLink" class="admin-only">Админ</a>
         </nav>
 
         <div class="nav-secondary">
-            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+            <button class="theme-toggle" id="themeToggle" aria-label="Смени темата">
                 <span id="themeIcon">🌞</span>
             </button>
 
-            <button class="login-btn-header" id="loginBtn" onclick="window.location='login.html'" style="display:none">Log In</button>
+            <button class="login-btn-header" id="loginBtn" onclick="window.location='login.html'" style="display:none">Вход</button>
 
             <div class="user-status-pill">
                 <div class="user-status-dot"></div>
-                <div id="userStatus">Not logged in.</div>
+                <div id="userStatus">Не сте влезли.</div>
             </div>
 
             <button class="logout-btn" id="logoutBtn" style="display:none" onclick="logout()">
                 <span>⏏</span>
-                Logout
+                Изход
             </button>
         </div>
     </div>
@@ -96,7 +96,7 @@
                 </div>
                 <div class="product-detail-body">
                     <div class="card-header">
-                        <h1 id="productTitle">Loading...</h1>
+                        <h1 id="productTitle">Зареждане...</h1>
                         <span id="productMeta"></span>
                     </div>
 
@@ -107,8 +107,8 @@
                     <div class="product-meta-row" id="productMetaRow"></div>
 
                     <div class="product-actions" style="margin-top:1rem;">
-                        <button class="btn-secondary" id="productFavBtn">Add to favorites</button>
-                        <button class="btn-primary" id="productCartBtn">Add to cart</button>
+                        <button class="btn-secondary" id="productFavBtn">Добави в любими</button>
+                        <button class="btn-primary" id="productCartBtn">Добави в количката</button>
                     </div>
                 </div>
             </div>
@@ -118,8 +118,8 @@
 
 <footer>
     <div class="footer-inner">
-        <span>© <span id="year"></span> MusicShop. All rights reserved.</span>
-        <span>Need an account? <a href="register.html">Create one</a></span>
+        <span>© <span id="year"></span> MusicShop. Всички права запазени.</span>
+        <span id="footerSecondary">Нямаш профил? <a href="register.html">Създай такъв</a></span>
     </div>
 </footer>
 
@@ -142,7 +142,7 @@
         const imgEl = document.getElementById("productImage");
         const metaRow = document.getElementById("productMetaRow");
 
-        if (titleEl) titleEl.textContent = p.name || "Product";
+        if (titleEl) titleEl.textContent = p.name || "Продукт";
 
         const metaParts = [];
         if (p.artist) metaParts.push(p.artist);
@@ -151,12 +151,12 @@
         if (p.music_genre) metaParts.push(p.music_genre);
         if (metaEl) metaEl.textContent = metaParts.join(" · ");
 
-        if (descEl) descEl.textContent = p.description || "No description available.";
+        if (descEl) descEl.textContent = p.description || "Няма налично описание.";
 
         const imageUrl = p.image_url || "images/products/placeholder.jpg";
         if (imgEl) {
             imgEl.src = imageUrl;
-            imgEl.alt = p.name || "Product image";
+            imgEl.alt = p.name || "Изображение на продукт";
         }
 
         const priceLabel = document.getElementById("productPriceLabel");
@@ -165,13 +165,13 @@
         if (metaRow) {
             metaRow.innerHTML = "";
             const attrs = [];
-            if (p.category) attrs.push("Category: " + p.category);
-            if (p.genre) attrs.push("Subcategory: " + p.genre);
-            if (p.music_genre) attrs.push("Music genre: " + p.music_genre);
-            if (p.format) attrs.push("Format: " + p.format);
-            if (p.color) attrs.push("Color: " + p.color);
-            if (p.size) attrs.push("Size: " + p.size);
-            if (p.stock !== undefined) attrs.push("Stock: " + p.stock);
+            if (p.category) attrs.push("Категория: " + p.category);
+            if (p.genre) attrs.push("Подкатегория: " + p.genre);
+            if (p.music_genre) attrs.push("Музикален жанр: " + p.music_genre);
+            if (p.format) attrs.push("Формат: " + p.format);
+            if (p.color) attrs.push("Цвят: " + p.color);
+            if (p.size) attrs.push("Размер: " + p.size);
+            if (p.stock !== undefined) attrs.push("Наличност: " + p.stock);
 
             attrs.forEach(text => {
                 const span = document.createElement("span");
@@ -186,7 +186,7 @@
         if (favBtn) {
             let isFavorite = Number(p.is_favorite) === 1;
             const setFavLabel = () => {
-                favBtn.textContent = isFavorite ? "Remove from favorites" : "Add to favorites";
+                favBtn.textContent = isFavorite ? "Премахни от любими" : "Добави в любими";
             };
             setFavLabel();
 
@@ -223,7 +223,7 @@
     function loadProduct() {
         const id = getQueryParam("id");
         if (!id) {
-            document.getElementById("productTitle").textContent = "No product selected.";
+            document.getElementById("productTitle").textContent = "Няма избран продукт.";
             return;
         }
 
@@ -231,13 +231,13 @@
             .then(r => r.json())
             .then(data => {
                 if (!data.ok || !data.products || data.products.length === 0) {
-                    document.getElementById("productTitle").textContent = "Product not found.";
+                    document.getElementById("productTitle").textContent = "Продуктът не е намерен.";
                     return;
                 }
                 renderProduct(data.products[0]);
             })
             .catch(() => {
-                document.getElementById("productTitle").textContent = "Error loading product.";
+                document.getElementById("productTitle").textContent = "Грешка при зареждане на продукта.";
             });
     }
 
@@ -262,7 +262,7 @@
             cart.push({ id, name, price: Number(price), quantity: 1 });
         }
         saveCart(cart);
-        alert("Added to cart.");
+        alert("Добавено в количката.");
     }
 
     function addFavorite(productId) {
@@ -275,14 +275,14 @@
         .then(r => r.json())
         .then(data => {
             if (!data.ok) {
-                alert("Failed: " + (data.error || "Unknown error"));
+                alert("Неуспешно: " + (data.error || "Неизвестна грешка"));
                 return false;
             }
-            alert("Added to favorites");
+            alert("Добавено в любими");
             return true;
         })
         .catch(() => {
-            alert("Error adding to favorites.");
+            alert("Грешка при добавяне в любими.");
             return false;
         });
     }
@@ -297,14 +297,14 @@
         .then(r => r.json())
         .then(data => {
             if (!data.ok) {
-                alert("Failed: " + (data.error || "Unknown error"));
+                alert("Неуспешно: " + (data.error || "Неизвестна грешка"));
                 return false;
             }
-            alert("Removed from favorites");
+            alert("Премахнато от любими");
             return true;
         })
         .catch(() => {
-            alert("Error removing from favorites.");
+            alert("Грешка при премахване от любими.");
             return false;
         });
     }
@@ -314,6 +314,7 @@
         const themeIcon = document.getElementById("themeIcon");
         const logoutBtn = document.getElementById("logoutBtn");
         const loginBtn = document.getElementById("loginBtn");
+        const footerSecondary = document.getElementById("footerSecondary");
 
         const savedTheme = localStorage.getItem("theme");
         if (savedTheme === "dark") {
@@ -337,14 +338,17 @@
                 if (loggedIn) {
                     if (logoutBtn) logoutBtn.style.display = "inline-flex";
                     if (loginBtn) loginBtn.style.display = "none";
+                    if (footerSecondary) footerSecondary.textContent = "Калоян Милев - Димпломен Проект";
                 } else {
                     if (logoutBtn) logoutBtn.style.display = "none";
                     if (loginBtn) loginBtn.style.display = "inline-flex";
+                    if (footerSecondary) footerSecondary.innerHTML = 'Нямаш профил? <a href="register.html">Създай такъв</a>';
                 }
             })
             .catch(() => {
                 if (logoutBtn) logoutBtn.style.display = "none";
                 if (loginBtn) loginBtn.style.display = "inline-flex";
+                if (footerSecondary) footerSecondary.innerHTML = 'Нямаш профил? <a href="register.html">Създай такъв</a>';
             });
 
         document.getElementById("year").textContent = new Date().getFullYear();

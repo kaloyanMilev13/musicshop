@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bg">
 <head>
     <meta charset="UTF-8">
-    <title>Login - MusicShop</title>
+    <title>Вход - MusicShop</title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
@@ -41,15 +41,15 @@
             </div>
             <div class="brand-text">
                 <h1>MusicShop</h1>
-                <p>Instruments · Vinyls · Merch</p>
+                <p>Инструменти · Плочи · Мърч</p>
             </div>
         </a>
 
         <div class="nav-right">
-            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+            <button class="theme-toggle" id="themeToggle" aria-label="Смени темата">
                 <span id="themeIcon">🌞</span>
             </button>
-            <a href="index.html">← Back to home</a>
+            <a href="index.html">← Назад към началото</a>
         </div>
     </div>
 </header>
@@ -58,24 +58,24 @@
     <div class="login-wrapper">
         <!-- Left: short pitch -->
         <section class="login-hero">
-            <h2>Welcome back</h2>
-            <p>Log in to manage your favorites, view your cart, and track your orders.</p>
+            <h2>Добре дошли отново</h2>
+            <p>Влез, за да управляваш любимите си, да виждаш количката си и да следиш поръчките си.</p>
             <ul>
-                <li>Save instruments, vinyls and merch you love.</li>
-                <li>Access your cart and orders from any device.</li>
-                <li>Stay updated with the latest music news.</li>
+                <li>Запази инструменти, плочи и мърч, които харесваш.</li>
+                <li>Достъпвай количката и поръчките си от всяко устройство.</li>
+                <li>Бъди в крак с най-новите музикални новини.</li>
             </ul>
         </section>
 
         <!-- Right: login card -->
         <section class="login-card">
-            <h2>Sign in</h2>
-            <p class="subtitle">Use the email and password you registered with.</p>
+            <h2>Вход</h2>
+            <p class="subtitle">Използвай имейла и паролата, с които си се регистрирал.</p>
 
             <div id="errorBox"></div>
 
             <div class="form-group">
-                <label for="email">Email</label>
+                <label for="email">Имейл</label>
                 <input
                     type="text"
                     id="email"
@@ -85,20 +85,20 @@
             </div>
 
             <div class="form-group">
-                <label for="password">Password</label>
+                <label for="password">Парола</label>
                 <input
                     type="password"
                     id="password"
-                    placeholder="Enter your password"
+                    placeholder="Въведи паролата си"
                     autocomplete="current-password"
                 >
             </div>
 
-            <button class="login-btn" onclick="doLogin()">Log in</button>
+            <button class="login-btn" onclick="doLogin()">Вход</button>
 
             <div class="login-footer">
-                Don’t have an account?
-                <a href="register.html">Register here</a>
+                Нямаш профил?
+                <a href="register.html">Регистрирай се тук</a>
             </div>
         </section>
     </div>
@@ -106,8 +106,8 @@
 
 <footer>
     <div class="footer-inner">
-        <span>© <span id="year"></span> MusicShop. All rights reserved.</span>
-        <span>Need an account? <a href="register.html">Create one</a></span>
+        <span>© <span id="year"></span> MusicShop. Всички права запазени.</span>
+        <span id="footerSecondary">Нямаш профил? <a href="register.html">Създай такъв</a></span>
     </div>
 </footer>
 
@@ -116,6 +116,7 @@
     document.addEventListener("DOMContentLoaded", function () {
         const themeToggle = document.getElementById("themeToggle");
         const themeIcon = document.getElementById("themeIcon");
+        const footerSecondary = document.getElementById("footerSecondary");
 
         const savedTheme = localStorage.getItem("theme");
         if (savedTheme === "dark") {
@@ -136,6 +137,20 @@
         }
 
         document.getElementById("year").textContent = new Date().getFullYear();
+
+        fetch("/musicshop/api/whoami.php", { credentials: "include" })
+            .then(r => r.ok ? r.json() : null)
+            .then(data => {
+                const loggedIn = data && data.logged_in;
+                if (loggedIn) {
+                    if (footerSecondary) footerSecondary.textContent = "Калоян Милев - Димпломен Проект";
+                } else {
+                    if (footerSecondary) footerSecondary.innerHTML = 'Нямаш профил? <a href="register.html">Създай такъв</a>';
+                }
+            })
+            .catch(() => {
+                if (footerSecondary) footerSecondary.innerHTML = 'Нямаш профил? <a href="register.html">Създай такъв</a>';
+            });
     });
 
     // Same login logic as before
@@ -147,7 +162,7 @@
         errorBox.style.display = "none";
 
         if (!email || !password) {
-            errorBox.textContent = "Please fill in all fields.";
+            errorBox.textContent = "Моля, попълни всички полета.";
             errorBox.style.display = "block";
             return;
         }
@@ -161,7 +176,7 @@
         .then(r => r.json())
         .then(data => {
             if (!data.ok) {
-                errorBox.textContent = data.error || "Login failed.";
+                errorBox.textContent = data.error || "Входът е неуспешен.";
                 errorBox.style.display = "block";
             } else {
                 window.location.href = "index.html";
@@ -169,7 +184,7 @@
         })
         .catch(err => {
             console.error(err);
-            errorBox.textContent = "Network or server error.";
+            errorBox.textContent = "Мрежова или сървърна грешка.";
             errorBox.style.display = "block";
         });
     }

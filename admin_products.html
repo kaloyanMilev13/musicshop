@@ -113,7 +113,7 @@
 <footer>
     <div class="footer-inner">
         <span>© <span id="year"></span> MusicShop. All rights reserved.</span>
-        <span>Built for your diploma project · <a href="admin.html" id="adminFooterLink" class="admin-only">Admin panel</a></span>
+        <span id="footerSecondary">Нямаш профил? <a href="register.html">Създай такъв</a></span>
     </div>
 </footer>
 
@@ -282,19 +282,24 @@
             .then(r => r.ok ? r.json() : null)
             .then(data => {
                 const loginBtn = document.getElementById("loginBtn");
+                const footerSecondary = document.getElementById("footerSecondary");
                 const loggedIn = data && data.logged_in;
                 if (loggedIn) {
                     if (logoutBtn) logoutBtn.style.display = "inline-flex";
                     if (loginBtn) loginBtn.style.display = "none";
+                    if (footerSecondary) footerSecondary.textContent = "Калоян Милев - Димпломен Проект";
                 } else {
                     if (logoutBtn) logoutBtn.style.display = "none";
                     if (loginBtn) loginBtn.style.display = "inline-flex";
+                    if (footerSecondary) footerSecondary.innerHTML = 'Нямаш профил? <a href="register.html">Създай такъв</a>';
                 }
             })
             .catch(() => {
                 if (logoutBtn) logoutBtn.style.display = "none";
                 const loginBtn = document.getElementById("loginBtn");
+                const footerSecondary = document.getElementById("footerSecondary");
                 if (loginBtn) loginBtn.style.display = "inline-flex";
+                if (footerSecondary) footerSecondary.innerHTML = 'Нямаш профил? <a href="register.html">Създай такъв</a>';
             });
 
         const searchInput = document.getElementById("adminProductSearch");

@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bg">
 <head>
     <meta charset="UTF-8">
-    <title>News Story - MusicShop</title>
+    <title>Новина - MusicShop</title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -44,34 +44,34 @@
             </div>
             <div class="brand-text">
                 <h1>MusicShop</h1>
-                <p>Instruments · Vinyls · Merch</p>
+                <p>Инструменти · Плочи · Мърч</p>
             </div>
         </a>
 
         <nav class="nav-links">
-            <a href="products.html">Products</a>
-            <a href="favorites.html">Favorites</a>
-            <a href="cart.html">Cart</a>
-            <a href="orders.html">Orders</a>
-            <a href="news.html" class="active">News</a>
-            <a href="admin.html" id="adminLink" class="admin-only">Admin</a>
+            <a href="products.html">Продукти</a>
+            <a href="favorites.html">Любими</a>
+            <a href="cart.html">Количка</a>
+            <a href="orders.html">Поръчки</a>
+            <a href="news.html" class="active">Новини</a>
+            <a href="admin.html" id="adminLink" class="admin-only">Админ</a>
         </nav>
 
         <div class="nav-secondary">
-            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+            <button class="theme-toggle" id="themeToggle" aria-label="Смени темата">
                 <span id="themeIcon">🌞</span>
             </button>
 
-            <button class="login-btn-header" id="loginBtn" onclick="window.location='login.html'" style="display:none">Log In</button>
+            <button class="login-btn-header" id="loginBtn" onclick="window.location='login.html'" style="display:none">Вход</button>
 
             <div class="user-status-pill">
                 <div class="user-status-dot"></div>
-                <div id="userStatus">Not logged in.</div>
+                <div id="userStatus">Не сте влезли.</div>
             </div>
 
             <button class="logout-btn" id="logoutBtn" style="display:none" onclick="logout()">
                 <span>⏏</span>
-                Logout
+                Изход
             </button>
         </div>
     </div>
@@ -81,15 +81,15 @@
     <div class="page-wrapper">
         <section class="card news-article">
             <div class="news-article-top">
-                <a class="news-crumb" href="news.html">← Back to newsroom</a>
-                <div class="news-kicker">MusicShop News</div>
-                <h1 id="detail_title">Loading...</h1>
+                <a class="news-crumb" href="news.html">← Назад към новините</a>
+                <div class="news-kicker">Новини от MusicShop</div>
+                <h1 id="detail_title">Зареждане...</h1>
                 <p class="news-subtitle" id="detail_subtitle"></p>
                 <div class="news-article-meta" id="detail_meta"></div>
             </div>
 
             <div class="news-article-media" id="detail_image_wrapper">
-                <img id="detail_image" src="images/news/placeholder.jpg" alt="News cover">
+                <img id="detail_image" src="images/news/placeholder.jpg" alt="Корица на новина">
             </div>
 
             <div class="news-article-body">
@@ -101,8 +101,8 @@
 
 <footer>
     <div class="footer-inner">
-        <span>© <span id="year"></span> MusicShop. All rights reserved.</span>
-        <span>Built for your diploma project · <a href="admin.html" id="adminFooterLink" class="admin-only">Admin panel</a></span>
+        <span>© <span id="year"></span> MusicShop. Всички права запазени.</span>
+        <span id="footerSecondary">Нямаш профил? <a href="register.html">Създай такъв</a></span>
     </div>
 </footer>
 
@@ -133,7 +133,7 @@
         if (!text) return "";
         const words = text.trim().split(/\s+/).length;
         const minutes = Math.max(1, Math.round(words / 200));
-        return `${minutes} min read`;
+        return `${minutes} мин четене`;
     }
 
     function formatNewsMeta(news) {
@@ -193,19 +193,24 @@
             .then(r => r.ok ? r.json() : null)
             .then(data => {
                 const loginBtn = document.getElementById("loginBtn");
+                const footerSecondary = document.getElementById("footerSecondary");
                 const loggedIn = data && data.logged_in;
                 if (loggedIn) {
                     if (logoutBtn) logoutBtn.style.display = "inline-flex";
                     if (loginBtn) loginBtn.style.display = "none";
+                    if (footerSecondary) footerSecondary.textContent = "Калоян Милев - Димпломен Проект";
                 } else {
                     if (logoutBtn) logoutBtn.style.display = "none";
                     if (loginBtn) loginBtn.style.display = "inline-flex";
+                    if (footerSecondary) footerSecondary.innerHTML = 'Нямаш профил? <a href="register.html">Създай такъв</a>';
                 }
             })
             .catch(() => {
                 if (logoutBtn) logoutBtn.style.display = "none";
                 const loginBtn = document.getElementById("loginBtn");
+                const footerSecondary = document.getElementById("footerSecondary");
                 if (loginBtn) loginBtn.style.display = "inline-flex";
+                if (footerSecondary) footerSecondary.innerHTML = 'Нямаш профил? <a href="register.html">Създай такъв</a>';
             });
 
         loadNewsDetail();
@@ -222,10 +227,10 @@
         const newsId = params.get("id");
 
         if (!newsId) {
-            if (titleEl) titleEl.textContent = "Story not found";
+            if (titleEl) titleEl.textContent = "Новината не е намерена";
             if (metaEl) metaEl.textContent = "";
             if (subtitleEl) subtitleEl.textContent = "";
-            if (contentEl) contentEl.textContent = "We could not find this news article.";
+            if (contentEl) contentEl.textContent = "Не успяхме да намерим тази новина.";
             return;
         }
 
@@ -233,34 +238,34 @@
             .then(r => r.json())
             .then(data => {
                 if (!data.ok || !Array.isArray(data.news)) {
-                    throw new Error("Invalid response");
+                    throw new Error("Невалиден отговор");
                 }
 
                 const news = data.news.find(item => String(item.id) === String(newsId));
                 if (!news) {
-                    if (titleEl) titleEl.textContent = "Story not found";
+                    if (titleEl) titleEl.textContent = "Новината не е намерена";
                     if (metaEl) metaEl.textContent = "";
                     if (subtitleEl) subtitleEl.textContent = "";
-                    if (contentEl) contentEl.textContent = "We could not find this news article.";
+                    if (contentEl) contentEl.textContent = "Не успяхме да намерим тази новина.";
                     return;
                 }
 
-                document.title = `${news.title || "News Story"} - MusicShop`;
+                document.title = `${news.title || "Новина"} - MusicShop`;
 
-                if (titleEl) titleEl.textContent = news.title || "(No title)";
+                if (titleEl) titleEl.textContent = news.title || "(Без заглавие)";
                 if (metaEl) metaEl.textContent = formatNewsMeta(news);
                 if (subtitleEl) subtitleEl.textContent = buildExcerpt(news.content, 180);
                 if (contentEl) contentEl.textContent = news.content || "";
                 if (imageEl) {
                     imageEl.src = getNewsImageUrl(news);
-                    imageEl.alt = news.title ? `${news.title} cover` : "News cover";
+                    imageEl.alt = news.title ? `${news.title} корица` : "Корица на новина";
                 }
             })
             .catch(() => {
-                if (titleEl) titleEl.textContent = "Story not found";
+                if (titleEl) titleEl.textContent = "Новината не е намерена";
                 if (metaEl) metaEl.textContent = "";
                 if (subtitleEl) subtitleEl.textContent = "";
-                if (contentEl) contentEl.textContent = "We could not load this news article.";
+                if (contentEl) contentEl.textContent = "Не успяхме да заредим тази новина.";
             });
     }
 </script>

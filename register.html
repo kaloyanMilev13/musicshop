@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bg">
 <head>
     <meta charset="UTF-8">
-    <title>Register - MusicShop</title>
+    <title>Регистрация - MusicShop</title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -38,15 +38,15 @@
             </div>
             <div class="brand-text">
                 <h1>MusicShop</h1>
-                <p>Instruments · Vinyls · Merch</p>
+                <p>Инструменти · Плочи · Мърч</p>
             </div>
         </a>
 
         <div class="nav-right">
-            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+            <button class="theme-toggle" id="themeToggle" aria-label="Смени темата">
                 <span id="themeIcon">🌞</span>
             </button>
-            <a href="index.html">← Back to home</a>
+            <a href="index.html">← Назад към началото</a>
         </div>
     </div>
 </header>
@@ -55,34 +55,34 @@
     <div class="login-wrapper">
         <!-- Left: pitch -->
         <section class="login-hero">
-            <h2>Join MusicShop</h2>
-            <p>Create an account to save favorites, place orders, and follow the latest news.</p>
+            <h2>Присъедини се към MusicShop</h2>
+            <p>Създай профил, за да запазваш любими, да правиш поръчки и да следиш последните новини.</p>
             <ul>
-                <li>Track your orders and reorder in one click.</li>
-                <li>Favorite instruments, vinyls, and merch.</li>
-                <li>Stay up to date with new drops and events.</li>
+                <li>Следи поръчките си и поръчвай отново с един клик.</li>
+                <li>Добавяй в любими инструменти, плочи и мърч.</li>
+                <li>Бъди в крак с нови попълнения и събития.</li>
             </ul>
         </section>
 
         <!-- Right: register card -->
         <section class="login-card">
-            <h2>Create account</h2>
-            <p class="subtitle">It only takes a moment.</p>
+            <h2>Създай профил</h2>
+            <p class="subtitle">Отнема само момент.</p>
 
             <div id="errorBox"></div>
 
             <div class="form-group">
-                <label for="username">Username</label>
+                <label for="username">Потребителско име</label>
                 <input
                     type="text"
                     id="username"
-                    placeholder="Your display name"
+                    placeholder="Твоето видимо име"
                     autocomplete="username"
                 >
             </div>
 
             <div class="form-group">
-                <label for="email">Email</label>
+                <label for="email">Имейл</label>
                 <input
                     type="email"
                     id="email"
@@ -92,20 +92,20 @@
             </div>
 
             <div class="form-group">
-                <label for="password">Password</label>
+                <label for="password">Парола</label>
                 <input
                     type="password"
                     id="password"
-                    placeholder="Create a password"
+                    placeholder="Създай парола"
                     autocomplete="new-password"
                 >
             </div>
 
-            <button class="login-btn" onclick="doRegister()">Sign up</button>
+            <button class="login-btn" onclick="doRegister()">Регистрация</button>
 
             <div class="login-footer">
-                Already have an account?
-                <a href="login.html">Log in here</a>
+                Вече имаш профил?
+                <a href="login.html">Влез тук</a>
             </div>
         </section>
     </div>
@@ -113,8 +113,8 @@
 
 <footer>
     <div class="footer-inner">
-        <span>© <span id="year"></span> MusicShop. All rights reserved.</span>
-        <span>Need help? <a href="login.html">Log in</a></span>
+        <span>© <span id="year"></span> MusicShop. Всички права запазени.</span>
+        <span id="footerSecondary">Нямаш профил? <a href="register.html">Създай такъв</a></span>
     </div>
 </footer>
 
@@ -122,6 +122,7 @@
     document.addEventListener("DOMContentLoaded", function () {
         const themeToggle = document.getElementById("themeToggle");
         const themeIcon = document.getElementById("themeIcon");
+        const footerSecondary = document.getElementById("footerSecondary");
         const savedTheme = localStorage.getItem("theme");
         if (savedTheme === "dark") {
             document.body.classList.add("dark-theme");
@@ -141,6 +142,20 @@
         }
 
         document.getElementById("year").textContent = new Date().getFullYear();
+
+        fetch("/musicshop/api/whoami.php", { credentials: "include" })
+            .then(r => r.ok ? r.json() : null)
+            .then(data => {
+                const loggedIn = data && data.logged_in;
+                if (loggedIn) {
+                    if (footerSecondary) footerSecondary.textContent = "Калоян Милев - Димпломен Проект";
+                } else {
+                    if (footerSecondary) footerSecondary.innerHTML = 'Нямаш профил? <a href="register.html">Създай такъв</a>';
+                }
+            })
+            .catch(() => {
+                if (footerSecondary) footerSecondary.innerHTML = 'Нямаш профил? <a href="register.html">Създай такъв</a>';
+            });
     });
 
     function doRegister() {
@@ -152,7 +167,7 @@
         errorBox.style.display = "none";
 
         if (!username || !email || !password) {
-            errorBox.textContent = "Please fill in all fields.";
+            errorBox.textContent = "Моля, попълни всички полета.";
             errorBox.style.display = "block";
             return;
         }
@@ -166,7 +181,7 @@
         .then(r => r.json())
         .then(data => {
             if (!data.ok) {
-                errorBox.textContent = data.error || "Registration failed.";
+                errorBox.textContent = data.error || "Регистрацията е неуспешна.";
                 errorBox.style.display = "block";
             } else {
                 window.location.href = "login.html";
@@ -174,7 +189,7 @@
         })
         .catch(err => {
             console.error(err);
-            errorBox.textContent = "Network or server error.";
+            errorBox.textContent = "Мрежова или сървърна грешка.";
             errorBox.style.display = "block";
         });
     }

@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bg">
 <head>
     <meta charset="UTF-8">
-    <title>Cart - MusicShop</title>
+    <title>Количка - MusicShop</title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -58,34 +58,34 @@
             </div>
             <div class="brand-text">
                 <h1>MusicShop</h1>
-                <p>Instruments · Vinyls · Merch</p>
+                <p>Инструменти · Плочи · Мърч</p>
             </div>
         </a>
 
         <nav class="nav-links">
-            <a href="products.html">Products</a>
-            <a href="favorites.html">Favorites</a>
-            <a href="cart.html" class="active">Cart</a>
-            <a href="orders.html">Orders</a>
-            <a href="news.html">News</a>
-            <a href="admin.html" id="adminLink" class="admin-only">Admin</a>
+            <a href="products.html">Продукти</a>
+            <a href="favorites.html">Любими</a>
+            <a href="cart.html" class="active">Количка</a>
+            <a href="orders.html">Поръчки</a>
+            <a href="news.html">Новини</a>
+            <a href="admin.html" id="adminLink" class="admin-only">Админ</a>
         </nav>
 
         <div class="nav-secondary">
-            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+            <button class="theme-toggle" id="themeToggle" aria-label="Смени темата">
                 <span id="themeIcon">🌞</span>
             </button>
 
-            <button class="login-btn-header" id="loginBtn" onclick="window.location='login.html'" style="display:none">Log In</button>
+            <button class="login-btn-header" id="loginBtn" onclick="window.location='login.html'" style="display:none">Вход</button>
 
             <div class="user-status-pill">
                 <div class="user-status-dot"></div>
-                <div id="userStatus">Not logged in.</div>
+                <div id="userStatus">Не сте влезли.</div>
             </div>
 
             <button class="logout-btn" id="logoutBtn" style="display:none" onclick="logout()">
                 <span>⏏</span>
-                Logout
+                Изход
             </button>
         </div>
     </div>
@@ -96,8 +96,8 @@
         <!-- LEFT: CART CONTENT -->
         <section class="card" id="cart_section">
             <div class="card-header">
-                <h1>Your cart</h1>
-                <span>Review and adjust your items</span>
+                <h1>Твоята количка</h1>
+                <span>Прегледай и коригирай артикулите си</span>
             </div>
 
             <div id="cart_list"></div>
@@ -105,10 +105,10 @@
 
             <div class="cart-footer-actions">
                 <button type="button" class="btn-outline" onclick="window.location.href='orders.html'">
-                    View recent orders
+                    Виж последните поръчки
                 </button>
                 <button type="button" class="btn-outline" onclick="window.location.href='products.html'">
-                    Browse products
+                    Разгледай продукти
                 </button>
             </div>
         </section>
@@ -116,13 +116,13 @@
         <!-- RIGHT: CHECKOUT FORM -->
         <section class="card">
             <div class="card-header">
-                <h2>Checkout details</h2>
-                <span>Fill in your delivery information</span>
+                <h2>Данни за поръчка</h2>
+                <span>Попълни информацията за доставка</span>
             </div>
 
             <form id="checkout_form" onsubmit="event.preventDefault(); placeOrder();">
                 <div>
-                    <label for="chk_name">Full name*</label><br>
+                    <label for="chk_name">Име и фамилия*</label><br>
                     <input type="text" id="chk_name" required>
                 </div>
                 <div>
@@ -130,25 +130,25 @@
                     <input type="email" id="chk_email" required>
                 </div>
                 <div>
-                    <label for="chk_phone">Phone*</label><br>
+                    <label for="chk_phone">Телефон*</label><br>
                     <input type="text" id="chk_phone" required>
                 </div>
                 <div>
-                    <label for="chk_address">Address*</label><br>
+                    <label for="chk_address">Адрес*</label><br>
                     <input type="text" id="chk_address" required>
                 </div>
                 <div>
-                    <label for="chk_city">City*</label><br>
+                    <label for="chk_city">Град*</label><br>
                     <input type="text" id="chk_city" required>
                 </div>
                 <div>
-                    <label for="chk_postcode">Postcode*</label><br>
+                    <label for="chk_postcode">Пощенски код*</label><br>
                     <input type="text" id="chk_postcode" required>
                 </div>
                 <div>
-                    <label for="chk_country">Country*</label><br>
+                    <label for="chk_country">Държава*</label><br>
                     <select id="chk_country" required>
-                        <option value="" disabled selected>Select your country</option>
+                        <option value="" disabled selected>Избери държава</option>
                         <option value="Afghanistan">Afghanistan</option>
                         <option value="Albania">Albania</option>
                         <option value="Algeria">Algeria</option>
@@ -348,11 +348,11 @@
                     </select>
                 </div>
                 <div>
-                    <label for="chk_note">Order note (optional)</label><br>
-                    <textarea id="chk_note" rows="3" placeholder="Any additional information"></textarea>
+                    <label for="chk_note">Бележка към поръчката (по желание)</label><br>
+                    <textarea id="chk_note" rows="3" placeholder="Допълнителна информация"></textarea>
                 </div>
 
-                <button type="submit" id="place_order_btn">Place order</button>
+                <button type="submit" id="place_order_btn">Направи поръчка</button>
             </form>
         </section>
     </div>
@@ -360,8 +360,8 @@
 
 <footer>
     <div class="footer-inner">
-        <span>© <span id="year"></span> MusicShop. All rights reserved.</span>
-        <span>Built for your diploma project · <a href="admin.html" id="adminFooterLink" class="admin-only">Admin panel</a></span>
+        <span>© <span id="year"></span> MusicShop. Всички права запазени.</span>
+        <span id="footerSecondary">Нямаш профил? <a href="register.html">Създай такъв</a></span>
     </div>
 </footer>
 
@@ -418,19 +418,24 @@
             .then(r => r.ok ? r.json() : null)
             .then(data => {
                 const loginBtn = document.getElementById("loginBtn");
+                const footerSecondary = document.getElementById("footerSecondary");
                 const loggedIn = data && data.logged_in;
                 if (loggedIn) {
                     if (logoutBtn) logoutBtn.style.display = "inline-flex";
                     if (loginBtn) loginBtn.style.display = "none";
+                    if (footerSecondary) footerSecondary.textContent = "Калоян Милев - Димпломен Проект";
                 } else {
                     if (logoutBtn) logoutBtn.style.display = "none";
                     if (loginBtn) loginBtn.style.display = "inline-flex";
+                    if (footerSecondary) footerSecondary.innerHTML = 'Нямаш профил? <a href="register.html">Създай такъв</a>';
                 }
             })
             .catch(() => {
                 if (logoutBtn) logoutBtn.style.display = "none";
                 const loginBtn = document.getElementById("loginBtn");
+                const footerSecondary = document.getElementById("footerSecondary");
                 if (loginBtn) loginBtn.style.display = "inline-flex";
+                if (footerSecondary) footerSecondary.innerHTML = 'Нямаш профил? <a href="register.html">Създай такъв</a>';
             });
 
         // Render cart initially
@@ -463,7 +468,7 @@
         container.innerHTML = "";
 
         if (cart.length === 0) {
-            container.textContent = "Your cart is empty.";
+            container.textContent = "Количката е празна.";
             totalEl.textContent = "";
             return;
         }
@@ -479,18 +484,18 @@
             div.innerHTML = `
                 <strong>${item.name}</strong>
                 <div class="cart-controls">
-                    <button class="btn-outline view-btn" data-id="${item.id}">View product</button>
+                    <button class="btn-outline view-btn" data-id="${item.id}">Виж продукт</button>
                     <button class="btn-outline dec-btn" data-index="${index}">-</button>
                     <span class="qty">${item.quantity}</span>
                     <button class="btn-outline inc-btn" data-index="${index}">+</button>
                     <span class="line-total">€${lineTotal.toFixed(2)}</span>
-                    <button class="btn-outline remove-btn" data-index="${index}">Remove</button>
+                    <button class="btn-outline remove-btn" data-index="${index}">Премахни</button>
                 </div>
             `;
             container.appendChild(div);
         });
 
-        totalEl.textContent = "Total: €" + total.toFixed(2);
+        totalEl.textContent = "Общо: €" + total.toFixed(2);
 
         // Increment quantity
         container.querySelectorAll(".inc-btn").forEach(btn => {
@@ -553,7 +558,7 @@
     function placeOrder() {
         const cart = getCart();
         if (cart.length === 0) {
-            alert("Your cart is empty.");
+            alert("Количката е празна.");
             return;
         }
 
@@ -567,7 +572,7 @@
         const note     = document.getElementById("chk_note").value.trim();
 
         if (!name || !address || !city || !postcode || !country) {
-            alert("Please fill in all required fields (marked with *).");
+            alert("Моля, попълни всички задължителни полета (отбелязани с *).");
             return;
         }
 
@@ -602,18 +607,18 @@
         .then(data => {
             if (!data) return;
             if (!data.ok) {
-                alert("Order failed: " + (data.error || "Unknown error"));
+                alert("Поръчката е неуспешна: " + (data.error || "Неизвестна грешка"));
                 return;
             }
 
-            alert("Order placed successfully. ID: " + data.order_id);
+            alert("Поръчката е направена успешно. ID: " + data.order_id);
             clearCart();
             document.getElementById("checkout_form").reset();
             renderCart();
         })
         .catch(err => {
             console.error(err);
-            alert("Error placing order.");
+            alert("Грешка при създаване на поръчката.");
         });
     }
 </script>

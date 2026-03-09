@@ -1,7 +1,7 @@
-<html lang="en">
+<html lang="bg">
 <head>
     <meta charset="UTF-8">
-    <title>MusicShop – Your Online Music Store</title>
+    <title>MusicShop – Вашият онлайн музикален магазин</title>
     <link rel="stylesheet" href="css/style.css">
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&#x26;display=swap" rel="stylesheet">
@@ -612,33 +612,33 @@
             <div class="brand-icon">♫</div>
             <div class="brand-text">
                 <h1>MusicShop</h1>
-                <p>Instruments · Vinyls · Merch</p>
+                <p>Инструменти · Плочи · Мърч</p>
             </div>
         </a>
 
         <nav class="nav-links">
-            <a href="products.html">Products</a>
-            <a href="favorites.html">Favorites</a>
-            <a href="cart.html">Cart</a>
-            <a href="orders.html">Orders</a>
-            <a href="news.html">News</a>
-            <a href="admin.html" id="adminLink" class="admin-only">Admin</a>
+            <a href="products.html">Продукти</a>
+            <a href="favorites.html">Любими</a>
+            <a href="cart.html">Количка</a>
+            <a href="orders.html">Поръчки</a>
+            <a href="news.html">Новини</a>
+            <a href="admin.html" id="adminLink" class="admin-only">Админ</a>
         </nav>
 
         <div class="nav-secondary">
-            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+            <button class="theme-toggle" id="themeToggle" aria-label="Смени темата">
                 <span id="themeIcon">🌞</span>
             </button>
-            <button class="login-btn-header" id="loginBtn" onclick="window.location='login.html'" style="display:none">Log In</button>
+            <button class="login-btn-header" id="loginBtn" onclick="window.location='login.html'" style="display:none">Вход</button>
 
             <div class="user-status-pill">
                 <div class="user-status-dot"></div>
-                <div id="userStatus">Not logged in.</div>
+                <div id="userStatus">Не сте влезли.</div>
             </div>
 
             <button class="logout-btn" id="logoutBtn" style="display:none" onclick="logout()">
                 <span>⏏</span>
-                Logout
+                Изход
             </button>
         </div>
     </div>
@@ -647,37 +647,37 @@
 <main>
     <div class="page-wrapper">
         <section class="hero-card">
-            <div class="hero-tag">Live now · New drops every week</div>
-            <h2 class="hero-title">Turn <span>up</span> your collection.</h2>
+            <div class="hero-tag">На живо сега · Нови попълнения всяка седмица</div>
+            <h2 class="hero-title">Обогати колекцията си <span>сега</span>!</h2>
             <p class="hero-subtitle">
-                Discover guitars, basses, vinyls, band merch and more – all in one place.
-                Save your favorites, keep track of your orders and never miss the latest news.
+                Открий китари, басове, плочи, мърч на банди и още – всичко на едно място.
+                Запази любимите си, следи поръчките си и не изпускай най-новите новини.
             </p>
-            <a href="products.html" class="hero-cta">Shop now</a>
+            <a href="products.html" class="hero-cta">Пазарувай сега</a>
         </section>
 
         <aside class="side-cards">
             <div class="side-card guest-only">
-                <h3>New here?</h3>
-                <p>Sign up to start adding favorites, placing orders and more.</p>
-                <a href="register.html">Register here</a>
+                <h3>Нов тук?</h3>
+                <p>Регистрирай се, за да добавяш любими, да правиш поръчки и още.</p>
+                <a href="register.html">Регистрирай се тук</a>
             </div>
             <div class="side-card guest-only">
-                <h3>Already registered?</h3>
-                <p>Log in to view your orders, favorites and cart.</p>
-                <a href="login.html">Sign in</a>
+                <h3>Вече имаш профил?</h3>
+                <p>Влез, за да видиш поръчките, любимите и количката си.</p>
+                <a href="login.html">Вход</a>
             </div>
         </aside>
 
         <section class="carousel-section">
             <div class="carousel-header">
-                <h2>Latest products</h2>
-                <a href="products.html">View all →</a>
+                <h2>Най-нови продукти</h2>
+                <a href="products.html">Виж всички →</a>
                     </div>
             <div class="carousel-container">
                 <button class="carousel-btn prev" onclick="moveCarousel('latest', -1)">‹</button>
                 <div class="carousel-track" id="latestTrack">
-                    <div class="home-empty" style="padding:1.5rem;">Loading products...</div>
+                    <div class="home-empty" style="padding:1.5rem;">Зареждане на продукти...</div>
                 </div>
                 <button class="carousel-btn next" onclick="moveCarousel('latest', 1)">›</button>
                 </div>
@@ -685,13 +685,13 @@
 
         <section class="carousel-section">
             <div class="carousel-header">
-                <h2>More picks for you</h2>
-                <a href="products.html">Browse catalog →</a>
+                <h2>Още предложения за теб</h2>
+                <a href="products.html">Разгледай каталога →</a>
                     </div>
             <div class="carousel-container">
                 <button class="carousel-btn prev" onclick="moveCarousel('deals', -1)">‹</button>
                 <div class="carousel-track" id="dealsTrack">
-                    <div class="home-empty" style="padding:1.5rem;">Loading products...</div>
+                    <div class="home-empty" style="padding:1.5rem;">Зареждане на продукти...</div>
                 </div>
                 <button class="carousel-btn next" onclick="moveCarousel('deals', 1)">›</button>
             </div>
@@ -699,13 +699,13 @@
 
         <section class="carousel-section news-carousel">
             <div class="carousel-header">
-                <h2>Latest news</h2>
-                <a href="news.html">View all →</a>
+                <h2>Последни новини</h2>
+                <a href="news.html">Виж всички →</a>
             </div>
             <div class="carousel-container">
                 <button class="carousel-btn prev" onclick="moveCarousel('news', -1)">‹</button>
                 <div class="carousel-track" id="newsTrack">
-                    <div class="home-empty" style="padding:1.5rem;">Loading news...</div>
+                    <div class="home-empty" style="padding:1.5rem;">Зареждане на новини...</div>
                 </div>
                 <button class="carousel-btn next" onclick="moveCarousel('news', 1)">›</button>
             </div>
@@ -715,8 +715,8 @@
 
 <footer>
     <div class="footer-inner">
-        <span>© <span id="year"></span> MusicShop. All rights reserved.</span>
-        <span>Need an account? <a href="register.html">Create one</a></span>
+        <span>© <span id="year"></span> MusicShop. Всички права запазени.</span>
+        <span id="footerSecondary">Нямаш профил? <a href="register.html">Създай такъв</a></span>
     </div>
 </footer>
 <script>
@@ -761,14 +761,17 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(data => {
             const loggedIn = data && data.logged_in;
             const loginBtn = document.getElementById("loginBtn");
+            const footerSecondary = document.getElementById("footerSecondary");
             if (loggedIn) {
                 if (logoutBtn) logoutBtn.style.display = "inline-flex";
                 if (loginBtn) loginBtn.style.display = "none";
+                if (footerSecondary) footerSecondary.textContent = "Калоян Милев - Димпломен Проект";
                 document.querySelectorAll(".guest-only").forEach(el => el.style.display = "none");
                 document.body.classList.add("logged-in");
             } else {
                 if (logoutBtn) logoutBtn.style.display = "none";
                 if (loginBtn) loginBtn.style.display = "inline-flex";
+                if (footerSecondary) footerSecondary.innerHTML = 'Нямаш профил? <a href="register.html">Създай такъв</a>';
                 document.querySelectorAll(".guest-only").forEach(el => el.style.display = "");
                 document.body.classList.remove("logged-in");
             }
@@ -776,7 +779,9 @@ document.addEventListener("DOMContentLoaded", function () {
         .catch(() => {
             if (logoutBtn) logoutBtn.style.display = "none";
             const loginBtn = document.getElementById("loginBtn");
+            const footerSecondary = document.getElementById("footerSecondary");
             if (loginBtn) loginBtn.style.display = "inline-flex";
+            if (footerSecondary) footerSecondary.innerHTML = 'Нямаш профил? <a href="register.html">Създай такъв</a>';
             document.body.classList.remove("logged-in");
             document.querySelectorAll(".guest-only").forEach(el => el.style.display = "");
         });
@@ -801,7 +806,7 @@ function renderCarouselItem(p) {
 
     const imageMarkup = imageUrl
         ? `<img src="${imageUrl}" alt="${safeName}">`
-        : `<div class="carousel-item-placeholder">No Image</div>`;
+        : `<div class="carousel-item-placeholder">Няма изображение</div>`;
 
     const metaParts = [];
     if (p.artist) metaParts.push(p.artist);
@@ -812,12 +817,12 @@ function renderCarouselItem(p) {
     item.innerHTML = `
         ${imageMarkup}
         <div class="carousel-item-body">
-            <div class="carousel-item-title">${p.name || 'Unnamed product'}</div>
+            <div class="carousel-item-title">${p.name || 'Продукт без име'}</div>
             <div class="carousel-item-price">€${Number(p.price).toFixed(2)}</div>
             <div class="carousel-item-meta">${metaParts.join(' · ') || '-'}</div>
             <div class="carousel-item-actions">
-                <button class="primary" onclick="addToCart(${p.id}, '${safeName}', ${p.price})">Add to cart</button>
-                <button class="secondary" onclick="addFavorite(${p.id})">Favorite</button>
+                <button class="primary" onclick="addToCart(${p.id}, '${safeName}', ${p.price})">Добави в количката</button>
+                <button class="secondary" onclick="addFavorite(${p.id})">Любими</button>
             </div>
         </div>
     `;
@@ -829,7 +834,7 @@ function initCarousel(id, products) {
     if (!track) return;
 
     if (!products || products.length === 0) {
-        setCarouselMessage(id, id === 'latest' ? 'No products available yet.' : 'More products will appear here soon.');
+        setCarouselMessage(id, id === 'latest' ? 'Все още няма налични продукти.' : 'Скоро тук ще се появят още продукти.');
         return;
     }
 
@@ -904,7 +909,7 @@ function renderNewsCarouselItem(n) {
     const safeTitle = (n.title || '').replace(/"/g, '&quot;').replace(/'/g, "\\'");
     const imageMarkup = n.image_url
         ? `<img src="${n.image_url}" alt="${safeTitle}">`
-        : `<div class="carousel-item-placeholder">No Image</div>`;
+        : `<div class="carousel-item-placeholder">Няма изображение</div>`;
 
     const snippet = (n.content || '').length > 120
         ? (n.content || '').slice(0, 117) + '…'
@@ -913,11 +918,11 @@ function renderNewsCarouselItem(n) {
     item.innerHTML = `
         ${imageMarkup}
         <div class="carousel-item-body">
-            <div class="carousel-item-title">${n.title || 'Untitled'}</div>
+            <div class="carousel-item-title">${n.title || 'Без заглавие'}</div>
             <div class="carousel-item-meta">${n.created_at || ''}</div>
             <div class="carousel-item-meta">${snippet || ''}</div>
             <div class="carousel-item-actions">
-                <button class="secondary" onclick="window.location='news.html'">Read more</button>
+                <button class="secondary" onclick="window.location='news.html'">Прочети повече</button>
             </div>
         </div>
     `;
@@ -930,7 +935,7 @@ function loadHomeNews() {
         .then(r => r.json())
         .then(data => {
             if (!data.ok || !Array.isArray(data.news) || data.news.length === 0) {
-                setCarouselMessage('news', 'No news yet.');
+                setCarouselMessage('news', 'Все още няма новини.');
                 return;
             }
 
@@ -943,21 +948,21 @@ function loadHomeNews() {
             updateCarouselButtons('news');
         })
         .catch(() => {
-            setCarouselMessage('news', 'Error loading news.');
+            setCarouselMessage('news', 'Грешка при зареждане на новините.');
         });
 }
 
 function loadHomeProducts() {
-    setCarouselMessage('latest', 'Loading products...');
-    setCarouselMessage('deals', 'Loading products...');
-    setCarouselMessage('news', 'Loading news...');
+    setCarouselMessage('latest', 'Зареждане на продукти...');
+    setCarouselMessage('deals', 'Зареждане на продукти...');
+    setCarouselMessage('news', 'Зареждане на новини...');
 
     fetch("/musicshop/api/products.php", { credentials: "include" })
         .then(r => r.json())
         .then(data => {
             if (!data.ok || !Array.isArray(data.products) || data.products.length === 0) {
-                setCarouselMessage('latest', 'No products available yet.');
-                setCarouselMessage('deals', 'More products will appear here soon.');
+                setCarouselMessage('latest', 'Все още няма налични продукти.');
+                setCarouselMessage('deals', 'Скоро тук ще се появят още продукти.');
                 loadHomeNews();
                 return;
             }
@@ -970,16 +975,16 @@ function loadHomeProducts() {
             if (deals.length > 0) {
                 initCarousel('deals', deals);
             } else {
-                setCarouselMessage('deals', 'More products will appear here soon.');
+                setCarouselMessage('deals', 'Скоро тук ще се появят още продукти.');
             }
 
             loadHomeNews();
         })
         .catch(err => {
             console.error(err);
-            setCarouselMessage('latest', 'Error loading products.');
-            setCarouselMessage('deals', 'Error loading products.');
-            setCarouselMessage('news', 'Error loading news.');
+            setCarouselMessage('latest', 'Грешка при зареждане на продуктите.');
+            setCarouselMessage('deals', 'Грешка при зареждане на продуктите.');
+            setCarouselMessage('news', 'Грешка при зареждане на новините.');
         });
 }
 
@@ -1013,7 +1018,7 @@ quantity: 1
 }
 
 saveCart(cart);
-alert("Added to cart.");
+alert("Добавено в количката.");
 }
 
 function addFavorite(productId) {
@@ -1026,14 +1031,14 @@ body: JSON.stringify({ product_id: productId })
 .then(r => r.json())
 .then(data => {
 if (!data.ok) {
-alert("Failed: " + (data.error || "Unknown error"));
+alert("Неуспешно: " + (data.error || "Неизвестна грешка"));
 } else {
-alert("Added to favorites");
+alert("Добавено в любими");
 }
 })
 .catch(err => {
 console.error(err);
-alert("Error adding to favorites.");
+alert("Грешка при добавяне в любими.");
 });
 }
 

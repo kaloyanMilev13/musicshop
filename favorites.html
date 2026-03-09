@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bg">
 <head>
     <meta charset="UTF-8">
-    <title>Favorites - MusicShop</title>
+    <title>Любими - MusicShop</title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -46,34 +46,34 @@
             </div>
             <div class="brand-text">
                 <h1>MusicShop</h1>
-                <p>Instruments · Vinyls · Merch</p>
+                <p>Инструменти · Плочи · Мърч</p>
             </div>
         </a>
 
         <nav class="nav-links">
-            <a href="products.html">Products</a>
-            <a href="favorites.html" class="active">Favorites</a>
-            <a href="cart.html">Cart</a>
-            <a href="orders.html">Orders</a>
-            <a href="news.html">News</a>
-            <a href="admin.html" id="adminLink" class="admin-only">Admin</a>
+            <a href="products.html">Продукти</a>
+            <a href="favorites.html" class="active">Любими</a>
+            <a href="cart.html">Количка</a>
+            <a href="orders.html">Поръчки</a>
+            <a href="news.html">Новини</a>
+            <a href="admin.html" id="adminLink" class="admin-only">Админ</a>
         </nav>
 
         <div class="nav-secondary">
-            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+            <button class="theme-toggle" id="themeToggle" aria-label="Смени темата">
                 <span id="themeIcon">🌞</span>
             </button>
 
-            <button class="login-btn-header" id="loginBtn" onclick="window.location='login.html'" style="display:none">Log In</button>
+            <button class="login-btn-header" id="loginBtn" onclick="window.location='login.html'" style="display:none">Вход</button>
 
             <div class="user-status-pill">
                 <div class="user-status-dot"></div>
-                <div id="userStatus">Not logged in.</div>
+                <div id="userStatus">Не сте влезли.</div>
             </div>
 
             <button class="logout-btn" id="logoutBtn" style="display:none" onclick="logout()">
                 <span>⏏</span>
-                Logout
+                Изход
             </button>
         </div>
     </div>
@@ -83,11 +83,11 @@
     <div class="page-wrapper">
         <section class="favorites-section">
             <div class="favorites-header">
-                <h2>Your favorites</h2>
+                <h2>Твоите любими</h2>
                 <span id="favoritesCountLabel"></span>
             </div>
 
-            <div id="favorites_list">Loading...</div>
+            <div id="favorites_list">Зареждане...</div>
         </section>
     </div>
 </main>
@@ -110,16 +110,16 @@
         </div>
 
         <div class="modal-actions">
-            <button class="secondary" id="modalRemoveBtn">Remove from favorites</button>
-            <button class="primary" id="modalCartBtn">Add to cart</button>
+            <button class="secondary" id="modalRemoveBtn">Премахни от любими</button>
+            <button class="primary" id="modalCartBtn">Добави в количката</button>
         </div>
     </div>
 </div>
 
 <footer>
     <div class="footer-inner">
-        <span>© <span id="year"></span> MusicShop. All rights reserved.</span>
-        <span>Built for your diploma project · <a href="admin.html" id="adminFooterLink" class="admin-only">Admin panel</a></span>
+        <span>© <span id="year"></span> MusicShop. Всички права запазени.</span>
+        <span id="footerSecondary">Нямаш профил? <a href="register.html">Създай такъв</a></span>
     </div>
 </footer>
 
@@ -178,19 +178,24 @@
             .then(r => r.ok ? r.json() : null)
             .then(data => {
                 const loginBtn = document.getElementById("loginBtn");
+                const footerSecondary = document.getElementById("footerSecondary");
                 const loggedIn = data && data.logged_in;
                 if (loggedIn) {
                     if (logoutBtn) logoutBtn.style.display = "inline-flex";
                     if (loginBtn) loginBtn.style.display = "none";
+                    if (footerSecondary) footerSecondary.textContent = "Калоян Милев - Димпломен Проект";
                 } else {
                     if (logoutBtn) logoutBtn.style.display = "none";
                     if (loginBtn) loginBtn.style.display = "inline-flex";
+                    if (footerSecondary) footerSecondary.innerHTML = 'Нямаш профил? <a href="register.html">Създай такъв</a>';
                 }
             })
             .catch(() => {
                 if (logoutBtn) logoutBtn.style.display = "none";
                 const loginBtn = document.getElementById("loginBtn");
+                const footerSecondary = document.getElementById("footerSecondary");
                 if (loginBtn) loginBtn.style.display = "inline-flex";
+                if (footerSecondary) footerSecondary.innerHTML = 'Нямаш профил? <a href="register.html">Създай такъв</a>';
             });
 
         // Modal wiring
@@ -262,7 +267,7 @@
         }
 
         saveCart(cart);
-        alert("Added to cart.");
+        alert("Добавено в количката.");
     }
 
     function removeFavorite(productId) {
@@ -275,12 +280,12 @@
         .then(r => r.json())
         .then(data => {
             if (!data.ok) {
-                alert('Failed to remove from favorites: ' + (data.error || 'Unknown error'));
+                alert('Неуспешно премахване от любими: ' + (data.error || 'Неизвестна грешка'));
                 return;
             }
             loadFavorites();
         })
-        .catch(() => alert('Error removing from favorites.'));
+        .catch(() => alert('Грешка при премахване от любими.'));
     }
 
     // --- MODAL OPEN ---
@@ -295,7 +300,7 @@
         const metaRow = document.getElementById("modalMetaRow");
         const descEl = document.getElementById("modalDescription");
 
-        if (titleEl) titleEl.textContent = p.name || "Product details";
+        if (titleEl) titleEl.textContent = p.name || "Детайли за продукта";
 
         const subtitleParts = [];
         if (p.artist) subtitleParts.push(p.artist);
@@ -307,28 +312,28 @@
         if (metaRow) {
             metaRow.innerHTML = "";
             const priceSpan = document.createElement("span");
-            priceSpan.textContent = "Price: €" + p.price;
+            priceSpan.textContent = "Цена: €" + p.price;
             metaRow.appendChild(priceSpan);
 
             if (p.category) {
                 const c = document.createElement("span");
-                c.textContent = "Main: " + p.category;
+                c.textContent = "Основна: " + p.category;
                 metaRow.appendChild(c);
             }
             if (p.genre) {
                 const g = document.createElement("span");
-                g.textContent = "Subcategory: " + p.genre;
+                g.textContent = "Подкатегория: " + p.genre;
                 metaRow.appendChild(g);
             }
             if (p.music_genre) {
                 const mg = document.createElement("span");
-                mg.textContent = "Music genre: " + p.music_genre;
+                mg.textContent = "Музикален жанр: " + p.music_genre;
                 metaRow.appendChild(mg);
             }
         }
 
         if (descEl) {
-            descEl.textContent = p.description || "No description available for this product.";
+            descEl.textContent = p.description || "Няма налично описание за този продукт.";
         }
 
         modal.classList.add("show");
@@ -345,22 +350,22 @@
 
                 if (!data.ok) {
                     if (data.error === 'Not logged in') {
-                        container.innerHTML = '<div class="empty-box">To see favourites, log in or sign up.</div>';
+                        container.innerHTML = '<div class="empty-box">За да видиш любимите си, влез или се регистрирай.</div>';
                     } else {
-                        container.innerHTML = '<div class="empty-box">Error loading favorites.</div>';
+                        container.innerHTML = '<div class="empty-box">Грешка при зареждане на любимите.</div>';
                     }
                     if (countLabel) countLabel.textContent = "";
                     return;
                 }
 
                 if (!data.favorites || data.favorites.length === 0) {
-                    container.innerHTML = '<div class="empty-box">You have no favorites yet.</div>';
-                    if (countLabel) countLabel.textContent = "0 items";
+                    container.innerHTML = '<div class="empty-box">Все още нямаш любими.</div>';
+                    if (countLabel) countLabel.textContent = "0 елемента";
                     return;
                 }
 
                 if (countLabel) {
-                    countLabel.textContent = data.favorites.length + " item" + (data.favorites.length !== 1 ? "s" : "");
+                    countLabel.textContent = data.favorites.length + " " + (data.favorites.length === 1 ? "елемент" : "елемента");
                 }
 
                 const grid = document.createElement("div");
@@ -377,7 +382,7 @@
                     card.innerHTML = `
                         <img class="product-thumb" src="${imageUrl}" alt="${safeName}">
                         <div class="product-card-heading">
-                            <div class="product-name">${p.name || "Unnamed product"}</div>
+                            <div class="product-name">${p.name || "Продукт без име"}</div>
                             <div class="product-price">€${Number(p.price).toFixed(2)}</div>
                         </div>
                         <div class="product-meta">
@@ -385,12 +390,12 @@
                             ${p.category || "-"}${p.genre ? " · " + p.genre : ""}${p.music_genre ? " · " + p.music_genre : ""}
                         </div>
                         <div class="product-description">
-                            ${p.description || "No description available."}
+                            ${p.description || "Няма налично описание."}
                         </div>
                         <div class="product-actions">
-                            <a class="btn-secondary view-details" href="product.html?id=${p.id}">View details</a>
-                            <button class="btn-outline cart-btn">Add to cart</button>
-                            <button class="btn-outline remove-btn">Remove</button>
+                            <a class="btn-secondary view-details" href="product.html?id=${p.id}">Виж детайли</a>
+                            <button class="btn-outline cart-btn">Добави в количката</button>
+                            <button class="btn-outline remove-btn">Премахни</button>
                         </div>
                     `;
 
@@ -407,7 +412,7 @@
             })
             .catch(() => {
                 document.getElementById("favorites_list").innerHTML =
-                    '<div class="empty-box">Error loading favorites.</div>';
+                    '<div class="empty-box">Грешка при зареждане на любимите.</div>';
                 const countLabel = document.getElementById("favoritesCountLabel");
                 if (countLabel) countLabel.textContent = "";
             });

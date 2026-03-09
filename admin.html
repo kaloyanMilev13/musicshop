@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bg">
 <head>
     <meta charset="UTF-8">
-    <title>Admin - MusicShop</title>
+    <title>Админ - MusicShop</title>
     <link rel="stylesheet" href="css/admin.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -77,34 +77,34 @@
             </div>
             <div class="brand-text">
                 <h1>MusicShop</h1>
-                <p>Instruments · Vinyls · Merch</p>
+                <p>Инструменти · Плочи · Мърч</p>
             </div>
         </a>
 
         <nav class="nav-links">
-            <a href="products.html">Products</a>
-            <a href="favorites.html">Favorites</a>
-            <a href="cart.html">Cart</a>
-            <a href="orders.html">Orders</a>
-            <a href="news.html">News</a>
-            <a href="admin.html" class="active admin-only" id="adminLink">Admin</a>
+            <a href="products.html">Продукти</a>
+            <a href="favorites.html">Любими</a>
+            <a href="cart.html">Количка</a>
+            <a href="orders.html">Поръчки</a>
+            <a href="news.html">Новини</a>
+            <a href="admin.html" class="active admin-only" id="adminLink">Админ</a>
         </nav>
 
         <div class="nav-secondary">
-            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+            <button class="theme-toggle" id="themeToggle" aria-label="Смени темата">
                 <span id="themeIcon">🌞</span>
             </button>
 
-            <button class="login-btn-header" id="loginBtn" onclick="window.location='login.html'" style="display:none">Log In</button>
+            <button class="login-btn-header" id="loginBtn" onclick="window.location='login.html'" style="display:none">Вход</button>
 
             <div class="user-status-pill">
                 <div class="user-status-dot"></div>
-                <div id="userStatus">Not logged in.</div>
+                <div id="userStatus">Не сте влезли.</div>
             </div>
 
             <button class="logout-btn" id="logoutBtn" style="display:none" onclick="logout()">
                 <span>⏏</span>
-                Logout
+                Изход
             </button>
         </div>
     </div>
@@ -118,59 +118,59 @@
             <div class="admin-card">
                 <div class="admin-card-header">
                     <div>
-                            <h2>Product management</h2>
-                            <span>Add new products or edit existing ones</span>
+                            <h2>Управление на продукти</h2>
+                            <span>Добави нови продукти или редактирай съществуващите</span>
                         </div>
                     </div>
 
                     <!-- PRODUCT FORM -->
                     <div class="product-form-grid">
                         <div class="form-group">
-                            <label for="name">Name</label>
-                            <input id="name" placeholder="Product name">
+                            <label for="name">Име</label>
+                            <input id="name" placeholder="Име на продукт">
                         </div>
 
                         <div class="form-group">
-                            <label for="artist">Artist (optional)</label>
-                            <input id="artist" placeholder="Artist / Band">
+                            <label for="artist">Изпълнител (по желание)</label>
+                            <input id="artist" placeholder="Изпълнител / Група">
                         </div>
 
                         <div class="form-group">
-                            <label for="category">Main category</label>
+                            <label for="category">Основна категория</label>
                             <select id="category">
-                                <option value="">Select main category</option>
-                                <option value="Instruments">Instruments</option>
-                                <option value="Music">Music</option>
-                                <option value="Merch">Merch</option>
-                                <option value="Other">Other</option>
+                                <option value="">Избери основна категория</option>
+                                <option value="Instruments">Инструменти</option>
+                                <option value="Music">Музика</option>
+                                <option value="Merch">Мърч</option>
+                                <option value="Other">Други</option>
                             </select>
                         </div>
 
                         <div class="form-group">
-                            <label for="subcategory">Subcategory</label>
+                            <label for="subcategory">Подкатегория</label>
                             <select id="subcategory">
-                                <option value="">Select subcategory</option>
+                                <option value="">Избери подкатегория</option>
                             </select>
                         </div>
 
                         <div class="form-group">
-                            <label for="price">Price (€)</label>
-                            <input id="price" type="number" step="0.01" min="0" placeholder="e.g. 19.99">
+                            <label for="price">Цена (€)</label>
+                            <input id="price" type="number" step="0.01" min="0" placeholder="напр. 19.99">
                         </div>
 
                         <div class="form-group">
-                            <label for="stock">Stock</label>
-                            <input id="stock" type="number" min="0" placeholder="Available quantity">
+                            <label for="stock">Наличност</label>
+                            <input id="stock" type="number" min="0" placeholder="Налично количество">
                         </div>
 
                         <div class="form-group">
-                            <label for="image_url">Image URL</label>
+                            <label for="image_url">URL на изображение</label>
                             <input id="image_url" placeholder="https://...">
                         </div>
 
                         <div class="form-group">
-                            <label for="description">Description</label>
-                            <textarea id="description" placeholder="Short description..."></textarea>
+                            <label for="description">Описание</label>
+                            <textarea id="description" placeholder="Кратко описание..."></textarea>
                         </div>
                     </div>
 
@@ -179,67 +179,67 @@
                         <!-- For category = Music -->
                         <div id="musicFields" style="display:none;">
                             <div class="form-group">
-                                <label for="format">Music format</label>
-                                <input id="format" placeholder="Vinyl, CD, Digital, etc.">
+                                <label for="format">Музикален формат</label>
+                                <input id="format" placeholder="Плоча, CD, Дигитален и др.">
                             </div>
                             <div class="form-group">
-                                <label for="music_genre">Music genre</label>
-                                <input id="music_genre" placeholder="Rock, Metal, Pop, etc.">
+                                <label for="music_genre">Музикален жанр</label>
+                                <input id="music_genre" placeholder="Рок, Метъл, Поп и др.">
                             </div>
                         </div>
 
                         <!-- For Merch -> Clothing -->
                         <div id="merchClothingFields" style="display:none;">
                             <div class="form-group">
-                                <label for="size">Size</label>
-                                <input id="size" placeholder="S, M, L, XL, etc.">
+                                <label for="size">Размер</label>
+                                <input id="size" placeholder="S, M, L, XL и др.">
                             </div>
                             <div class="form-group">
-                                <label for="color">Color</label>
-                                <input id="color" placeholder="Black, White, etc.">
+                                <label for="color">Цвят</label>
+                                <input id="color" placeholder="Черен, Бял и др.">
                             </div>
                             <div class="form-group">
-                                <label for="merch_type">Merch type</label>
-                                <input id="merch_type" placeholder="T-Shirt, Hoodie, etc.">
+                                <label for="merch_type">Тип мърч</label>
+                                <input id="merch_type" placeholder="Тениска, Худи и др.">
                             </div>
                         </div>
 
                         <!-- For Instruments -->
                         <div id="instrumentFields" style="display:none;">
                             <div class="form-group">
-                                <label for="instrument_subtype">Instrument subtype</label>
-                                <input id="instrument_subtype" placeholder="Acoustic, Electric, etc.">
+                                <label for="instrument_subtype">Подтип инструмент</label>
+                                <input id="instrument_subtype" placeholder="Акустичен, Електрически и др.">
                             </div>
                         </div>
 
                         <!-- For Other -->
                         <div id="otherFields" style="display:none;">
                             <div class="form-group">
-                                <label for="accessory_type">Accessory type</label>
-                                <input id="accessory_type" placeholder="Cable, Stand, Case, etc.">
+                                <label for="accessory_type">Тип аксесоар</label>
+                                <input id="accessory_type" placeholder="Кабел, Стойка, Калъф и др.">
                             </div>
                         </div>
                     </div>
 
                     <div class="product-form-actions">
-                        <button class="btn-outline" type="button" onclick="resetForm()">Reset</button>
-                        <button class="btn-primary" type="button" onclick="addProduct()">Save product</button>
+                        <button class="btn-outline" type="button" onclick="resetForm()">Нулирай</button>
+                        <button class="btn-primary" type="button" onclick="addProduct()">Запази продукт</button>
                     </div>
 
                     <!-- PRODUCT LIST -->
                     <div class="product-list-container">
                         <div class="product-list-header admin-list-header">
                             <div class="admin-list-meta">
-                                <span>Existing products</span>
+                                <span>Съществуващи продукти</span>
                                 <span id="productCountLabel"></span>
                             </div>
-                            <a class="btn-outline" href="admin_products.html">See all</a>
+                            <a class="btn-outline" href="admin_products.html">Виж всички</a>
                         </div>
                         <div class="carousel-container admin-product-carousel">
                             <button class="carousel-btn prev" id="adminProductPrevBtn" type="button">‹</button>
                             <div class="carousel-viewport">
                                 <div class="carousel-track" id="adminProductTrack">
-                                    <div class="home-empty" style="padding:1.5rem;">Loading...</div>
+                                    <div class="home-empty" style="padding:1.5rem;">Зареждане...</div>
                                 </div>
                             </div>
                             <button class="carousel-btn next" id="adminProductNextBtn" type="button">›</button>
@@ -254,30 +254,30 @@
                 <div class="admin-card">
                     <div class="admin-card-header">
                         <div>
-                            <h2>News management</h2>
-                            <span>Post updates about events & drops</span>
+                            <h2>Управление на новини</h2>
+                            <span>Публикувай актуализации за събития и нови попълнения</span>
                         </div>
                     </div>
 
                     <div class="product-form-grid news-form-grid">
                         <div class="form-group">
-                            <label for="news_title">Title</label>
-                            <input type="text" id="news_title" placeholder="News title">
+                            <label for="news_title">Заглавие</label>
+                            <input type="text" id="news_title" placeholder="Заглавие на новина">
                         </div>
                         <div class="form-group news-form-full">
-                            <label for="news_content">Content</label>
-                            <textarea id="news_content" placeholder="Full news content..."></textarea>
+                            <label for="news_content">Съдържание</label>
+                            <textarea id="news_content" placeholder="Пълно съдържание на новината..."></textarea>
                         </div>
                     </div>
                     <div class="news-form-actions">
-                        <button class="btn-outline" id="newsCancelBtn" type="button" style="display:none;" onclick="cancelNewsEdit()">Cancel</button>
-                        <button class="btn-secondary" type="button" onclick="saveNews()" id="newsSaveBtn">Add news</button>
+                        <button class="btn-outline" id="newsCancelBtn" type="button" style="display:none;" onclick="cancelNewsEdit()">Отказ</button>
+                        <button class="btn-secondary" type="button" onclick="saveNews()" id="newsSaveBtn">Добави новина</button>
                     </div>
 
                     <div class="product-list-container">
                         <div class="product-list-header admin-list-header">
                             <div class="admin-list-meta">
-                                <span>Existing news</span>
+                                <span>Съществуващи новини</span>
                                 <span id="newsCountLabel"></span>
                             </div>
                         </div>
@@ -285,7 +285,7 @@
                             <button class="carousel-btn prev" id="adminNewsPrevBtn" type="button">‹</button>
                             <div class="carousel-viewport">
                                 <div class="carousel-track" id="adminNewsTrack">
-                                    <div class="home-empty" style="padding:1.5rem;">Loading...</div>
+                                    <div class="home-empty" style="padding:1.5rem;">Зареждане...</div>
                                 </div>
                             </div>
                             <button class="carousel-btn next" id="adminNewsNextBtn" type="button">›</button>
@@ -300,15 +300,15 @@
             <div class="admin-card">
                 <div class="admin-card-header">
                     <div>
-                        <h2>All orders</h2>
-                        <span>Admin view of every order</span>
+                        <h2>Всички поръчки</h2>
+                        <span>Админ преглед на всяка поръчка</span>
                     </div>
                     <div class="admin-order-actions">
-                        <button class="btn-outline" id="exportOrdersBtn" type="button">Export as Excel</button>
-                        <button class="btn-secondary" id="deleteAllOrdersBtn" type="button">Delete all orders</button>
+                        <button class="btn-outline" id="exportOrdersBtn" type="button">Експортирай в Excel</button>
+                        <button class="btn-secondary" id="deleteAllOrdersBtn" type="button">Изтрий всички поръчки</button>
                     </div>
                 </div>
-                <div id="admin_orders" class="orders-list">Loading orders...</div>
+                <div id="admin_orders" class="orders-list">Зареждане на поръчки...</div>
             </div>
         </section>
     </div>
@@ -316,8 +316,8 @@
 
 <footer>
     <div class="footer-inner">
-        <span>© <span id="year"></span> MusicShop. All rights reserved.</span>
-        <span>Built for your diploma project · <a href="admin.html" id="adminFooterLink" class="admin-only">Admin panel</a></span>
+        <span>© <span id="year"></span> MusicShop. Всички права запазени.</span>
+        <span id="footerSecondary">Нямаш профил? <a href="register.html">Създай такъв</a></span>
     </div>
 </footer>
 
@@ -388,20 +388,25 @@
             .then(r => r.ok ? r.json() : null)
             .then(data => {
                 const loginBtn = document.getElementById("loginBtn");
+                const footerSecondary = document.getElementById("footerSecondary");
                 const loggedIn = data && data.logged_in;
                 if (loggedIn) {
                     csrfToken = data.csrf_token || "";
                     if (logoutBtn) logoutBtn.style.display = "inline-flex";
                     if (loginBtn) loginBtn.style.display = "none";
+                    if (footerSecondary) footerSecondary.textContent = "Калоян Милев - Димпломен Проект";
                 } else {
                     if (logoutBtn) logoutBtn.style.display = "none";
                     if (loginBtn) loginBtn.style.display = "inline-flex";
+                    if (footerSecondary) footerSecondary.innerHTML = 'Нямаш профил? <a href="register.html">Създай такъв</a>';
                 }
             })
             .catch(() => {
                 if (logoutBtn) logoutBtn.style.display = "none";
                 const loginBtn = document.getElementById("loginBtn");
+                const footerSecondary = document.getElementById("footerSecondary");
                 if (loginBtn) loginBtn.style.display = "inline-flex";
+                if (footerSecondary) footerSecondary.innerHTML = 'Нямаш профил? <a href="register.html">Създай такъв</a>';
             });
 
         // After DOM ready, init admin logic
@@ -416,6 +421,40 @@
         "Merch": ["Clothing", "Headwear", "Drinkware", "Posters", "Stickers", "Other"],
         "Other": ["Cables", "Stands", "Cases", "Maintenance", "Gift", "Other"]
     };
+    const CATEGORY_LABELS = {
+        Instruments: "Инструменти",
+        Music: "Музика",
+        Merch: "Мърч",
+        Other: "Други"
+    };
+    const SUBCATEGORY_LABELS = {
+        Guitars: "Китари",
+        Basses: "Басове",
+        Drums: "Барабани",
+        Keys: "Клавишни",
+        Studio: "Студио",
+        DJ: "DJ",
+        Amps: "Усилватели",
+        Pedals: "Педали",
+        Microphones: "Микрофони",
+        Accessories: "Аксесоари",
+        Vinyls: "Плочи",
+        CDs: "CD",
+        Digital: "Дигитални",
+        Cassette: "Касети",
+        Boxset: "Бокс сет",
+        Clothing: "Облекло",
+        Headwear: "Шапки",
+        Drinkware: "Съдове за напитки",
+        Posters: "Постери",
+        Stickers: "Стикери",
+        Cables: "Кабели",
+        Stands: "Стойки",
+        Cases: "Калъфи",
+        Maintenance: "Поддръжка",
+        Gift: "Подаръци",
+        Other: "Други"
+    };
 
     let editId = null;          // current product edit id (null = add mode)
     let editingNewsId = null;   // current news edit id (null = add mode)
@@ -425,13 +464,13 @@
     function populateSubcategories(mainCat, selectedSub = "") {
         const sub = document.getElementById("subcategory");
         if (!sub) return;
-        sub.innerHTML = '<option value="">Select subcategory</option>';
+        sub.innerHTML = '<option value="">Избери подкатегория</option>';
 
         if (CATEGORY_MAP[mainCat]) {
             CATEGORY_MAP[mainCat].forEach(s => {
                 const opt = document.createElement("option");
                 opt.value = s;
-                opt.textContent = s;
+                opt.textContent = SUBCATEGORY_LABELS[s] || s;
                 if (s === selectedSub) opt.selected = true;
                 sub.appendChild(opt);
             });
@@ -480,12 +519,12 @@
         if (p.image_url) {
             const img = document.createElement("img");
             img.src = p.image_url;
-            img.alt = p.name || "Product image";
+            img.alt = p.name || "Изображение на продукт";
             item.appendChild(img);
         } else {
             const placeholder = document.createElement("div");
             placeholder.className = "carousel-item-placeholder";
-            placeholder.textContent = "No Image";
+            placeholder.textContent = "Няма изображение";
             item.appendChild(placeholder);
         }
 
@@ -494,7 +533,7 @@
 
         const title = document.createElement("div");
         title.className = "carousel-item-title";
-        title.textContent = p.name || "Unnamed product";
+        title.textContent = p.name || "Продукт без име";
 
         const price = document.createElement("div");
         price.className = "carousel-item-price";
@@ -504,10 +543,10 @@
         meta.className = "carousel-item-meta";
         const metaParts = [];
         if (p.artist) metaParts.push(p.artist);
-        if (p.category) metaParts.push(p.category);
-        if (p.genre) metaParts.push(p.genre);
+        if (p.category) metaParts.push(CATEGORY_LABELS[p.category] || p.category);
+        if (p.genre) metaParts.push(SUBCATEGORY_LABELS[p.genre] || p.genre);
         if (p.music_genre) metaParts.push(p.music_genre);
-        if (p.stock !== undefined && p.stock !== null) metaParts.push("Stock: " + p.stock);
+        if (p.stock !== undefined && p.stock !== null) metaParts.push("Наличност: " + p.stock);
         meta.textContent = metaParts.join(" · ") || "-";
 
         const actions = document.createElement("div");
@@ -516,13 +555,13 @@
         const editBtn = document.createElement("button");
         editBtn.type = "button";
         editBtn.className = "btn-outline";
-        editBtn.textContent = "Edit";
+        editBtn.textContent = "Редактирай";
         editBtn.addEventListener("click", () => editProduct(p.id));
 
         const delBtn = document.createElement("button");
         delBtn.type = "button";
         delBtn.className = "btn-primary";
-        delBtn.textContent = "Delete";
+        delBtn.textContent = "Изтрий";
         delBtn.addEventListener("click", () => deleteProduct(p.id));
 
         actions.appendChild(editBtn);
@@ -599,7 +638,7 @@
         if (!track) return;
 
         if (!products || products.length === 0) {
-            setAdminCarouselMessage("No products yet.");
+            setAdminCarouselMessage("Все още няма продукти.");
             return;
         }
 
@@ -620,19 +659,19 @@
             if (!track) return;
 
             if (!data.ok) {
-                setAdminCarouselMessage("Error: " + data.error);
+                setAdminCarouselMessage("Грешка: " + data.error);
                 if (countLabel) countLabel.textContent = "";
                 return;
             }
 
             if (!data.products || data.products.length === 0) {
-                if (countLabel) countLabel.textContent = "0 products";
-                setAdminCarouselMessage("No products yet.");
+                if (countLabel) countLabel.textContent = "0 продукта";
+                setAdminCarouselMessage("Все още няма продукти.");
                 return;
             }
 
             if (countLabel) {
-                countLabel.textContent = data.products.length + " product" + (data.products.length !== 1 ? "s" : "");
+                countLabel.textContent = data.products.length + " " + (data.products.length === 1 ? "продукт" : "продукта");
             }
 
             initAdminCarousel(data.products);
@@ -640,7 +679,7 @@
     }
 
     function deleteProduct(id) {
-        if (!confirm("Delete this product?")) return;
+        if (!confirm("Да се изтрие ли този продукт?")) return;
 
         fetch(`/musicshop/api/admin_delete_product.php?id=${id}`, {
             method: "GET",
@@ -651,7 +690,7 @@
             if (data.ok) {
                 loadProductsList();
             } else {
-                alert("Error: " + (data.error || "Delete failed"));
+                alert("Грешка: " + (data.error || "Изтриването е неуспешно"));
             }
         });
     }
@@ -663,7 +702,7 @@
         .then(r => r.json())
         .then(data => {
             if (!data.ok || !data.product) {
-                alert(data.error || "Product not found");
+                alert(data.error || "Продуктът не е намерен");
                 return;
             }
 
@@ -713,12 +752,12 @@
         };
 
         if (!payload.name || !payload.category) {
-            alert("Name and main category are required.");
+            alert("Името и основната категория са задължителни.");
             return;
         }
 
         if (isNaN(payload.price) || payload.price < 0 || isNaN(payload.stock) || payload.stock < 0) {
-            alert("Price and stock must be valid non-negative numbers.");
+            alert("Цената и наличността трябва да са валидни неотрицателни числа.");
             return;
         }
 
@@ -733,7 +772,7 @@
             .then(r => r.json())
             .then(data => {
                 if (!data.ok) {
-                    alert("Error: " + (data.error || "Add failed"));
+                    alert("Грешка: " + (data.error || "Добавянето е неуспешно"));
                     return;
                 }
                 resetForm();
@@ -752,7 +791,7 @@
             .then(r => r.json())
             .then(data => {
                 if (!data.ok) {
-                    alert("Error: " + (data.error || "Update failed"));
+                    alert("Грешка: " + (data.error || "Редакцията е неуспешна"));
                     return;
                 }
                 resetForm();
@@ -768,7 +807,7 @@
         });
 
         const sub = document.getElementById("subcategory");
-        if (sub) sub.innerHTML = '<option value="">Select subcategory</option>';
+        if (sub) sub.innerHTML = '<option value="">Избери подкатегория</option>';
 
         ["format","music_genre","size","color","merch_type","instrument_subtype","accessory_type"].forEach(id => {
             const el = document.getElementById(id);
@@ -787,10 +826,10 @@
     // ===== ORDERS ADMIN =====
     async function deleteOrder(orderId) {
         if (!csrfToken) {
-            alert('Missing CSRF token. Please refresh the page.');
+            alert('Липсва CSRF токен. Моля, презареди страницата.');
             return;
         }
-        if (!confirm(`Delete order #${orderId}? This cannot be undone.`)) return;
+        if (!confirm(`Да се изтрие ли поръчка #${orderId}? Това действие е необратимо.`)) return;
 
         try {
             const resp = await fetch('/musicshop/api/admin_delete_order.php', {
@@ -804,21 +843,21 @@
             });
             const data = await resp.json().catch(() => null);
             if (!resp.ok || !data || !data.ok) {
-                alert('Delete failed: ' + ((data && data.error) || 'Unknown error'));
+                alert('Изтриването е неуспешно: ' + ((data && data.error) || 'Неизвестна грешка'));
                 return;
             }
             loadAllOrders();
         } catch (err) {
-            alert('Delete failed.');
+            alert('Изтриването е неуспешно.');
         }
     }
 
     async function deleteAllOrders() {
         if (!csrfToken) {
-            alert('Missing CSRF token. Please refresh the page.');
+            alert('Липсва CSRF токен. Моля, презареди страницата.');
             return;
         }
-        if (!confirm('Delete ALL orders? This cannot be undone.')) return;
+        if (!confirm('Да се изтрият ли ВСИЧКИ поръчки? Това действие е необратимо.')) return;
 
         try {
             const resp = await fetch('/musicshop/api/admin_delete_all_orders.php', {
@@ -828,12 +867,12 @@
             });
             const data = await resp.json().catch(() => null);
             if (!resp.ok || !data || !data.ok) {
-                alert('Delete failed: ' + ((data && data.error) || 'Unknown error'));
+                alert('Изтриването е неуспешно: ' + ((data && data.error) || 'Неизвестна грешка'));
                 return;
             }
             loadAllOrders();
         } catch (err) {
-            alert('Delete failed.');
+            alert('Изтриването е неуспешно.');
         }
     }
 
@@ -841,13 +880,13 @@
         const btn = document.getElementById('exportOrdersBtn');
         if (btn) {
             btn.disabled = true;
-            btn.textContent = 'Exporting...';
+            btn.textContent = 'Експортиране...';
         }
 
         try {
             const resp = await fetch('/musicshop/api/export_orders_csv.php', { credentials: 'include' });
             if (!resp.ok) {
-                let message = 'Export failed.';
+                let message = 'Експортирането е неуспешно.';
                 try {
                     const data = await resp.json();
                     if (data && data.error) message = data.error;
@@ -870,11 +909,11 @@
             a.remove();
             URL.revokeObjectURL(url);
         } catch (err) {
-            alert('Export failed.');
+            alert('Експортирането е неуспешно.');
         } finally {
             if (btn) {
                 btn.disabled = false;
-                btn.textContent = 'Export as Excel';
+                btn.textContent = 'Експортирай в Excel';
             }
         }
     }
@@ -882,7 +921,7 @@
     async function loadAllOrders() {
         const el = document.getElementById('admin_orders');
         if (!el) return;
-        el.textContent = 'Loading orders...';
+        el.textContent = 'Зареждане на поръчки...';
 
         try {
             const resp = await fetch('/musicshop/api/get_all_orders.php', { credentials: 'include' });
@@ -891,19 +930,19 @@
             try {
                 data = JSON.parse(text);
             } catch (e) {
-                el.innerHTML = 'Error loading orders: <pre>' +
+                el.innerHTML = 'Грешка при зареждане на поръчките: <pre>' +
                     text.replace(/[&<>"']/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[s])) +
                     '</pre>';
                 return;
             }
 
             if (!data.ok) {
-                el.textContent = 'Error loading orders: ' + (data.error || 'Unknown error');
+                el.textContent = 'Грешка при зареждане на поръчките: ' + (data.error || 'Неизвестна грешка');
                 return;
             }
 
             if (!data.orders || data.orders.length === 0) {
-                el.textContent = 'No orders yet.';
+                el.textContent = 'Все още няма поръчки.';
                 return;
             }
 
@@ -917,20 +956,20 @@
                 div.className = 'admin-order-card';
                 div.innerHTML = `
                     <div class="admin-order-header">
-                        <strong>Order #${order.id}</strong>
+                        <strong>Поръчка #${order.id}</strong>
                         <span>${order.created_at}</span>
                     </div>
                     <div class="admin-order-divider"></div>
                     <div class="admin-order-meta">
-                        <div><strong>User:</strong> ${order.username || ''} ${order.email ? '('+order.email+')' : ''}</div>
-                        <div><strong>Customer:</strong> ${order.customer_name || '-'}${order.customer_email ? ' ('+order.customer_email+')' : ''}${order.customer_phone ? ', '+order.customer_phone : ''}</div>
-                        <div><strong>Address:</strong> ${(order.shipping_address || '')}, ${(order.shipping_city || '')} ${(order.shipping_postcode || '')}, ${(order.shipping_country || '')}</div>
-                        ${order.customer_note ? `<div><strong>Note:</strong> ${order.customer_note}</div>` : ''}
-                        <div><strong>Total:</strong> €${Number(order.total_price).toFixed(2)}</div>
+                        <div><strong>Потребител:</strong> ${order.username || ''} ${order.email ? '('+order.email+')' : ''}</div>
+                        <div><strong>Клиент:</strong> ${order.customer_name || '-'}${order.customer_email ? ' ('+order.customer_email+')' : ''}${order.customer_phone ? ', '+order.customer_phone : ''}</div>
+                        <div><strong>Адрес:</strong> ${(order.shipping_address || '')}, ${(order.shipping_city || '')} ${(order.shipping_postcode || '')}, ${(order.shipping_country || '')}</div>
+                        ${order.customer_note ? `<div><strong>Бележка:</strong> ${order.customer_note}</div>` : ''}
+                        <div><strong>Общо:</strong> €${Number(order.total_price).toFixed(2)}</div>
                     </div>
                     ${items ? `<div class="admin-order-divider"></div><ul class="admin-order-items">${items}</ul>` : ''}
                     <div class="admin-order-controls">
-                        <button class="btn-secondary delete-order-btn" data-order-id="${order.id}" type="button">Delete order</button>
+                        <button class="btn-secondary delete-order-btn" data-order-id="${order.id}" type="button">Изтрий поръчката</button>
                     </div>
                 `;
                 el.appendChild(div);
@@ -942,7 +981,7 @@
             });
         } catch (err) {
             console.error(err);
-            el.textContent = 'Error loading orders.';
+            el.textContent = 'Грешка при зареждане на поръчките.';
         }
     }
 
@@ -967,7 +1006,7 @@
 
         const img = document.createElement("img");
         img.src = getNewsImageUrl(n);
-        img.alt = n.title ? `${n.title} cover` : "News image";
+        img.alt = n.title ? `${n.title} корица` : "Изображение на новина";
         item.appendChild(img);
 
         const body = document.createElement("div");
@@ -975,7 +1014,7 @@
 
         const title = document.createElement("div");
         title.className = "carousel-item-title";
-        title.textContent = n.title || "Untitled news";
+        title.textContent = n.title || "Новина без заглавие";
 
         const meta = document.createElement("div");
         meta.className = "carousel-item-meta";
@@ -991,13 +1030,13 @@
         const editBtn = document.createElement("button");
         editBtn.type = "button";
         editBtn.className = "btn-outline";
-        editBtn.textContent = "Edit";
+        editBtn.textContent = "Редактирай";
         editBtn.addEventListener("click", () => startNewsEdit(n));
 
         const delBtn = document.createElement("button");
         delBtn.type = "button";
         delBtn.className = "btn-primary";
-        delBtn.textContent = "Delete";
+        delBtn.textContent = "Изтрий";
         delBtn.addEventListener("click", () => deleteNews(n.id));
 
         actions.appendChild(editBtn);
@@ -1061,7 +1100,7 @@
         if (!track) return;
 
         if (!newsItems || newsItems.length === 0) {
-            setAdminNewsCarouselMessage("No news yet.");
+            setAdminNewsCarouselMessage("Все още няма новини.");
             return;
         }
 
@@ -1080,27 +1119,27 @@
                 if (!container) return;
 
                 if (!data.ok) {
-                    setAdminNewsCarouselMessage('Error loading news.');
-                    if (countLabel) countLabel.textContent = 'Error';
+                    setAdminNewsCarouselMessage('Грешка при зареждане на новините.');
+                    if (countLabel) countLabel.textContent = 'Грешка';
                     return;
                 }
 
                 if (!data.news || data.news.length === 0) {
-                    setAdminNewsCarouselMessage('No news yet.');
-                    if (countLabel) countLabel.textContent = '0 items';
+                    setAdminNewsCarouselMessage('Все още няма новини.');
+                    if (countLabel) countLabel.textContent = '0 елемента';
                     return;
                 }
 
                 if (countLabel) {
-                    countLabel.textContent = data.news.length + ' item' + (data.news.length !== 1 ? 's' : '');
+                    countLabel.textContent = data.news.length + ' ' + (data.news.length === 1 ? 'елемент' : 'елемента');
                 }
 
                 initAdminNewsCarousel(data.news);
             })
             .catch(() => {
-                setAdminNewsCarouselMessage('Error loading news.');
+                setAdminNewsCarouselMessage('Грешка при зареждане на новините.');
                 const countLabel = document.getElementById('newsCountLabel');
-                if (countLabel) countLabel.textContent = 'Error';
+                if (countLabel) countLabel.textContent = 'Грешка';
             });
     }
 
@@ -1108,7 +1147,7 @@
         editingNewsId = news.id;
         document.getElementById('news_title').value = news.title || '';
         document.getElementById('news_content').value = news.content || '';
-        document.getElementById('newsSaveBtn').textContent = 'Save changes';
+        document.getElementById('newsSaveBtn').textContent = 'Запази промените';
         document.getElementById('newsCancelBtn').style.display = 'inline-flex';
     }
 
@@ -1116,7 +1155,7 @@
         editingNewsId = null;
         document.getElementById('news_title').value = '';
         document.getElementById('news_content').value = '';
-        document.getElementById('newsSaveBtn').textContent = 'Add news';
+        document.getElementById('newsSaveBtn').textContent = 'Добави новина';
         document.getElementById('newsCancelBtn').style.display = 'none';
     }
 
@@ -1125,7 +1164,7 @@
         const content = document.getElementById('news_content').value.trim();
 
         if (!title || !content) {
-            alert('Please fill title and content.');
+            alert('Моля, попълни заглавие и съдържание.');
             return;
         }
 
@@ -1140,7 +1179,7 @@
             .then(r => r.json())
             .then(data => {
                 if (!data.ok) {
-                    alert('Error adding news: ' + (data.error || 'Unknown error'));
+                    alert('Грешка при добавяне на новина: ' + (data.error || 'Неизвестна грешка'));
                     return;
                 }
                 cancelNewsEdit();
@@ -1157,7 +1196,7 @@
             .then(r => r.json())
             .then(data => {
                 if (!data.ok) {
-                    alert('Error updating news: ' + (data.error || 'Unknown error'));
+                    alert('Грешка при редактиране на новина: ' + (data.error || 'Неизвестна грешка'));
                     return;
                 }
                 cancelNewsEdit();
@@ -1167,7 +1206,7 @@
     }
 
     function deleteNews(id) {
-        if (!confirm("Delete this news item?")) return;
+        if (!confirm("Да се изтрие ли тази новина?")) return;
 
         const formData = new FormData();
         formData.append('id', id);
@@ -1180,7 +1219,7 @@
         .then(r => r.json())
         .then(data => {
             if (!data.ok) {
-                alert('Error deleting news: ' + (data.error || 'Unknown error'));
+                alert('Грешка при изтриване на новина: ' + (data.error || 'Неизвестна грешка'));
                 return;
             }
             if (editingNewsId === id) {

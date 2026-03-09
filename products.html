@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bg">
 <head>
     <meta charset="UTF-8">
-    <title>Products - MusicShop</title>
+    <title>Продукти - MusicShop</title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -69,34 +69,34 @@
             </div>
             <div class="brand-text">
                 <h1>MusicShop</h1>
-                <p>Instruments · Vinyls · Merch</p>
+                <p>Инструменти · Плочи · Мърч</p>
             </div>
         </a>
 
         <nav class="nav-links">
-            <a href="products.html" class="active">Products</a>
-            <a href="favorites.html">Favorites</a>
-            <a href="cart.html">Cart</a>
-            <a href="orders.html">Orders</a>
-            <a href="news.html">News</a>
-            <a href="admin.html" id="adminLink" class="admin-only">Admin</a>
+            <a href="products.html" class="active">Продукти</a>
+            <a href="favorites.html">Любими</a>
+            <a href="cart.html">Количка</a>
+            <a href="orders.html">Поръчки</a>
+            <a href="news.html">Новини</a>
+            <a href="admin.html" id="adminLink" class="admin-only">Админ</a>
         </nav>
 
         <div class="nav-secondary">
-            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+            <button class="theme-toggle" id="themeToggle" aria-label="Смени темата">
                 <span id="themeIcon">🌞</span>
             </button>
 
-            <button class="login-btn-header" id="loginBtn" onclick="window.location='login.html'" style="display:none">Log In</button>
+            <button class="login-btn-header" id="loginBtn" onclick="window.location='login.html'" style="display:none">Вход</button>
 
             <div class="user-status-pill">
                 <div class="user-status-dot"></div>
-                <div id="userStatus">Not logged in.</div>
+                <div id="userStatus">Не сте влезли.</div>
             </div>
 
             <button class="logout-btn" id="logoutBtn" style="display:none" onclick="logout()">
                 <span>⏏</span>
-                Logout
+                Изход
             </button>
         </div>
     </div>
@@ -107,33 +107,33 @@
         <!-- FILTERS -->
         <section class="filter-card">
             <div class="filter-header">
-                <h1>Products</h1>
-                <span>Filter &amp; sort the catalog</span>
+                <h1>Продукти</h1>
+                <span>Филтрирай и сортирай каталога</span>
             </div>
 
             <div class="filters-grid">
                 <div class="filter-group">
-                    <label for="filter_category">Main category</label>
+                    <label for="filter_category">Основна категория</label>
                     <select id="filter_category">
-                        <option value="">All</option>
-                        <option value="Instruments">Instruments</option>
-                        <option value="Music">Music</option>
-                        <option value="Merch">Merch</option>
-                        <option value="Other">Other</option>
+                        <option value="">Всички</option>
+                        <option value="Instruments">Инструменти</option>
+                        <option value="Music">Музика</option>
+                        <option value="Merch">Мърч</option>
+                        <option value="Other">Други</option>
                     </select>
                 </div>
 
                 <div class="filter-group">
-                    <label for="filter_subcategory">Subcategory</label>
+                    <label for="filter_subcategory">Подкатегория</label>
                     <select id="filter_subcategory">
-                        <option value="">All</option>
+                        <option value="">Всички</option>
                     </select>
                 </div>
 
                 <div class="filter-group" id="music_genre_wrapper" style="display:none;">
-                    <label for="filter_music_genre">Music genre</label>
+                    <label for="filter_music_genre">Музикален жанр</label>
                     <select id="filter_music_genre">
-                        <option value="">All</option>
+                        <option value="">Всички</option>
                         <option value="Rock">Rock</option>
                         <option value="Metal">Metal</option>
                         <option value="Pop">Pop</option>
@@ -148,40 +148,40 @@
                         <option value="Classical">Classical</option>
                         <option value="Soundtrack">Soundtrack</option>
                         <option value="Folk">Folk</option>
-                        <option value="Other">Other</option>
+                        <option value="Other">Други</option>
                     </select>
                 </div>
 
                 <div class="filter-group">
-                    <label for="sortSelect">Sort</label>
+                    <label for="sortSelect">Сортиране</label>
                     <select id="sortSelect">
-                        <option value="">No sorting</option>
-                        <option value="price_asc">Price: Low → High</option>
-                        <option value="price_desc">Price: High → Low</option>
-                        <option value="name_asc">Name: A → Z</option>
-                        <option value="name_desc">Name: Z → A</option>
+                        <option value="">Без сортиране</option>
+                        <option value="price_asc">Цена: ниска → висока</option>
+                        <option value="price_desc">Цена: висока → ниска</option>
+                        <option value="name_asc">Име: A → Z</option>
+                        <option value="name_desc">Име: Z → A</option>
                     </select>
                 </div>
 
                 <div class="filter-group">
-                    <label for="search_box">Search</label>
-                    <input type="text" id="search_box" placeholder="Search by name or artist">
+                    <label for="search_box">Търсене</label>
+                    <input type="text" id="search_box" placeholder="Търси по име или изпълнител">
                 </div>
             </div>
 
             <div class="filter-actions">
-                <button id="applyBtn" class="btn-apply">Apply filters</button>
+                <button id="applyBtn" class="btn-apply">Приложи филтрите</button>
             </div>
         </section>
 
         <!-- PRODUCTS -->
         <section class="products-section">
             <div class="products-header">
-                <h2>All products</h2>
+                <h2>Всички продукти</h2>
                 <span id="productsCountLabel"></span>
             </div>
 
-            <div id="product_list">Loading...</div>
+            <div id="product_list">Зареждане...</div>
         </section>
     </div>
 </main>
@@ -204,16 +204,16 @@
         </div>
 
         <div class="modal-actions">
-            <button class="btn-outline" id="modalFavBtn">Add to favorites</button>
-            <button class="btn-secondary" id="modalCartBtn">Add to cart</button>
+            <button class="btn-outline" id="modalFavBtn">Добави в любими</button>
+            <button class="btn-secondary" id="modalCartBtn">Добави в количката</button>
         </div>
     </div>
 </div>
 
 <footer>
     <div class="footer-inner">
-        <span>© <span id="year"></span> MusicShop. All rights reserved.</span>
-        <span>Built for your diploma project · <a href="admin.html" id="adminFooterLink" class="admin-only">Admin panel</a></span>
+        <span>© <span id="year"></span> MusicShop. Всички права запазени.</span>
+        <span id="footerSecondary">Нямаш профил? <a href="register.html">Създай такъв</a></span>
     </div>
 </footer>
 
@@ -271,19 +271,24 @@
             .then(r => r.ok ? r.json() : null)
             .then(data => {
                 const loginBtn = document.getElementById("loginBtn");
+                const footerSecondary = document.getElementById("footerSecondary");
                 const loggedIn = data && data.logged_in;
                 if (loggedIn) {
                     if (logoutBtn) logoutBtn.style.display = "inline-flex";
                     if (loginBtn) loginBtn.style.display = "none";
+                    if (footerSecondary) footerSecondary.textContent = "Калоян Милев - Димпломен Проект";
                 } else {
                     if (logoutBtn) logoutBtn.style.display = "none";
                     if (loginBtn) loginBtn.style.display = "inline-flex";
+                    if (footerSecondary) footerSecondary.innerHTML = 'Нямаш профил? <a href="register.html">Създай такъв</a>';
                 }
             })
             .catch(() => {
                 if (logoutBtn) logoutBtn.style.display = "none";
                 const loginBtn = document.getElementById("loginBtn");
+                const footerSecondary = document.getElementById("footerSecondary");
                 if (loginBtn) loginBtn.style.display = "inline-flex";
+                if (footerSecondary) footerSecondary.innerHTML = 'Нямаш профил? <a href="register.html">Създай такъв</a>';
             });
     });
 
@@ -305,6 +310,34 @@
             "Cables", "Stands", "Cases", "Maintenance", "Gift", "Other"
         ]
     };
+    const SUBCATEGORY_LABELS = {
+        Guitars: "Китари",
+        Basses: "Басове",
+        Drums: "Барабани",
+        Keys: "Клавишни",
+        Studio: "Студио",
+        DJ: "DJ",
+        Amps: "Усилватели",
+        Pedals: "Педали",
+        Microphones: "Микрофони",
+        Accessories: "Аксесоари",
+        Vinyls: "Плочи",
+        CDs: "CD",
+        Digital: "Дигитални",
+        Cassette: "Касети",
+        Boxset: "Бокс сет",
+        Clothing: "Облекло",
+        Headwear: "Шапки",
+        Drinkware: "Съдове за напитки",
+        Posters: "Постери",
+        Stickers: "Стикери",
+        Cables: "Кабели",
+        Stands: "Стойки",
+        Cases: "Калъфи",
+        Maintenance: "Поддръжка",
+        Gift: "Подаръци",
+        Other: "Други"
+    };
 
     // Modal state
     let currentModalProduct = null;
@@ -317,14 +350,14 @@
 
         const allOpt = document.createElement("option");
         allOpt.value = "";
-        allOpt.textContent = "All";
+        allOpt.textContent = "Всички";
         subSelect.appendChild(allOpt);
 
         if (CATEGORY_MAP[main]) {
             CATEGORY_MAP[main].forEach(sub => {
                 const opt = document.createElement("option");
                 opt.value = sub;
-                opt.textContent = sub;
+                opt.textContent = SUBCATEGORY_LABELS[sub] || sub;
                 subSelect.appendChild(opt);
             });
         }
@@ -375,7 +408,7 @@
         }
 
         saveCart(cart);
-        alert("Added to cart.");
+        alert("Добавено в количката.");
     }
 
     function addFavorite(productId) {
@@ -388,14 +421,14 @@
             .then(r => r.json())
             .then(data => {
                 if (!data.ok) {
-                    alert("Failed: " + (data.error || "Unknown error"));
+                    alert("Неуспешно: " + (data.error || "Неизвестна грешка"));
                     return false;
                 }
-                alert("Added to favorites");
+                alert("Добавено в любими");
                 return true;
             })
             .catch(() => {
-                alert("Error adding to favorites.");
+                alert("Грешка при добавяне в любими.");
                 return false;
             });
     }
@@ -410,14 +443,14 @@
             .then(r => r.json())
             .then(data => {
                 if (!data.ok) {
-                    alert("Failed: " + (data.error || "Unknown error"));
+                    alert("Неуспешно: " + (data.error || "Неизвестна грешка"));
                     return false;
                 }
-                alert("Removed from favorites");
+                alert("Премахнато от любими");
                 return true;
             })
             .catch(() => {
-                alert("Error removing from favorites.");
+                alert("Грешка при премахване от любими.");
                 return false;
             });
     }
@@ -450,19 +483,19 @@
                 container.innerHTML = "";
 
                 if (!data.ok) {
-                    container.textContent = "Error loading products: " + (data.error || "");
+                    container.textContent = "Грешка при зареждане на продуктите: " + (data.error || "");
                     if (countLabel) countLabel.textContent = "";
                     return;
                 }
 
                 if (!data.products || data.products.length === 0) {
-                    container.textContent = "No products found.";
-                    if (countLabel) countLabel.textContent = "0 products";
+                    container.textContent = "Няма намерени продукти.";
+                    if (countLabel) countLabel.textContent = "0 продукта";
                     return;
                 }
 
                 if (countLabel) {
-                    countLabel.textContent = data.products.length + " product" + (data.products.length !== 1 ? "s" : "");
+                    countLabel.textContent = data.products.length + " " + (data.products.length === 1 ? "продукт" : "продукта");
                 }
 
                 const grid = document.createElement("div");
@@ -479,7 +512,7 @@
                     card.innerHTML = `
                         <img class="product-thumb" src="${imageUrl}" alt="${safeName}">
                         <div class="product-card-heading">
-                            <div class="product-name">${p.name || "Unnamed product"}</div>
+                            <div class="product-name">${p.name || "Продукт без име"}</div>
                             <div class="product-price">€${p.price}</div>
                         </div>
                         <div class="product-meta">
@@ -488,12 +521,12 @@
                             ${p.music_genre ? " · " + p.music_genre : ""}
                         </div>
                         <div class="product-description">
-                            ${p.description || "No description available."}
+                            ${p.description || "Няма налично описание."}
                         </div>
                         <div class="product-actions">
-                            <a class="btn-secondary view-details" href="product.html?id=${p.id}">View details</a>
-                            <button class="btn-outline fav-btn">Add to favorites</button>
-                            <button class="btn-outline cart-btn">Add to cart</button>
+                            <a class="btn-secondary view-details" href="product.html?id=${p.id}">Виж детайли</a>
+                            <button class="btn-outline fav-btn">Добави в любими</button>
+                            <button class="btn-outline cart-btn">Добави в количката</button>
                         </div>
                     `;
 
@@ -504,7 +537,7 @@
                     if (favBtn) {
                         let isFavorite = Number(p.is_favorite) === 1;
                         const setFavLabel = () => {
-                            favBtn.textContent = isFavorite ? "Remove from favorites" : "Add to favorites";
+                            favBtn.textContent = isFavorite ? "Премахни от любими" : "Добави в любими";
                         };
                         setFavLabel();
 
@@ -529,7 +562,7 @@
             })
             .catch(err => {
                 console.error(err);
-                document.getElementById("product_list").textContent = "Error loading products.";
+                document.getElementById("product_list").textContent = "Грешка при зареждане на продуктите.";
             });
     }
 
