@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Продукти - MusicShop</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?v=20260323b">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         /* Explicit button styling to ensure readability */
@@ -168,20 +168,20 @@
                     <label for="filter_music_genre">Музикален жанр</label>
                     <select id="filter_music_genre">
                         <option value="">Всички</option>
-                        <option value="Rock">Rock</option>
-                        <option value="Metal">Metal</option>
-                        <option value="Pop">Pop</option>
-                        <option value="Hip-Hop">Hip-Hop</option>
-                        <option value="Rap">Rap</option>
-                        <option value="Jazz">Jazz</option>
-                        <option value="Blues">Blues</option>
-                        <option value="Electronic">Electronic</option>
-                        <option value="House">House</option>
-                        <option value="Techno">Techno</option>
-                        <option value="Drum & Bass">Drum &amp; Bass</option>
-                        <option value="Classical">Classical</option>
-                        <option value="Soundtrack">Soundtrack</option>
-                        <option value="Folk">Folk</option>
+                        <option value="Rock">Рок</option>
+                        <option value="Metal">Метъл</option>
+                        <option value="Pop">Поп</option>
+                        <option value="Hip-Hop">Хип-хоп</option>
+                        <option value="Rap">Рап</option>
+                        <option value="Jazz">Джаз</option>
+                        <option value="Blues">Блус</option>
+                        <option value="Electronic">Електронна</option>
+                        <option value="House">Хаус</option>
+                        <option value="Techno">Техно</option>
+                        <option value="Drum & Bass">Дръм енд бейс</option>
+                        <option value="Classical">Класическа</option>
+                        <option value="Soundtrack">Саундтрак</option>
+                        <option value="Folk">Фолклор</option>
                         <option value="Other">Други</option>
                     </select>
                 </div>
@@ -331,32 +331,38 @@
     // Category -> subcategory mapping (MUST match admin.html CATEGORY_MAP)
     const CATEGORY_MAP = {
         "Instruments": [
-            "Guitars", "Basses", "Drums", "Keys", "Studio",
-            "DJ", "Amps", "Pedals", "Microphones", "Accessories", "Other"
+            "Guitars", "Basses", "Drums", "Keyboards", "Studio",
+            "DJ", "Amps", "Effects", "Microphones", "Accessories", "Other"
         ],
         "Music": [
-            "Vinyls", "CDs", "Digital", "Cassette", "Boxset", "Other"
+            "Vinyl", "CD", "Digital", "Cassette", "Boxset", "Other"
         ],
         "Merch": [
-            "Clothing", "Headwear", "Drinkware", "Posters", "Stickers", "Other"
+            "Clothing", "Headwear", "Drinkware", "Posters", "Stickers", "Accessories", "Other"
         ],
         "Other": [
-            "Cables", "Stands", "Cases", "Maintenance", "Gift", "Other"
+            "Accessories", "Cables", "Stands", "Cases", "Maintenance", "Gift", "Audio", "Recording", "Other"
         ]
+    };
+    const CATEGORY_LABELS = {
+        Instruments: "Инструменти",
+        Music: "Музика",
+        Merch: "Мърч",
+        Other: "Други"
     };
     const SUBCATEGORY_LABELS = {
         Guitars: "Китари",
         Basses: "Басове",
         Drums: "Барабани",
-        Keys: "Клавишни",
+        Keyboards: "Клавишни",
         Studio: "Студио",
         DJ: "DJ",
         Amps: "Усилватели",
-        Pedals: "Педали",
+        Effects: "Ефекти",
         Microphones: "Микрофони",
         Accessories: "Аксесоари",
-        Vinyls: "Плочи",
-        CDs: "CD",
+        Vinyl: "Плочи",
+        CD: "CD",
         Digital: "Дигитални",
         Cassette: "Касети",
         Boxset: "Бокс сет",
@@ -370,8 +376,39 @@
         Cases: "Калъфи",
         Maintenance: "Поддръжка",
         Gift: "Подаръци",
+        Audio: "Аудио",
+        Recording: "Запис",
         Other: "Други"
     };
+    const MUSIC_GENRE_LABELS = {
+        Rock: "Рок",
+        Metal: "Метъл",
+        Pop: "Поп",
+        "Hip-Hop": "Хип-хоп",
+        Rap: "Рап",
+        Jazz: "Джаз",
+        Blues: "Блус",
+        Electronic: "Електронна",
+        House: "Хаус",
+        Techno: "Техно",
+        "Drum & Bass": "Дръм енд бейс",
+        Classical: "Класическа",
+        Soundtrack: "Саундтрак",
+        Folk: "Фолклор",
+        Other: "Други"
+    };
+
+    function translateCategory(value) {
+        return CATEGORY_LABELS[value] || value || "-";
+    }
+
+    function translateSubcategory(value) {
+        return SUBCATEGORY_LABELS[value] || value;
+    }
+
+    function translateMusicGenre(value) {
+        return MUSIC_GENRE_LABELS[value] || value;
+    }
 
     // Modal state
     let currentModalProduct = null;
@@ -534,6 +571,11 @@
 
                 const grid = document.createElement("div");
                 grid.className = "product-grid";
+                if (data.products.length === 1) {
+                    grid.classList.add("single-product-result");
+                    grid.style.gridTemplateColumns = "minmax(240px, 280px)";
+                    grid.style.justifyContent = "start";
+                }
 
                 data.products.forEach(p => {
                     const card = document.createElement("div");
@@ -544,15 +586,17 @@
                     const imageUrl = p.image_url || "images/products/placeholder.jpg";
 
                     card.innerHTML = `
-                        <img class="product-thumb" src="${imageUrl}" alt="${safeName}">
+                        <div class="product-thumb-frame">
+                            <img class="product-thumb" src="${imageUrl}" alt="${safeName}">
+                        </div>
                         <div class="product-card-heading">
                             <div class="product-name">${p.name || "Продукт без име"}</div>
                             <div class="product-price">€${p.price}</div>
                         </div>
                         <div class="product-meta">
                             ${p.artist ? p.artist + " · " : ""}
-                            ${p.category || "-"}${p.genre ? " · " + p.genre : ""}
-                            ${p.music_genre ? " · " + p.music_genre : ""}
+                            ${translateCategory(p.category)}${p.genre ? " · " + translateSubcategory(p.genre) : ""}
+                            ${p.music_genre ? " · " + translateMusicGenre(p.music_genre) : ""}
                         </div>
                         <div class="product-description">
                             ${p.description || "Няма налично описание."}

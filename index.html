@@ -827,6 +827,59 @@ function logout() {
 }
 
 function renderCarouselItem(p) {
+    const CATEGORY_LABELS = {
+        Instruments: 'Инструменти',
+        Music: 'Музика',
+        Merch: 'Мърч',
+        Other: 'Други'
+    };
+    const SUBCATEGORY_LABELS = {
+        Guitars: 'Китари',
+        Basses: 'Басове',
+        Drums: 'Барабани',
+        Keyboards: 'Клавишни',
+        Studio: 'Студио',
+        DJ: 'DJ',
+        Amps: 'Усилватели',
+        Effects: 'Ефекти',
+        Microphones: 'Микрофони',
+        Accessories: 'Аксесоари',
+        Vinyl: 'Плочи',
+        CD: 'CD',
+        Digital: 'Дигитални',
+        Cassette: 'Касети',
+        Boxset: 'Бокс сет',
+        Clothing: 'Облекло',
+        Headwear: 'Шапки',
+        Drinkware: 'Съдове за напитки',
+        Posters: 'Постери',
+        Stickers: 'Стикери',
+        Cables: 'Кабели',
+        Stands: 'Стойки',
+        Cases: 'Калъфи',
+        Maintenance: 'Поддръжка',
+        Gift: 'Подаръци',
+        Audio: 'Аудио',
+        Recording: 'Запис',
+        Other: 'Други'
+    };
+    const MUSIC_GENRE_LABELS = {
+        Rock: 'Рок',
+        Metal: 'Метъл',
+        Pop: 'Поп',
+        'Hip-Hop': 'Хип-хоп',
+        Rap: 'Рап',
+        Jazz: 'Джаз',
+        Blues: 'Блус',
+        Electronic: 'Електронна',
+        House: 'Хаус',
+        Techno: 'Техно',
+        'Drum & Bass': 'Дръм енд бейс',
+        Classical: 'Класическа',
+        Soundtrack: 'Саундтрак',
+        Folk: 'Фолклор',
+        Other: 'Други'
+    };
     const safeName = (p.name || '').replace(/"/g, '&quot;').replace(/'/g, "\\'");
     const imageUrl = p.image_url || 'images/products/placeholder.jpg';
     const item = document.createElement('div');
@@ -838,9 +891,9 @@ function renderCarouselItem(p) {
 
     const metaParts = [];
     if (p.artist) metaParts.push(p.artist);
-    if (p.category) metaParts.push(p.category);
-    if (p.genre) metaParts.push(p.genre);
-    if (p.music_genre) metaParts.push(p.music_genre);
+    if (p.category) metaParts.push(CATEGORY_LABELS[p.category] || p.category);
+    if (p.genre) metaParts.push(SUBCATEGORY_LABELS[p.genre] || p.genre);
+    if (p.music_genre) metaParts.push(MUSIC_GENRE_LABELS[p.music_genre] || p.music_genre);
 
     item.innerHTML = `
         ${imageMarkup}
@@ -995,9 +1048,9 @@ function loadHomeProducts() {
                 return;
             }
 
-            const products = data.products;
+            const products = [...data.products].sort((a, b) => Number(b.id || 0) - Number(a.id || 0));
             const latest = products.slice(0, 8);
-            const deals = products.slice(4, 12);
+            const deals = products.slice(8, 16);
 
             initCarousel('latest', latest);
             if (deals.length > 0) {

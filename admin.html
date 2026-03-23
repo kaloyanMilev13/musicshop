@@ -450,10 +450,10 @@
     // ===== PRODUCTS ADMIN LOGIC =====
 
     const CATEGORY_MAP = {
-        "Instruments": ["Guitars", "Basses", "Drums", "Keys", "Studio", "DJ", "Amps", "Pedals", "Microphones", "Accessories", "Other"],
-        "Music": ["Vinyls", "CDs", "Digital", "Cassette", "Boxset", "Other"],
-        "Merch": ["Clothing", "Headwear", "Drinkware", "Posters", "Stickers", "Other"],
-        "Other": ["Cables", "Stands", "Cases", "Maintenance", "Gift", "Other"]
+        "Instruments": ["Guitars", "Basses", "Drums", "Keyboards", "Studio", "DJ", "Amps", "Effects", "Microphones", "Accessories", "Other"],
+        "Music": ["Vinyl", "CD", "Digital", "Cassette", "Boxset", "Other"],
+        "Merch": ["Clothing", "Headwear", "Drinkware", "Posters", "Stickers", "Accessories", "Other"],
+        "Other": ["Accessories", "Cables", "Stands", "Cases", "Maintenance", "Gift", "Audio", "Recording", "Other"]
     };
     const CATEGORY_LABELS = {
         Instruments: "Инструменти",
@@ -465,15 +465,15 @@
         Guitars: "Китари",
         Basses: "Басове",
         Drums: "Барабани",
-        Keys: "Клавишни",
+        Keyboards: "Клавишни",
         Studio: "Студио",
         DJ: "DJ",
         Amps: "Усилватели",
-        Pedals: "Педали",
+        Effects: "Ефекти",
         Microphones: "Микрофони",
         Accessories: "Аксесоари",
-        Vinyls: "Плочи",
-        CDs: "CD",
+        Vinyl: "Плочи",
+        CD: "CD",
         Digital: "Дигитални",
         Cassette: "Касети",
         Boxset: "Бокс сет",
@@ -487,6 +487,8 @@
         Cases: "Калъфи",
         Maintenance: "Поддръжка",
         Gift: "Подаръци",
+        Audio: "Аудио",
+        Recording: "Запис",
         Other: "Други"
     };
 
@@ -536,7 +538,7 @@
         }
 
         if (cat === "Instruments" &&
-            (sub === "Guitars" || sub === "Basses" || sub === "Drums" || sub === "Keys") &&
+            (sub === "Guitars" || sub === "Basses" || sub === "Drums" || sub === "Keyboards") &&
             instrumentFields) {
             instrumentFields.style.display = "block";
         }

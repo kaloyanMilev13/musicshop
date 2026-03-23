@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bg">
 <head>
     <meta charset="UTF-8">
-    <title>Admin Products - MusicShop</title>
+    <title>Админ Продукти - MusicShop</title>
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -78,34 +78,34 @@
             </div>
             <div class="brand-text">
                 <h1>MusicShop</h1>
-                <p>Instruments · Vinyls · Merch</p>
+                <p>Инструменти · Плочи · Мърч</p>
             </div>
         </a>
 
         <nav class="nav-links">
-            <a href="products.html">Products</a>
-            <a href="favorites.html">Favorites</a>
-            <a href="cart.html">Cart</a>
-            <a href="orders.html">Orders</a>
-            <a href="news.html">News</a>
-            <a href="admin.html" class="active admin-only" id="adminLink">Admin</a>
+            <a href="products.html">Продукти</a>
+            <a href="favorites.html">Любими</a>
+            <a href="cart.html">Количка</a>
+            <a href="orders.html">Поръчки</a>
+            <a href="news.html">Новини</a>
+            <a href="admin.html" class="active admin-only" id="adminLink">Админ</a>
         </nav>
 
         <div class="nav-secondary">
-            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+            <button class="theme-toggle" id="themeToggle" aria-label="Смени темата">
                 <span id="themeIcon">🌞</span>
             </button>
 
-            <button class="login-btn-header" id="loginBtn" onclick="window.location='login.html'" style="display:none">Log In</button>
+            <button class="login-btn-header" id="loginBtn" onclick="window.location='login.html'" style="display:none">Вход</button>
 
             <div class="user-status-pill">
                 <div class="user-status-dot"></div>
-                <div id="userStatus">Not logged in.</div>
+                <div id="userStatus">Не сте влезли.</div>
             </div>
 
             <button class="logout-btn" id="logoutBtn" style="display:none" onclick="logout()">
                 <span>⏏</span>
-                Logout
+                Изход
             </button>
         </div>
     </div>
@@ -115,38 +115,38 @@
     <div class="page-wrapper">
         <section class="filter-card">
             <div class="filter-header">
-                <h1>Admin products</h1>
-                <span>Search and manage products</span>
+                <h1>Админ продукти</h1>
+                <span>Търси и управлявай продукти</span>
             </div>
 
             <div class="filters-grid">
                 <div class="filter-group">
-                    <label for="adminProductSearch">Search</label>
-                    <input id="adminProductSearch" type="text" placeholder="Search by name, artist, category, or subcategory">
+                    <label for="adminProductSearch">Търсене</label>
+                    <input id="adminProductSearch" type="text" placeholder="Търси по име, изпълнител, категория или подкатегория">
                 </div>
             </div>
 
             <div class="filter-actions">
-                <button id="adminSearchBtn" class="btn-apply" type="button">Search</button>
-                <button id="adminSearchClear" class="btn-outline" type="button">Clear</button>
+                <button id="adminSearchBtn" class="btn-apply" type="button">Търси</button>
+                <button id="adminSearchClear" class="btn-outline" type="button">Изчисти</button>
             </div>
         </section>
 
         <section class="products-section">
             <div class="products-header">
-                <h2>All products</h2>
+                <h2>Всички продукти</h2>
                 <span id="adminProductsCount"></span>
-                <a class="btn-outline" href="admin.html">Back to admin</a>
+                <a class="btn-outline" href="admin.html">Назад към админ панела</a>
             </div>
 
-            <div id="adminProductsList">Loading...</div>
+            <div id="adminProductsList">Зареждане...</div>
         </section>
     </div>
 </main>
 
 <footer>
     <div class="footer-inner">
-        <span>© <span id="year"></span> MusicShop. All rights reserved.</span>
+        <span>© <span id="year"></span> MusicShop. Всички права запазени.</span>
         <span id="footerSecondary">Нямаш профил? <a href="register.html">Създай такъв</a></span>
     </div>
 </footer>
@@ -163,6 +163,62 @@
         query: ""
     };
 
+    const CATEGORY_LABELS = {
+        Instruments: "Инструменти",
+        Music: "Музика",
+        Merch: "Мърч",
+        Other: "Други"
+    };
+
+    const SUBCATEGORY_LABELS = {
+        Guitars: "Китари",
+        Basses: "Басове",
+        Drums: "Барабани",
+        Keyboards: "Клавишни",
+        Studio: "Студио",
+        DJ: "DJ",
+        Amps: "Усилватели",
+        Effects: "Ефекти",
+        Microphones: "Микрофони",
+        Accessories: "Аксесоари",
+        Vinyl: "Плочи",
+        CD: "CD",
+        Digital: "Дигитални",
+        Cassette: "Касети",
+        Boxset: "Бокс сет",
+        Clothing: "Облекло",
+        Headwear: "Шапки",
+        Drinkware: "Съдове за напитки",
+        Posters: "Постери",
+        Stickers: "Стикери",
+        Cables: "Кабели",
+        Stands: "Стойки",
+        Cases: "Калъфи",
+        Maintenance: "Поддръжка",
+        Gift: "Подаръци",
+        Audio: "Аудио",
+        Recording: "Запис",
+        Other: "Други"
+    };
+
+    const MUSIC_GENRE_LABELS = {
+        Rock: "Рок",
+        Metal: "Метъл",
+        Pop: "Поп",
+        "Hip-Hop": "Хип-хоп",
+        Rap: "Рап",
+        Jazz: "Джаз",
+        Blues: "Блус",
+        Electronic: "Електронна",
+        House: "Хаус",
+        Techno: "Техно",
+        "Drum & Bass": "Дръм енд бейс",
+        Classical: "Класическа",
+        Soundtrack: "Саундтрак",
+        Folk: "Фолклор",
+        Other: "Други"
+    };
+
     function goEditProduct(id) {
         window.location = "admin.html?edit=" + id;
     }
@@ -171,17 +227,21 @@
         const card = document.createElement("div");
         card.className = "product-card";
 
+        const imageFrame = document.createElement("div");
+        imageFrame.className = "product-thumb-frame";
+
         const image = document.createElement("img");
         image.className = "product-thumb";
         image.src = p.image_url || "images/products/placeholder.jpg";
-        image.alt = p.name || "Product image";
+        image.alt = p.name || "Изображение на продукт";
+        imageFrame.appendChild(image);
 
         const heading = document.createElement("div");
         heading.className = "product-card-heading";
 
         const name = document.createElement("div");
         name.className = "product-name";
-        name.textContent = p.name || "Unnamed product";
+        name.textContent = p.name || "Продукт без име";
 
         const price = document.createElement("div");
         price.className = "product-price";
@@ -194,14 +254,14 @@
         meta.className = "product-meta";
         const parts = [];
         if (p.artist) parts.push(p.artist);
-        if (p.category) parts.push(p.category);
-        if (p.genre) parts.push(p.genre);
-        if (p.music_genre) parts.push(p.music_genre);
+        if (p.category) parts.push(CATEGORY_LABELS[p.category] || p.category);
+        if (p.genre) parts.push(SUBCATEGORY_LABELS[p.genre] || p.genre);
+        if (p.music_genre) parts.push(MUSIC_GENRE_LABELS[p.music_genre] || p.music_genre);
         meta.textContent = parts.join(" · ") || "-";
 
         const desc = document.createElement("div");
         desc.className = "product-description";
-        desc.textContent = p.description || "No description available.";
+        desc.textContent = p.description || "Няма налично описание.";
 
         const actions = document.createElement("div");
         actions.className = "product-actions";
@@ -209,12 +269,12 @@
         const editBtn = document.createElement("button");
         editBtn.type = "button";
         editBtn.className = "btn-secondary";
-        editBtn.textContent = "Edit product";
+        editBtn.textContent = "Редактирай продукта";
         editBtn.addEventListener("click", () => goEditProduct(p.id));
 
         actions.appendChild(editBtn);
 
-        card.appendChild(image);
+        card.appendChild(imageFrame);
         card.appendChild(heading);
         card.appendChild(meta);
         card.appendChild(desc);
@@ -241,12 +301,12 @@
         });
 
         if (count) {
-            count.textContent = filtered.length + " product" + (filtered.length !== 1 ? "s" : "");
+            count.textContent = filtered.length + " " + (filtered.length === 1 ? "продукт" : "продукта");
         }
 
         list.innerHTML = "";
         if (filtered.length === 0) {
-            list.textContent = "No products found.";
+            list.textContent = "Няма намерени продукти.";
             return;
         }
 
@@ -262,7 +322,7 @@
             .then(data => {
                 const list = document.getElementById("adminProductsList");
                 if (!data.ok) {
-                    if (list) list.textContent = "Error loading products.";
+                    if (list) list.textContent = "Грешка при зареждане на продуктите.";
                     return;
                 }
                 adminProducts.all = Array.isArray(data.products) ? data.products : [];
@@ -270,7 +330,7 @@
             })
             .catch(() => {
                 const list = document.getElementById("adminProductsList");
-                if (list) list.textContent = "Error loading products.";
+                if (list) list.textContent = "Грешка при зареждане на продуктите.";
             });
     }
 

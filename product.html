@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Продукт - MusicShop</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?v=20260323b">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         /* Ensure readable price and meta in dark theme */
@@ -134,7 +134,9 @@
         <section class="card product-detail-card" id="productSection">
             <div class="product-detail-grid">
                 <div class="product-detail-media">
-                    <img id="productImage" class="product-detail-img" src="images/products/placeholder.jpg" alt="">
+                    <div class="product-detail-image-frame">
+                        <img id="productImage" class="product-detail-img" src="images/products/placeholder.jpg" alt="">
+                    </div>
                 </div>
                 <div class="product-detail-body">
                     <div class="card-header">
@@ -166,6 +168,96 @@
 </footer>
 
 <script>
+    const CATEGORY_LABELS = {
+        Instruments: "Инструменти",
+        Music: "Музика",
+        Merch: "Мърч",
+        Other: "Други"
+    };
+    const SUBCATEGORY_LABELS = {
+        Guitars: "Китари",
+        Basses: "Басове",
+        Drums: "Барабани",
+        Keyboards: "Клавишни",
+        Studio: "Студио",
+        DJ: "DJ",
+        Amps: "Усилватели",
+        Effects: "Ефекти",
+        Microphones: "Микрофони",
+        Accessories: "Аксесоари",
+        Vinyl: "Плочи",
+        CD: "CD",
+        Digital: "Дигитални",
+        Cassette: "Касети",
+        Boxset: "Бокс сет",
+        Clothing: "Облекло",
+        Headwear: "Шапки",
+        Drinkware: "Съдове за напитки",
+        Posters: "Постери",
+        Stickers: "Стикери",
+        Cables: "Кабели",
+        Stands: "Стойки",
+        Cases: "Калъфи",
+        Maintenance: "Поддръжка",
+        Gift: "Подаръци",
+        Audio: "Аудио",
+        Recording: "Запис",
+        Other: "Други"
+    };
+    const MUSIC_GENRE_LABELS = {
+        Rock: "Рок",
+        Metal: "Метъл",
+        Pop: "Поп",
+        "Hip-Hop": "Хип-хоп",
+        Rap: "Рап",
+        Jazz: "Джаз",
+        Blues: "Блус",
+        Electronic: "Електронна",
+        House: "Хаус",
+        Techno: "Техно",
+        "Drum & Bass": "Дръм енд бейс",
+        Classical: "Класическа",
+        Soundtrack: "Саундтрак",
+        Folk: "Фолклор",
+        Other: "Други"
+    };
+    const ATTRIBUTE_VALUE_LABELS = {
+        Black: "Черен",
+        White: "Бял",
+        Red: "Червен",
+        Silver: "Сребрист",
+        Cherry: "Черешов",
+        Electric: "Електрически",
+        "Electric Guitar": "Електрическа китара",
+        Piano: "Пиано",
+        "Drum Set": "Комплект барабани",
+        "Guitar Pedal": "Китарен педал",
+        Stand: "Стойка",
+        "Pop Filter": "Поп филтър",
+        Headphones: "Слушалки",
+        Interface: "Аудио интерфейс",
+        Vinyl: "Плоча",
+        Digital: "Дигитален",
+        Cassette: "Касета",
+        Boxset: "Бокс сет"
+    };
+
+    function translateCategory(value) {
+        return CATEGORY_LABELS[value] || value;
+    }
+
+    function translateSubcategory(value) {
+        return SUBCATEGORY_LABELS[value] || value;
+    }
+
+    function translateMusicGenre(value) {
+        return MUSIC_GENRE_LABELS[value] || value;
+    }
+
+    function translateAttributeValue(value) {
+        return ATTRIBUTE_VALUE_LABELS[value] || value;
+    }
+
     function logout() {
         fetch("/musicshop/api/logout.php", {
             credentials: "include"
@@ -188,9 +280,9 @@
 
         const metaParts = [];
         if (p.artist) metaParts.push(p.artist);
-        if (p.category) metaParts.push(p.category);
-        if (p.genre) metaParts.push(p.genre);
-        if (p.music_genre) metaParts.push(p.music_genre);
+        if (p.category) metaParts.push(translateCategory(p.category));
+        if (p.genre) metaParts.push(translateSubcategory(p.genre));
+        if (p.music_genre) metaParts.push(translateMusicGenre(p.music_genre));
         if (metaEl) metaEl.textContent = metaParts.join(" · ");
 
         if (descEl) descEl.textContent = p.description || "Няма налично описание.";
@@ -207,12 +299,15 @@
         if (metaRow) {
             metaRow.innerHTML = "";
             const attrs = [];
-            if (p.category) attrs.push("Категория: " + p.category);
-            if (p.genre) attrs.push("Подкатегория: " + p.genre);
-            if (p.music_genre) attrs.push("Музикален жанр: " + p.music_genre);
-            if (p.format) attrs.push("Формат: " + p.format);
-            if (p.color) attrs.push("Цвят: " + p.color);
+            if (p.category) attrs.push("Категория: " + translateCategory(p.category));
+            if (p.genre) attrs.push("Подкатегория: " + translateSubcategory(p.genre));
+            if (p.music_genre) attrs.push("Музикален жанр: " + translateMusicGenre(p.music_genre));
+            if (p.format) attrs.push("Формат: " + translateAttributeValue(p.format));
+            if (p.color) attrs.push("Цвят: " + translateAttributeValue(p.color));
             if (p.size) attrs.push("Размер: " + p.size);
+            if (p.merch_type) attrs.push("Тип мърч: " + translateAttributeValue(p.merch_type));
+            if (p.instrument_subtype) attrs.push("Тип инструмент: " + translateAttributeValue(p.instrument_subtype));
+            if (p.accessory_type) attrs.push("Тип аксесоар: " + translateAttributeValue(p.accessory_type));
             if (p.stock !== undefined) attrs.push("Наличност: " + p.stock);
 
             attrs.forEach(text => {

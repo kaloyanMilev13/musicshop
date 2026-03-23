@@ -158,6 +158,72 @@
 </footer>
 
 <script>
+    const CATEGORY_LABELS = {
+        Instruments: "Инструменти",
+        Music: "Музика",
+        Merch: "Мърч",
+        Other: "Други"
+    };
+    const SUBCATEGORY_LABELS = {
+        Guitars: "Китари",
+        Basses: "Басове",
+        Drums: "Барабани",
+        Keyboards: "Клавишни",
+        Studio: "Студио",
+        DJ: "DJ",
+        Amps: "Усилватели",
+        Effects: "Ефекти",
+        Microphones: "Микрофони",
+        Accessories: "Аксесоари",
+        Vinyl: "Плочи",
+        CD: "CD",
+        Digital: "Дигитални",
+        Cassette: "Касети",
+        Boxset: "Бокс сет",
+        Clothing: "Облекло",
+        Headwear: "Шапки",
+        Drinkware: "Съдове за напитки",
+        Posters: "Постери",
+        Stickers: "Стикери",
+        Cables: "Кабели",
+        Stands: "Стойки",
+        Cases: "Калъфи",
+        Maintenance: "Поддръжка",
+        Gift: "Подаръци",
+        Audio: "Аудио",
+        Recording: "Запис",
+        Other: "Други"
+    };
+    const MUSIC_GENRE_LABELS = {
+        Rock: "Рок",
+        Metal: "Метъл",
+        Pop: "Поп",
+        "Hip-Hop": "Хип-хоп",
+        Rap: "Рап",
+        Jazz: "Джаз",
+        Blues: "Блус",
+        Electronic: "Електронна",
+        House: "Хаус",
+        Techno: "Техно",
+        "Drum & Bass": "Дръм енд бейс",
+        Classical: "Класическа",
+        Soundtrack: "Саундтрак",
+        Folk: "Фолклор",
+        Other: "Други"
+    };
+
+    function translateCategory(value) {
+        return CATEGORY_LABELS[value] || value || "-";
+    }
+
+    function translateSubcategory(value) {
+        return SUBCATEGORY_LABELS[value] || value;
+    }
+
+    function translateMusicGenre(value) {
+        return MUSIC_GENRE_LABELS[value] || value;
+    }
+
     function logout() {
         fetch("/musicshop/api/logout.php", {
             credentials: "include"
@@ -421,7 +487,7 @@
                         </div>
                         <div class="product-meta">
                             ${p.artist ? p.artist + " · " : ""}
-                            ${p.category || "-"}${p.genre ? " · " + p.genre : ""}${p.music_genre ? " · " + p.music_genre : ""}
+                            ${translateCategory(p.category)}${p.genre ? " · " + translateSubcategory(p.genre) : ""}${p.music_genre ? " · " + translateMusicGenre(p.music_genre) : ""}
                         </div>
                         <div class="product-description">
                             ${p.description || "Няма налично описание."}

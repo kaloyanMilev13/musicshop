@@ -3,6 +3,33 @@ session_start();
 require 'db.php';
 header('Content-Type: application/json');
 
+function resolveProductImageUrl($imagePath) {
+    $fallback = 'images/products/placeholder.jpg';
+
+    if (empty($imagePath)) {
+        return $fallback;
+    }
+
+    $isRemote = preg_match('#^https?://#i', $imagePath) === 1;
+    if ($isRemote) {
+        return $imagePath;
+    }
+
+    $base = basename($imagePath);
+    $localProductPath = __DIR__ . '/../images/products/' . $base;
+    $localLegacyPath  = __DIR__ . '/../' . ltrim($imagePath, '/');
+
+    if (file_exists($localProductPath)) {
+        return 'images/products/' . $base . '?v=' . filemtime($localProductPath);
+    }
+
+    if (file_exists($localLegacyPath)) {
+        return ltrim($imagePath, '/') . '?v=' . filemtime($localLegacyPath);
+    }
+
+    return $fallback;
+}
+
 $userId = $_SESSION['user_id'] ?? null;
 $params = [];
 $types = "";
@@ -13,7 +40,8 @@ $selectFavorite = $userId
 
 $sql = "SELECT 
             p.id, p.name, p.artist, p.category, p.genre, p.price, p.stock, p.description,
-            p.image_url, p.music_genre
+            p.image_url, p.music_genre, p.format, p.size, p.color, p.merch_type,
+            p.instrument_subtype, p.accessory_type
             $selectFavorite
         FROM products p";
 
@@ -71,30 +99,7 @@ $res = $stmt->get_result();
 
 $products = [];
 while ($row = $res->fetch_assoc()) {
-    $imagePath = $row['image_url'] ?? '';
-
-    // Normalize image paths: prefer local files in /images/products/
-    if (!empty($imagePath)) {
-        $isRemote = preg_match('#^https?://#i', $imagePath) === 1;
-        if (!$isRemote) {
-            $base = basename($imagePath);
-            $localProductPath = __DIR__ . '/../images/products/' . $base;
-            $localLegacyPath  = __DIR__ . '/../' . ltrim($imagePath, '/');
-
-            if (file_exists($localProductPath)) {
-                $row['image_url'] = 'images/products/' . $base;
-            } elseif (file_exists($localLegacyPath)) {
-                $row['image_url'] = ltrim($imagePath, '/');
-            } else {
-                $row['image_url'] = 'images/products/placeholder.jpg';
-            }
-        }
-    }
-
-    if (empty($row['image_url'])) {
-        $row['image_url'] = 'images/products/placeholder.jpg';
-    }
-
+    $row['image_url'] = resolveProductImageUrl($row['image_url'] ?? '');
     $products[] = $row;
 }
 
