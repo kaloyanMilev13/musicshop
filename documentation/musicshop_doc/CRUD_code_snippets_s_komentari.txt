@@ -1,0 +1,511 @@
+CRUD ФРАГМЕНТИ ЗА ДОКУМЕНТАЦИЯТА НА MUSICSHOP
+
+ПРОВЕРКА:
+1. Фрагментите по-долу са извлечени от реалния код на проекта към 2026-03-18.
+2. Имената на таблицата `products` и на всички използвани колони са проверени спрямо `musicshop.sql`.
+3. Използваните крайни точки и JavaScript функции са проверени спрямо `admin.html` и файловете в `api/`.
+
+ИЗПОЛЗВАНИ ИЗТОЧНИЦИ:
+- `admin.html`:
+  - `addProduct()` около редове 770-834
+  - `deleteProduct(id)` около редове 715-729
+- `api/admin_add_product.php`
+- `api/products.php`
+- `api/admin_edit_product.php`
+- `api/admin_delete_product.php`
+- `musicshop.sql`:
+  - структура на таблица `products` около редове 135-153
+
+======================================================================
+1. CREATE ЗАЯВКА
+======================================================================
+
+Идея:
+Този фрагмент показва как администраторът добавя нов продукт. Първо
+JavaScript събира стойностите от формата в `admin.html`, след което ги
+изпраща като JSON към `api/admin_add_product.php`. Там PHP валидира
+данните и изпълнява `INSERT` заявка в таблицата `products`.
+
+1.1. Клиентска част - admin.html
+
+```javascript
+function addProduct() {
+    // Събираме всички данни от формата в един обект.
+    // Това е payload-ът, който ще изпратим към сървъра.
+    const payload = {
+        name: document.getElementById("name").value,
+        artist: document.getElementById("artist").value,
+        category: document.getElementById("category").value,
+        genre: document.getElementById("subcategory").value,
+        price: Math.max(0, parseFloat(document.getElementById("price").value)),
+        stock: Math.max(0, parseInt(document.getElementById("stock").value)),
+        description: document.getElementById("description").value,
+        image_url: document.getElementById("image_url").value,
+        format: document.getElementById("format")?.value || null,
+        music_genre: document.getElementById("music_genre")?.value || null,
+        size: document.getElementById("size")?.value || null,
+        color: document.getElementById("color")?.value || null,
+        merch_type: document.getElementById("merch_type")?.value || null,
+        instrument_subtype: document.getElementById("instrument_subtype")?.value || null,
+        accessory_type: document.getElementById("accessory_type")?.value || null
+    };
+
+    // Проверяваме дали са попълнени най-важните полета.
+    if (!payload.name || !payload.category) {
+        alert("Името и основната категория са задължителни.");
+        return;
+    }
+
+    // Проверяваме дали цената и наличността са валидни числа.
+    if (isNaN(payload.price) || payload.price < 0 || isNaN(payload.stock) || payload.stock < 0) {
+        alert("Цената и наличността трябва да са валидни неотрицателни числа.");
+        return;
+    }
+
+    // Ако editId е null, значи създаваме нов продукт.
+    if (editId === null) {
+        fetch("/musicshop/api/admin_add_product.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify(payload)
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (!data.ok) {
+                alert("Грешка: " + (data.error || "Добавянето е неуспешно"));
+                return;
+            }
+
+            // При успех нулираме формата и презареждаме списъка с продукти.
+            resetForm();
+            loadProductsList();
+        });
+    }
+}
+```
+
+1.2. Сървърна част - api/admin_add_product.php
+
+```php
+<?php
+require 'admin_check.php';
+require 'db.php';
+header('Content-Type: application/json');
+
+// Четем JSON заявката, изпратена от JavaScript.
+$data = json_decode(file_get_contents("php://input"), true);
+
+// Проверяваме дали са подадени задължителните полета.
+if (!$data || !isset($data['name'], $data['category'], $data['price'])) {
+    echo json_encode(['ok' => false, 'error' => 'Missing required fields']);
+    exit;
+}
+
+// Подготвяме променливите, които ще бъдат записани в базата.
+$name = $data['name'];
+$artist = $data['artist'] ?? null;
+$category = $data['category'];
+$genre = $data['genre'] ?? null;
+$price = (float)$data['price'];
+$stock = isset($data['stock']) ? (int)$data['stock'] : 0;
+$description = $data['description'] ?? null;
+$image_url = $data['image_url'] ?? null;
+
+$format = $data['format'] ?? null;
+$music_genre = $data['music_genre'] ?? null;
+$size = $data['size'] ?? null;
+$color = $data['color'] ?? null;
+$merch_type = $data['merch_type'] ?? null;
+$instrument_subtype = $data['instrument_subtype'] ?? null;
+$accessory_type = $data['accessory_type'] ?? null;
+
+// Подготвена INSERT заявка.
+// Използването на prepare() и bind_param() е важно за сигурността.
+$stmt = $conn->prepare("
+    INSERT INTO products
+    (name, artist, category, genre, price, stock, description, image_url,
+     format, music_genre, size, color, merch_type, instrument_subtype, accessory_type)
+    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+");
+
+$stmt->bind_param(
+    "ssssddsssssssss",
+    $name,
+    $artist,
+    $category,
+    $genre,
+    $price,
+    $stock,
+    $description,
+    $image_url,
+    $format,
+    $music_genre,
+    $size,
+    $color,
+    $merch_type,
+    $instrument_subtype,
+    $accessory_type
+);
+
+// Ако заявката се изпълни успешно, връщаме ok=true.
+if ($stmt->execute()) {
+    echo json_encode(['ok' => true]);
+} else {
+    echo json_encode(['ok' => false, 'error' => $stmt->error]);
+}
+```
+
+Кратко обяснение:
+- JavaScript подготвя и изпраща данните.
+- PHP валидира входа.
+- SQL `INSERT` добавя нов ред в таблицата `products`.
+- Подготвената заявка предпазва от SQL инжекция.
+
+======================================================================
+2. READ ЗАЯВКА
+======================================================================
+
+Идея:
+Този фрагмент показва как се извличат продуктите за каталога. Заявката
+поддържа филтриране, търсене, сортиране и отбелязване на любимите
+продукти на текущия потребител.
+
+Източник:
+- `api/products.php`
+
+```php
+<?php
+session_start();
+require 'db.php';
+header('Content-Type: application/json');
+
+// Ако има логнат потребител, пазим неговото ID.
+$userId = $_SESSION['user_id'] ?? null;
+$params = [];
+$types = "";
+
+// Ако има логнат потребител, добавяме и информация дали продуктът е любим.
+$selectFavorite = $userId
+    ? ", CASE WHEN f.product_id IS NULL THEN 0 ELSE 1 END AS is_favorite"
+    : ", 0 AS is_favorite";
+
+$sql = "SELECT 
+            p.id, p.name, p.artist, p.category, p.genre, p.price, p.stock, p.description,
+            p.image_url, p.music_genre
+            $selectFavorite
+        FROM products p";
+
+if ($userId) {
+    // Свързваме products с favorites, за да отбележим кои продукти
+    // вече са добавени в любими от текущия потребител.
+    $sql .= " LEFT JOIN (SELECT DISTINCT product_id FROM favorites WHERE user_id = ?) f ON f.product_id = p.id";
+    $params[] = $userId;
+    $types .= "i";
+}
+
+$sql .= " WHERE 1";
+
+// Филтър по основна категория.
+if (!empty($_GET['category'])) {
+    $sql .= " AND p.category = ?";
+    $params[] = $_GET['category'];
+    $types .= "s";
+}
+
+// Филтър по конкретен продукт.
+if (!empty($_GET['id'])) {
+    $sql .= " AND p.id = ?";
+    $params[] = (int)$_GET['id'];
+    $types .= "i";
+}
+
+// Филтър по подкатегория.
+if (!empty($_GET['subcategory'])) {
+    $sql .= " AND p.genre = ?";
+    $params[] = $_GET['subcategory'];
+    $types .= "s";
+}
+
+// Филтър по музикален жанр.
+if (!empty($_GET['music_genre'])) {
+    $sql .= " AND p.music_genre = ?";
+    $params[] = $_GET['music_genre'];
+    $types .= "s";
+}
+
+// Търсене по име или изпълнител.
+if (!empty($_GET['search'])) {
+    $sql .= " AND (p.name LIKE CONCAT('%', ?, '%') OR p.artist LIKE CONCAT('%', ?, '%'))";
+    $params[] = $_GET['search'];
+    $params[] = $_GET['search'];
+    $types .= "ss";
+}
+
+// Сортиране на резултатите.
+if (!empty($_GET['sort'])) {
+    switch ($_GET['sort']) {
+        case 'price_asc':  $sql .= " ORDER BY p.price ASC"; break;
+        case 'price_desc': $sql .= " ORDER BY p.price DESC"; break;
+        case 'name_asc':   $sql .= " ORDER BY p.name ASC"; break;
+        case 'name_desc':  $sql .= " ORDER BY p.name DESC"; break;
+    }
+}
+
+$stmt = $conn->prepare($sql);
+if ($params) {
+    $stmt->bind_param($types, ...$params);
+}
+$stmt->execute();
+$res = $stmt->get_result();
+
+$products = [];
+while ($row = $res->fetch_assoc()) {
+    $imagePath = $row['image_url'] ?? '';
+
+    // Нормализиране на пътя към изображението.
+    if (!empty($imagePath)) {
+        $isRemote = preg_match('#^https?://#i', $imagePath) === 1;
+        if (!$isRemote) {
+            $base = basename($imagePath);
+            $localProductPath = __DIR__ . '/../images/products/' . $base;
+            $localLegacyPath  = __DIR__ . '/../' . ltrim($imagePath, '/');
+
+            if (file_exists($localProductPath)) {
+                $row['image_url'] = 'images/products/' . $base;
+            } elseif (file_exists($localLegacyPath)) {
+                $row['image_url'] = ltrim($imagePath, '/');
+            } else {
+                $row['image_url'] = 'images/products/placeholder.jpg';
+            }
+        }
+    }
+
+    if (empty($row['image_url'])) {
+        $row['image_url'] = 'images/products/placeholder.jpg';
+    }
+
+    $products[] = $row;
+}
+
+echo json_encode(["ok" => true, "products" => $products]);
+```
+
+Кратко обяснение:
+- Извлича продукти от таблицата `products`.
+- Добавя филтри и търсене според параметрите от URL.
+- Ако има логнат потребител, прави връзка с `favorites`.
+- Връща резултатите като JSON за визуализация в каталога.
+
+======================================================================
+3. UPDATE ЗАЯВКА
+======================================================================
+
+Идея:
+Този фрагмент показва как администраторът редактира вече съществуващ
+продукт. Първо продуктът се избира, след това данните му се зареждат
+във формата и накрая се изпраща `UPDATE` заявка към сървъра.
+
+3.1. Клиентска част - admin.html
+
+```javascript
+function addProduct() {
+    const payload = {
+        name: document.getElementById("name").value,
+        artist: document.getElementById("artist").value,
+        category: document.getElementById("category").value,
+        genre: document.getElementById("subcategory").value,
+        price: Math.max(0, parseFloat(document.getElementById("price").value)),
+        stock: Math.max(0, parseInt(document.getElementById("stock").value)),
+        description: document.getElementById("description").value,
+        image_url: document.getElementById("image_url").value,
+        format: document.getElementById("format")?.value || null,
+        music_genre: document.getElementById("music_genre")?.value || null,
+        size: document.getElementById("size")?.value || null,
+        color: document.getElementById("color")?.value || null,
+        merch_type: document.getElementById("merch_type")?.value || null,
+        instrument_subtype: document.getElementById("instrument_subtype")?.value || null,
+        accessory_type: document.getElementById("accessory_type")?.value || null
+    };
+
+    // Ако editId вече има стойност, вместо нов запис
+    // актуализираме съществуващ продукт.
+    if (editId !== null) {
+        payload.id = editId;
+
+        fetch("/musicshop/api/admin_edit_product.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            credentials: "include",
+            body: JSON.stringify(payload)
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (!data.ok) {
+                alert("Грешка: " + (data.error || "Редакцията е неуспешна"));
+                return;
+            }
+
+            // При успех презареждаме списъка с продукти.
+            resetForm();
+            loadProductsList();
+        });
+    }
+}
+```
+
+3.2. Сървърна част - api/admin_edit_product.php
+
+```php
+<?php
+require 'admin_check.php';
+require 'db.php';
+header('Content-Type: application/json');
+
+// Четем JSON заявката от клиента.
+$data = json_decode(file_get_contents("php://input"), true);
+
+// Update не може да се изпълни без ID на записа.
+if (!$data || !isset($data['id'])) {
+    echo json_encode(['ok' => false, 'error' => 'Missing product ID']);
+    exit;
+}
+
+$id = (int)$data['id'];
+$name = $data['name'];
+$artist = $data['artist'] ?? null;
+$category = $data['category'];
+$genre = $data['genre'] ?? null;
+$price = (float)$data['price'];
+$stock = isset($data['stock']) ? (int)$data['stock'] : 0;
+$description = $data['description'] ?? null;
+$image_url = $data['image_url'] ?? null;
+
+$format = $data['format'] ?? null;
+$music_genre = $data['music_genre'] ?? null;
+$size = $data['size'] ?? null;
+$color = $data['color'] ?? null;
+$merch_type = $data['merch_type'] ?? null;
+$instrument_subtype = $data['instrument_subtype'] ?? null;
+$accessory_type = $data['accessory_type'] ?? null;
+
+// Подготвена UPDATE заявка.
+$stmt = $conn->prepare("
+    UPDATE products
+    SET name=?, artist=?, category=?, genre=?, price=?, stock=?, description=?, image_url=?,
+        format=?, music_genre=?, size=?, color=?, merch_type=?, instrument_subtype=?, accessory_type=?
+    WHERE id=?
+");
+
+$stmt->bind_param(
+    "ssssddsssssssssi",
+    $name,
+    $artist,
+    $category,
+    $genre,
+    $price,
+    $stock,
+    $description,
+    $image_url,
+    $format,
+    $music_genre,
+    $size,
+    $color,
+    $merch_type,
+    $instrument_subtype,
+    $accessory_type,
+    $id
+);
+
+if ($stmt->execute()) {
+    echo json_encode(['ok' => true]);
+} else {
+    echo json_encode(['ok' => false, 'error' => $stmt->error]);
+}
+```
+
+Кратко обяснение:
+- Използва се същата форма като при Create.
+- Разликата е, че тук се подава и `id` на продукта.
+- SQL `UPDATE` променя конкретния ред в `products`.
+- `WHERE id=?` гарантира, че се редактира само един запис.
+
+======================================================================
+4. DELETE ЗАЯВКА
+======================================================================
+
+Идея:
+Този фрагмент показва как се изтрива продукт от административния панел.
+Първо потребителят потвърждава действието, след което се изпраща
+идентификаторът на продукта към сървъра.
+
+4.1. Клиентска част - admin.html
+
+```javascript
+function deleteProduct(id) {
+    // Допълнително потвърждение, за да се избегне случайно изтриване.
+    if (!confirm("Да се изтрие ли този продукт?")) return;
+
+    fetch(`/musicshop/api/admin_delete_product.php?id=${id}`, {
+        method: "GET",
+        credentials: "include"
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.ok) {
+            // Ако изтриването е успешно, презареждаме списъка.
+            loadProductsList();
+        } else {
+            alert("Грешка: " + (data.error || "Изтриването е неуспешно"));
+        }
+    });
+}
+```
+
+4.2. Сървърна част - api/admin_delete_product.php
+
+```php
+<?php
+require 'admin_check.php';
+require 'db.php';
+
+// Проверяваме дали е подаден валиден ID параметър.
+if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+    echo json_encode(['ok' => false, 'error' => 'Invalid ID']);
+    exit;
+}
+
+$id = intval($_GET['id']);
+
+// Подготвена DELETE заявка.
+$stmt = $conn->prepare("DELETE FROM products WHERE id=?");
+$stmt->bind_param("i", $id);
+$stmt->execute();
+
+// Проверяваме дали реално е бил изтрит ред.
+if ($stmt->affected_rows > 0) {
+    echo json_encode(['ok' => true]);
+} else {
+    echo json_encode(['ok' => false, 'error' => 'Product not found']);
+}
+```
+
+Кратко обяснение:
+- Клиентът подава `id` на продукта, който трябва да бъде изтрит.
+- PHP валидира входния параметър.
+- SQL `DELETE` премахва записа от таблицата `products`.
+- `affected_rows` проверява дали операцията действително е засегнала ред.
+
+======================================================================
+ФИНАЛНА БЕЛЕЖКА ЗА КОМИСИЯТА
+======================================================================
+
+Тези четири фрагмента са избрани, защото показват пълния CRUD цикъл върху
+една и съща таблица - `products`. Това ги прави най-подходящите примери за
+документация, тъй като:
+
+- използват реален код от проекта, а не преразказан пример;
+- съвпадат с актуалната структура на `products` в `musicshop.sql`;
+- покриват както клиентската, така и сървърната част на операциите;
+- са достатъчно представителни за архитектурата и логиката на MusicShop.
+

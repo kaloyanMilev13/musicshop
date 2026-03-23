@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jan 13, 2026 at 09:09 AM
--- Server version: 12.1.2-MariaDB
--- PHP Version: 8.5.1
+-- Generation Time: Mar 18, 2026 at 06:32 AM
+-- Server version: 12.2.2-MariaDB
+-- PHP Version: 8.5.3
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -40,9 +40,12 @@ CREATE TABLE `favorites` (
 
 INSERT INTO `favorites` (`id`, `user_id`, `product_id`, `created_at`) VALUES
 (3, 1, 2, '2025-11-20 21:58:25'),
-(5, 1, 14, '2025-11-25 11:37:44'),
 (6, 1, 1, '2025-12-11 14:54:32'),
-(7, 1, 3, '2025-12-11 14:54:58');
+(7, 1, 3, '2025-12-11 14:54:58'),
+(8, 1, 10, '2026-02-11 06:10:28'),
+(9, 2, 1, '2026-02-18 07:56:50'),
+(10, 2, 2, '2026-02-18 07:56:57'),
+(11, 1, 23, '2026-02-21 08:18:12');
 
 -- --------------------------------------------------------
 
@@ -64,9 +67,8 @@ CREATE TABLE `news` (
 INSERT INTO `news` (`id`, `title`, `content`, `created_at`) VALUES
 (1, 'sdqwwc', 'dc', '2025-11-27 08:16:54'),
 (2, 'ciac', 'jfewioco', '2025-11-27 08:17:05'),
-(3, 'nowina 1', 'nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_', '2026-01-13 08:55:58'),
-(4, 'nowina2', 'nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_nowini_', '2026-01-13 08:56:10'),
-(5, 'nowina3', 'ноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсдноаьийцоуесжнасржсждржржсд', '2026-01-13 08:56:40');
+(6, 'Robbie Williams teases future reunion with Take That: “I’m sure we will ride again”', 'Robbie Williams played his smallest-ever ticketed show in London last night, where he ran through his debut album in full, as well as performing his upcoming record ‘BRITPOP’ in its entirety. Check out photos and the full setlist below, along with everything that went down.\n\nThe solo icon and former Take That member took to the stage at the 500-capacity venue Dingwalls in Camden Town just before 11pm with a mammoth two-hour set, bookending his almost three-decade career. He told many a tale behind the tunes, and revealed how some of his heroes had influenced his new material – with the odd dig at some music biz rivals thrown in.\n\nThe phone-free gig had been announced to celebrate the release of the 90s-inspired ‘BRITPOP’, which was initially set to arrive today (Friday October 10). However, the LP was recently delayed until early 2026 due to “scheduling issues”. “We’re all pretending it’s not about Taylor Swift, but it fucking is,” Williams told the crowd.\n\n“Here’s the truth: I want 16 Number One albums. Taylor then decided to put her album out the same weekend as me. I was like, ‘For fuck’s sake! I’ll put it out the next week’, and they were like, ‘She does these other deluxe versions’. I was like, ‘Fucking hell! Can I put it out the week after that then?’ They were like, ‘Oasis might be around then’… ‘For fuck’s sake! Let’s do it in fucking February when no one’s got an album out’.”\n\nHe continued: “I was worried about making you all fucking wait, and then I was like, ‘Fuck it! I want a 16th Number One album!’ I’m sorry, but I’m fucking being selfish. How many times in your life do you get to have the most Number One albums the UK’s ever fucking had?”\n\nBefore Williams jumped into ‘BRITPOP’, he ran through his 1997 first LP ‘Life Thru A Lens’ front to back. He arrived on stage donning the iconic red Adidas tracksuit jacket he wore at Glastonbury 1995 – a photo from which appears on the cover of his forthcoming full-length. This image was also projected onto the side of Dingwalls as fans queued outside. Some attendees wore the same jacket in homage, while others sported Williams-branded football shirts.', '2026-01-13 09:57:24'),
+(7, 'nowina test 1', 'nowina iwnqcasndc  aifsv ii os afsvoijsdvio uidfvn odfn i vnfo s nowina iwnqcasndc  aifsv ii os afsvoijsdvio uidfvn odfn i vnfo snowina iwnqcasndc  aifsv ii os afsvoijsdvio uidfvn odfn i vnfo snowina iwnqcasndc  aifsv ii os afsvoijsdvio uidfvn odfn i vnfo snowina iwnqcasndc  aifsv ii os afsvoijsdvio uidfvn odfn i vnfo s', '2026-01-13 09:58:47');
 
 -- --------------------------------------------------------
 
@@ -95,7 +97,8 @@ CREATE TABLE `orders` (
 
 INSERT INTO `orders` (`id`, `user_id`, `total_price`, `customer_name`, `customer_email`, `customer_phone`, `shipping_address`, `shipping_city`, `shipping_postcode`, `shipping_country`, `customer_note`, `created_at`) VALUES
 (1, 1, 999.99, 'kaloyan', '', '', 'sofia', 'sofia', '1750', 'bg', '', '2025-11-20 16:21:10'),
-(2, 1, 1541.97, 'kaloyan', 'kala@abv.gb', '', 'mladost', 'sofia', '1740', 'bg', 'helo hi fries', '2025-11-25 08:18:09');
+(2, 1, 1541.97, 'kaloyan', 'kala@abv.gb', '', 'mladost', 'sofia', '1740', 'bg', 'helo hi fries', '2025-11-25 08:18:09'),
+(4, 2, 2498.99, 'Kaloyan Milev', 'kala@gmail.com', '0878594004', 'Mladost 1', 'Sofia', '1750', 'Other', 'cniocosid', '2026-02-18 06:19:14');
 
 -- --------------------------------------------------------
 
@@ -119,7 +122,9 @@ INSERT INTO `order_items` (`id`, `order_id`, `product_id`, `quantity`, `unit_pri
 (1, 1, 1, 1, 999.99),
 (2, 2, 9, 2, 13.49),
 (3, 2, 16, 1, 15.99),
-(4, 2, 2, 1, 1499.00);
+(4, 2, 2, 1, 1499.00),
+(6, 4, 1, 1, 999.99),
+(7, 4, 2, 1, 1499.00);
 
 -- --------------------------------------------------------
 
@@ -173,7 +178,9 @@ INSERT INTO `products` (`id`, `name`, `artist`, `category`, `genre`, `price`, `s
 (18, 'Microphone Pop Filter', NULL, 'Other', 'Accessories', 12.99, 22, 'Perfect for home recording studios.', 'images/popfilter.jpg', NULL, NULL, NULL, 'Black', NULL, NULL, 'Pop Filter', '2025-11-20 16:19:14', NULL),
 (19, 'Studio Headphones', NULL, 'Other', 'Audio', 89.99, 10, 'Closed-back monitoring headphones.', 'images/headphones.jpg', NULL, NULL, NULL, 'Black', NULL, NULL, 'Headphones', '2025-11-20 16:19:14', NULL),
 (20, 'USB Audio Interface', NULL, 'Other', 'Recording', 129.99, 6, '2-input USB audio interface for home studios.', 'images/interface.jpg', NULL, NULL, NULL, 'Red', NULL, NULL, 'Interface', '2025-11-20 16:19:14', NULL),
-(21, 'test product za id page', '', 'Instruments', 'Basses', 20.00, 3, '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-13 09:02:57', NULL);
+(21, 'test product za id page', '', 'Instruments', 'Basses', 20.00, 3, '', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-13 09:02:57', NULL),
+(22, 'Akustichna kitara', '', 'Instruments', 'Guitars', 20.00, 5, 'snimkata e online url', 'https://images.squarespace-cdn.com/content/v1/57f5648637c581229b2e436f/1561988003374-K92XU2EQFH13QJOPOMU2/80-front.jpg?format=500w', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2026-01-13 10:01:59', '2026-01-13 10:03:19'),
+(23, 'elektricheska kitara', '', 'Instruments', 'Guitars', 4000.00, 0, 'snimkata e ot lokalna papka w proekta', 'images/elektricheska_kitara.jpg', NULL, NULL, NULL, NULL, NULL, 'Electric', NULL, '2026-01-13 10:05:22', NULL);
 
 -- --------------------------------------------------------
 
@@ -197,7 +204,8 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `username`, `email`, `password_hash`, `role`, `is_admin`, `created_at`) VALUES
 (1, 'admin', 'admin@shop.com', '$2y$12$x9AbPXrgAeYICKd4rAOZgO3auA8Ai2yVoF/Vj6s4zHQlJAcMRGPoO', 'admin', 0, '2025-11-20 16:04:39'),
-(2, 'kala', 'kala@abv.bg', '$2y$12$TAnrw17/qRAAywcS52D/dOmmJsWG.OqVxEOOHHw3waHfrJWb8LkrK', 'user', 0, '2025-12-23 07:13:00');
+(2, 'kala', 'kala@abv.bg', '$2y$12$TAnrw17/qRAAywcS52D/dOmmJsWG.OqVxEOOHHw3waHfrJWb8LkrK', 'user', 0, '2025-12-23 07:13:00'),
+(3, 'Kaloyan', 'kaloyan@abv.bg', '$2y$12$4JF8cmyBPw0g31suYZaE3O8fPDeBXgNR.lvj5tXOoS882p48LH83G', 'user', 0, '2026-03-09 10:37:09');
 
 --
 -- Indexes for dumped tables
@@ -260,37 +268,37 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `favorites`
 --
 ALTER TABLE `favorites`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `news`
 --
 ALTER TABLE `news`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Constraints for dumped tables
