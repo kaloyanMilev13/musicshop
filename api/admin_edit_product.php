@@ -1,6 +1,7 @@
 <?php
 require 'admin_check.php';
 require 'db.php';
+require 'product_image.php';
 header('Content-Type: application/json');
 
 $data = json_decode(file_get_contents("php://input"), true);
@@ -18,7 +19,7 @@ $genre = $data['genre'] ?? null;
 $price = (float)$data['price'];
 $stock = isset($data['stock']) ? (int)$data['stock'] : 0;
 $description = $data['description'] ?? null;
-$image_url = $data['image_url'] ?? null;
+$image_url = normalizeProductImagePath($data['image_url'] ?? null);
 
 $format = $data['format'] ?? null;
 $music_genre = $data['music_genre'] ?? null;

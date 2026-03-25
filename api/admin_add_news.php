@@ -3,12 +3,14 @@
 
 require 'admin_check.php'; // will exit with 403 JSON if not admin
 require 'db.php';
+require 'news_image.php';
 header('Content-Type: application/json');
 
 $data = json_decode(file_get_contents('php://input'), true);
 
 $title   = isset($data['title'])   ? trim($data['title'])   : '';
 $content = isset($data['content']) ? trim($data['content']) : '';
+$imageUrl = normalizeNewsImagePath($data['image_url'] ?? null);
 
 if ($title === '' || $content === '') {
     http_response_code(400);
@@ -17,10 +19,10 @@ if ($title === '' || $content === '') {
 }
 
 $stmt = $conn->prepare(
-    "INSERT INTO news (title, content)
-     VALUES (?, ?)"
+    "INSERT INTO news (title, content, image_url)
+     VALUES (?, ?, ?)"
 );
-$stmt->bind_param('ss', $title, $content);
+$stmt->bind_param('sss', $title, $content, $imageUrl);
 
 if (!$stmt->execute()) {
     http_response_code(500);
@@ -32,4 +34,3 @@ echo json_encode([
     'ok' => true,
     'id' => $stmt->insert_id
 ]);
-

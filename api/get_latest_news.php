@@ -3,12 +3,13 @@
 session_start();
 header('Content-Type: application/json');
 require 'db.php';
+require 'news_image.php';
 
 $limit = 3;
 
 try {
     $stmt = $conn->prepare(
-        "SELECT id, title, content, created_at 
+        "SELECT id, title, content, image_url, created_at 
          FROM news 
          ORDER BY created_at DESC 
          LIMIT ?"
@@ -24,7 +25,7 @@ try {
             'title'      => $row['title'],
             'content'    => $row['content'],
             'created_at' => $row['created_at'],
-            'image_url'  => "images/news/placeholder.jpg"
+            'image_url'  => resolveNewsImageUrl($row['image_url'] ?? '')
         ];
     }
 

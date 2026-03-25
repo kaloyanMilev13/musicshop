@@ -3,6 +3,7 @@
 
 require 'admin_check.php';   // ensures admin
 require 'db.php';
+require 'news_image.php';
 header('Content-Type: application/json');
 
 $data = json_decode(file_get_contents('php://input'), true);
@@ -10,6 +11,7 @@ $data = json_decode(file_get_contents('php://input'), true);
 $id      = isset($data['id'])      ? (int)$data['id']      : 0;
 $title   = isset($data['title'])   ? trim($data['title']) : '';
 $content = isset($data['content']) ? trim($data['content']) : '';
+$imageUrl = normalizeNewsImagePath($data['image_url'] ?? null);
 
 if ($id <= 0 || $title === '' || $content === '') {
     http_response_code(400);
@@ -20,10 +22,10 @@ if ($id <= 0 || $title === '' || $content === '') {
 try {
     $stmt = $conn->prepare(
         "UPDATE news
-         SET title = ?, content = ?
+         SET title = ?, content = ?, image_url = ?
          WHERE id = ?"
     );
-    $stmt->bind_param('ssi', $title, $content, $id);
+    $stmt->bind_param('sssi', $title, $content, $imageUrl, $id);
 
     if (!$stmt->execute()) {
         throw new Exception("Update failed: " . $stmt->error);
@@ -40,4 +42,3 @@ try {
         'error' => $e->getMessage()
     ]);
 }
-

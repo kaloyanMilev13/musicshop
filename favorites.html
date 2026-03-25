@@ -480,22 +480,25 @@
                     const imageUrl = p.image_url || "images/products/placeholder.jpg";
 
                     card.innerHTML = `
-                        <img class="product-thumb" src="${imageUrl}" alt="${safeName}">
+                        <div class="product-thumb-frame">
+                            <img class="product-thumb" src="${imageUrl}" alt="${safeName}">
+                        </div>
                         <div class="product-card-heading">
                             <div class="product-name">${p.name || "Продукт без име"}</div>
-                            <div class="product-price">€${Number(p.price).toFixed(2)}</div>
+                            <div class="product-price">€${p.price}</div>
                         </div>
                         <div class="product-meta">
                             ${p.artist ? p.artist + " · " : ""}
-                            ${translateCategory(p.category)}${p.genre ? " · " + translateSubcategory(p.genre) : ""}${p.music_genre ? " · " + translateMusicGenre(p.music_genre) : ""}
+                            ${translateCategory(p.category)}${p.genre ? " · " + translateSubcategory(p.genre) : ""}
+                            ${p.music_genre ? " · " + translateMusicGenre(p.music_genre) : ""}
                         </div>
                         <div class="product-description">
                             ${p.description || "Няма налично описание."}
                         </div>
                         <div class="product-actions">
                             <a class="btn-secondary view-details" href="product.html?id=${p.id}">Виж детайли</a>
-                            <button class="btn-outline cart-btn">Добави в количката</button>
                             <button class="btn-outline remove-btn">Премахни</button>
+                            <button class="btn-outline cart-btn">Добави в количката</button>
                         </div>
                     `;
 

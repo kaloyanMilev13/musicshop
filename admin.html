@@ -96,6 +96,17 @@
         body.dark-theme .brand-icon .brand-logo-dark {
             display: block;
         }
+
+        .admin-product-carousel .admin-product-carousel-image {
+            width: 100%;
+            height: 220px;
+            object-fit: contain;
+            object-position: center;
+            display: block;
+            padding: 0.75rem;
+            background: #f0f0f0;
+            box-sizing: border-box;
+        }
     </style>
 
  
@@ -297,6 +308,10 @@
                         <div class="form-group">
                             <label for="news_title">Заглавие</label>
                             <input type="text" id="news_title" placeholder="Заглавие на новина">
+                        </div>
+                        <div class="form-group">
+                            <label for="news_image_url">URL на изображение</label>
+                            <input type="text" id="news_image_url" placeholder="images/news/novina.jpg или https://...">
                         </div>
                         <div class="form-group news-form-full">
                             <label for="news_content">Съдържание</label>
@@ -554,6 +569,7 @@
 
         if (p.image_url) {
             const img = document.createElement("img");
+            img.className = "admin-product-carousel-image";
             img.src = p.image_url;
             img.alt = p.name || "Изображение на продукт";
             item.appendChild(img);
@@ -1182,6 +1198,7 @@
     function startNewsEdit(news) {
         editingNewsId = news.id;
         document.getElementById('news_title').value = news.title || '';
+        document.getElementById('news_image_url').value = news.image_url || '';
         document.getElementById('news_content').value = news.content || '';
         document.getElementById('newsSaveBtn').textContent = 'Запази промените';
         document.getElementById('newsCancelBtn').style.display = 'inline-flex';
@@ -1190,6 +1207,7 @@
     function cancelNewsEdit() {
         editingNewsId = null;
         document.getElementById('news_title').value = '';
+        document.getElementById('news_image_url').value = '';
         document.getElementById('news_content').value = '';
         document.getElementById('newsSaveBtn').textContent = 'Добави новина';
         document.getElementById('newsCancelBtn').style.display = 'none';
@@ -1197,6 +1215,7 @@
 
     function saveNews() {
         const title = document.getElementById('news_title').value.trim();
+        const image_url = document.getElementById('news_image_url').value.trim();
         const content = document.getElementById('news_content').value.trim();
 
         if (!title || !content) {
@@ -1210,7 +1229,7 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
-                body: JSON.stringify({ title, content })
+                body: JSON.stringify({ title, content, image_url })
             })
             .then(r => r.json())
             .then(data => {
@@ -1227,7 +1246,7 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
-                body: JSON.stringify({ id: editingNewsId, title, content })
+                body: JSON.stringify({ id: editingNewsId, title, content, image_url })
             })
             .then(r => r.json())
             .then(data => {
