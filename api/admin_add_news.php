@@ -9,6 +9,7 @@ header('Content-Type: application/json');
 $data = json_decode(file_get_contents('php://input'), true);
 
 $title   = isset($data['title'])   ? trim($data['title'])   : '';
+$subtitle = isset($data['subtitle']) ? trim($data['subtitle']) : '';
 $content = isset($data['content']) ? trim($data['content']) : '';
 $imageUrl = normalizeNewsImagePath($data['image_url'] ?? null);
 
@@ -19,10 +20,10 @@ if ($title === '' || $content === '') {
 }
 
 $stmt = $conn->prepare(
-    "INSERT INTO news (title, content, image_url)
-     VALUES (?, ?, ?)"
+    "INSERT INTO news (title, subtitle, content, image_url)
+     VALUES (?, ?, ?, ?)"
 );
-$stmt->bind_param('sss', $title, $content, $imageUrl);
+$stmt->bind_param('ssss', $title, $subtitle, $content, $imageUrl);
 
 if (!$stmt->execute()) {
     http_response_code(500);

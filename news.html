@@ -366,7 +366,7 @@
 
             const excerpt = document.createElement('p');
             excerpt.className = 'news-card-excerpt';
-            excerpt.textContent = buildExcerpt(n.content, 140);
+            excerpt.textContent = n.subtitle || buildExcerpt(n.content, 140);
 
             const readMore = document.createElement('a');
             readMore.className = 'news-card-link';

@@ -9,7 +9,7 @@ $limit = 3;
 
 try {
     $stmt = $conn->prepare(
-        "SELECT id, title, content, image_url, created_at 
+        "SELECT id, title, subtitle, content, image_url, created_at 
          FROM news 
          ORDER BY created_at DESC 
          LIMIT ?"
@@ -23,6 +23,7 @@ try {
         $news[] = [
             'id'         => (int)$row['id'],
             'title'      => $row['title'],
+            'subtitle'   => $row['subtitle'],
             'content'    => $row['content'],
             'created_at' => $row['created_at'],
             'image_url'  => resolveNewsImageUrl($row['image_url'] ?? '')

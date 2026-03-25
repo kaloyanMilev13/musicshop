@@ -288,7 +288,7 @@
 
                 if (titleEl) titleEl.textContent = news.title || "(Без заглавие)";
                 if (metaEl) metaEl.textContent = formatNewsMeta(news);
-                if (subtitleEl) subtitleEl.textContent = buildExcerpt(news.content, 180);
+                if (subtitleEl) subtitleEl.textContent = news.subtitle || buildExcerpt(news.content, 180);
                 if (contentEl) contentEl.textContent = news.content || "";
                 if (imageEl) {
                     imageEl.src = getNewsImageUrl(news);

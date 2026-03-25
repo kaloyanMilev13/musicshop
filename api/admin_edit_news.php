@@ -10,6 +10,7 @@ $data = json_decode(file_get_contents('php://input'), true);
 
 $id      = isset($data['id'])      ? (int)$data['id']      : 0;
 $title   = isset($data['title'])   ? trim($data['title']) : '';
+$subtitle = isset($data['subtitle']) ? trim($data['subtitle']) : '';
 $content = isset($data['content']) ? trim($data['content']) : '';
 $imageUrl = normalizeNewsImagePath($data['image_url'] ?? null);
 
@@ -22,10 +23,10 @@ if ($id <= 0 || $title === '' || $content === '') {
 try {
     $stmt = $conn->prepare(
         "UPDATE news
-         SET title = ?, content = ?, image_url = ?
+         SET title = ?, subtitle = ?, content = ?, image_url = ?
          WHERE id = ?"
     );
-    $stmt->bind_param('sssi', $title, $content, $imageUrl, $id);
+    $stmt->bind_param('ssssi', $title, $subtitle, $content, $imageUrl, $id);
 
     if (!$stmt->execute()) {
         throw new Exception("Update failed: " . $stmt->error);

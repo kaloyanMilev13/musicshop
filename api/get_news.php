@@ -10,6 +10,7 @@ try {
         SELECT 
             id,
             title,
+            subtitle,
             content,
             image_url,
             created_at
@@ -26,6 +27,7 @@ try {
         $news[] = [
             'id'         => (int)$row['id'],
             'title'      => $row['title'],
+            'subtitle'   => $row['subtitle'],
             'content'    => $row['content'],
             'created_at' => $row['created_at'],
             'image_url'  => resolveNewsImageUrl($row['image_url'] ?? '')
