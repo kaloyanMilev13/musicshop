@@ -16,6 +16,24 @@
             color: #e6e6e6 !important;
         }
 
+        .related-products-shell {
+            width: 100%;
+            max-width: 1200px;
+            justify-self: center;
+        }
+
+        .product-detail-page .product-carousel .carousel-item {
+            cursor: pointer;
+        }
+
+        .product-detail-page .product-carousel .carousel-item img {
+            object-fit: contain;
+            object-position: center;
+            display: block;
+            padding: 0.75rem;
+            background: #f0f0f0;
+        }
+
         .login-btn-header {
             background: #ffffff;
             color: #222222;
@@ -157,6 +175,21 @@
                 </div>
             </div>
         </section>
+
+        <section class="carousel-section product-carousel related-products-shell" id="relatedProductsSection">
+            <div class="carousel-header">
+                <h2>Още продукти</h2>
+                <a href="products.html">Виж всички →</a>
+            </div>
+            <div class="carousel-container">
+                <button class="carousel-btn prev" id="relatedPrevBtn" type="button" onclick="moveRelatedCarousel(-1)">‹</button>
+                <div class="carousel-track" id="relatedTrack">
+                    <div class="home-empty" style="padding:1.5rem;">Зареждане на предложения...</div>
+                </div>
+                <button class="carousel-btn next" id="relatedNextBtn" type="button" onclick="moveRelatedCarousel(1)">›</button>
+            </div>
+        </section>
+
     </div>
 </main>
 
@@ -258,6 +291,12 @@
         return ATTRIBUTE_VALUE_LABELS[value] || value;
     }
 
+    const relatedCarousel = {
+        track: null,
+        index: 0,
+        total: 0
+    };
+
     function logout() {
         fetch("/musicshop/api/logout.php", {
             credentials: "include"
@@ -357,10 +396,172 @@
         }
     }
 
+    function renderRelatedCarouselItem(p) {
+        const safeName = (p.name || "").replace(/"/g, '&quot;').replace(/'/g, "\\'");
+        const imageUrl = p.image_url || "images/products/placeholder.jpg";
+        const item = document.createElement("div");
+        item.className = "carousel-item";
+        item.setAttribute("role", "link");
+        item.setAttribute("tabindex", "0");
+
+        const openProduct = () => {
+            window.location.href = `product.html?id=${p.id}`;
+        };
+
+        item.addEventListener("click", openProduct);
+        item.addEventListener("keydown", event => {
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                openProduct();
+            }
+        });
+
+        const metaParts = [];
+        if (p.artist) metaParts.push(p.artist);
+        if (p.category) metaParts.push(translateCategory(p.category));
+        if (p.genre) metaParts.push(translateSubcategory(p.genre));
+        if (p.music_genre) metaParts.push(translateMusicGenre(p.music_genre));
+
+        item.innerHTML = `
+            <img src="${imageUrl}" alt="${safeName}">
+            <div class="carousel-item-body">
+                <div class="carousel-item-title">${p.name || "Продукт без име"}</div>
+                <div class="carousel-item-price">€${Number(p.price).toFixed(2)}</div>
+                <div class="carousel-item-meta">${metaParts.join(" · ") || "-"}</div>
+                <div class="carousel-item-actions">
+                    <button class="primary" type="button">Добави в количката</button>
+                    <button class="secondary" type="button">Любими</button>
+                </div>
+            </div>
+        `;
+
+        const cartBtn = item.querySelector(".primary");
+        const favBtn = item.querySelector(".secondary");
+
+        if (cartBtn) {
+            cartBtn.addEventListener("click", event => {
+                event.stopPropagation();
+                addToCart(p.id, safeName, p.price);
+            });
+        }
+
+        if (favBtn) {
+            favBtn.addEventListener("click", event => {
+                event.stopPropagation();
+                addFavorite(p.id);
+            });
+        }
+
+        return item;
+    }
+
+    function setRelatedCarouselMessage(message) {
+        const track = document.getElementById("relatedTrack");
+        if (!track) return;
+
+        track.innerHTML = `<div class="home-empty" style="padding:1.5rem;">${message}</div>`;
+        track.style.transform = "translateX(0)";
+        relatedCarousel.track = null;
+        relatedCarousel.index = 0;
+        relatedCarousel.total = 0;
+        updateRelatedCarouselButtons();
+    }
+
+    function getRelatedCarouselStep() {
+        if (!relatedCarousel.track) return 304;
+
+        const item = relatedCarousel.track.querySelector(".carousel-item");
+        const itemWidth = item ? item.getBoundingClientRect().width : 280;
+        const styles = getComputedStyle(relatedCarousel.track);
+        const gap = parseFloat(styles.columnGap || styles.gap || 24) || 24;
+        return itemWidth + gap;
+    }
+
+    function getRelatedItemsPerView(step) {
+        if (!relatedCarousel.track) return 1;
+        const containerWidth = relatedCarousel.track.parentElement.clientWidth;
+        return Math.max(1, Math.floor(containerWidth / step));
+    }
+
+    function updateRelatedCarouselButtons() {
+        const prev = document.getElementById("relatedPrevBtn");
+        const next = document.getElementById("relatedNextBtn");
+
+        if (!relatedCarousel.track || relatedCarousel.total === 0) {
+            if (prev) prev.disabled = true;
+            if (next) next.disabled = true;
+            return;
+        }
+
+        const step = getRelatedCarouselStep();
+        const perView = getRelatedItemsPerView(step);
+        const maxIndex = Math.max(0, relatedCarousel.total - perView);
+
+        relatedCarousel.index = Math.min(relatedCarousel.index, maxIndex);
+        relatedCarousel.track.style.transform = `translateX(-${relatedCarousel.index * step}px)`;
+
+        if (prev) prev.disabled = relatedCarousel.index === 0;
+        if (next) next.disabled = relatedCarousel.index >= maxIndex;
+    }
+
+    function moveRelatedCarousel(direction) {
+        if (!relatedCarousel.track) return;
+
+        const step = getRelatedCarouselStep();
+        const perView = getRelatedItemsPerView(step);
+        const maxIndex = Math.max(0, relatedCarousel.total - perView);
+
+        relatedCarousel.index = Math.max(0, Math.min(relatedCarousel.index + direction, maxIndex));
+        relatedCarousel.track.style.transform = `translateX(-${relatedCarousel.index * step}px)`;
+        updateRelatedCarouselButtons();
+    }
+
+    function shuffleProducts(products) {
+        const copy = [...products];
+        for (let i = copy.length - 1; i > 0; i -= 1) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
+    }
+
+    function loadRelatedProducts(currentProductId) {
+        fetch("/musicshop/api/products.php", { credentials: "include" })
+            .then(r => r.json())
+            .then(data => {
+                if (!data.ok || !Array.isArray(data.products)) {
+                    setRelatedCarouselMessage("Грешка при зареждане на предложенията.");
+                    return;
+                }
+
+                const products = data.products.filter(p => Number(p.id) !== Number(currentProductId));
+                if (products.length === 0) {
+                    setRelatedCarouselMessage("Няма други налични продукти.");
+                    return;
+                }
+
+                const selection = shuffleProducts(products).slice(0, 8);
+                const track = document.getElementById("relatedTrack");
+                if (!track) return;
+
+                track.innerHTML = "";
+                selection.forEach(product => track.appendChild(renderRelatedCarouselItem(product)));
+
+                relatedCarousel.track = track;
+                relatedCarousel.index = 0;
+                relatedCarousel.total = selection.length;
+                updateRelatedCarouselButtons();
+            })
+            .catch(() => {
+                setRelatedCarouselMessage("Грешка при зареждане на предложенията.");
+            });
+    }
+
     function loadProduct() {
         const id = getQueryParam("id");
         if (!id) {
             document.getElementById("productTitle").textContent = "Няма избран продукт.";
+            setRelatedCarouselMessage("Няма избран продукт.");
             return;
         }
 
@@ -369,12 +570,15 @@
             .then(data => {
                 if (!data.ok || !data.products || data.products.length === 0) {
                     document.getElementById("productTitle").textContent = "Продуктът не е намерен.";
+                    setRelatedCarouselMessage("Няма налични предложения.");
                     return;
                 }
                 renderProduct(data.products[0]);
+                loadRelatedProducts(id);
             })
             .catch(() => {
                 document.getElementById("productTitle").textContent = "Грешка при зареждане на продукта.";
+                setRelatedCarouselMessage("Грешка при зареждане на предложенията.");
             });
     }
 
@@ -491,6 +695,8 @@
         document.getElementById("year").textContent = new Date().getFullYear();
         loadProduct();
     });
+
+    window.addEventListener("resize", updateRelatedCarouselButtons);
 </script>
 
 <script src="js/script.js?v=20260309"></script>

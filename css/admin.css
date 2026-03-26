@@ -214,7 +214,7 @@ main {
 }
 
 .page-wrapper.admin-layout {
-    width: min(1104px, 100%);
+    width: min(1360px, 100%);
     display: flex;
     flex-direction: column;
     gap: 24px;
