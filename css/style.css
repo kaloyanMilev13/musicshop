@@ -549,10 +549,31 @@ textarea:focus {
     font-size: 0.95rem;
 }
 
+.favorites-page .product-description,
+.products-page .product-description {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+}
+
 .product-actions {
     display: flex;
     gap: 0.5rem;
     flex-wrap: wrap;
+}
+
+.favorites-page .product-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+}
+
+.favorites-page .product-actions > * {
+    min-width: 0;
+    white-space: nowrap;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
 }
 
 /* Carousels on home */
@@ -1073,13 +1094,17 @@ textarea:focus {
     grid-template-columns: 1fr;
 }
 
+.product-detail-page .page-wrapper.product-detail-wrapper {
+    max-width: 1360px;
+}
+
 .product-detail-card {
     padding: 0;
 }
 
 .product-detail-grid {
     display: grid;
-    grid-template-columns: 1.2fr 1fr;
+    grid-template-columns: minmax(360px, 0.95fr) minmax(420px, 1.15fr);
     gap: 2rem;
     align-items: start;
     padding: 1.5rem;
@@ -1091,8 +1116,8 @@ textarea:focus {
 
 .product-detail-image-frame {
     width: 100%;
-    height: 560px;
-    max-height: 70vh;
+    height: clamp(420px, 58vh, 520px);
+    max-height: none;
     border-radius: 12px;
     background: #f0f0f0;
     display: flex;
@@ -1116,6 +1141,12 @@ textarea:focus {
     margin-bottom: 0.5rem;
 }
 
+.product-detail-body {
+    display: flex;
+    flex-direction: column;
+    min-height: clamp(420px, 58vh, 520px);
+}
+
 .product-price-large {
     font-size: 1.6rem;
     font-weight: 700;
@@ -1127,6 +1158,10 @@ textarea:focus {
     margin: 0.5rem 0 1rem;
     color: var(--text);
     line-height: 1.6;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    padding-right: 0.5rem;
 }
 
 .product-meta-row {
@@ -1149,10 +1184,19 @@ textarea:focus {
         grid-template-columns: 1fr;
     }
 
+    .product-detail-body {
+        min-height: 0;
+    }
+
     .product-detail-image-frame {
         height: 420px;
         max-height: none;
         padding: 1rem;
+    }
+
+    .product-detail-description {
+        overflow: visible;
+        padding-right: 0;
     }
 }
 
@@ -1579,6 +1623,10 @@ footer {
 @media (max-width: 600px) {
     .product-grid,
     .product-grid.single-product-result {
+        grid-template-columns: 1fr;
+    }
+
+    .favorites-page .product-actions {
         grid-template-columns: 1fr;
     }
 
