@@ -2,6 +2,7 @@
 session_start();
 require 'db.php';
 require 'product_image.php';
+require 'music_genre.php';
 header('Content-Type: application/json');
 
 $userId = $_SESSION['user_id'] ?? null;
@@ -45,9 +46,15 @@ if (!empty($_GET['subcategory'])) {
     $types .= "s";
 }
 if (!empty($_GET['music_genre'])) {
-    $sql .= " AND p.music_genre = ?";
-    $params[] = $_GET['music_genre'];
-    $types .= "s";
+    $aliases = getMusicGenreAliases($_GET['music_genre']);
+    if ($aliases) {
+        $placeholders = implode(',', array_fill(0, count($aliases), '?'));
+        $sql .= " AND p.music_genre IN ($placeholders)";
+        foreach ($aliases as $alias) {
+            $params[] = $alias;
+            $types .= "s";
+        }
+    }
 }
 if (!empty($_GET['search'])) {
     $sql .= " AND (p.name LIKE CONCAT('%', ?, '%') OR p.artist LIKE CONCAT('%', ?, '%'))";

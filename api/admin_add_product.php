@@ -1,6 +1,7 @@
 <?php
 require 'admin_check.php';
 require 'db.php';
+require 'music_genre.php';
 require 'product_image.php';
 header('Content-Type: application/json');
 
@@ -21,7 +22,7 @@ $description = $data['description'] ?? null;
 $image_url = normalizeProductImagePath($data['image_url'] ?? null);
 
 $format = $data['format'] ?? null;
-$music_genre = $data['music_genre'] ?? null;
+$music_genre = normalizeMusicGenreValue($data['music_genre'] ?? null);
 $size = $data['size'] ?? null;
 $color = $data['color'] ?? null;
 $merch_type = $data['merch_type'] ?? null;

@@ -222,9 +222,13 @@ main {
 
 .admin-middle-row {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 24px;
     align-items: stretch;
+}
+
+body.admin-split-layout .admin-middle-row {
+    grid-template-columns: 1fr 1fr;
 }
 
 /* Cards */
@@ -301,6 +305,17 @@ textarea {
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 1rem;
     margin: 1rem 0;
+}
+
+body:not(.admin-split-layout) .product-form-grid .form-group:has(#description) {
+    grid-column: 1 / -1;
+}
+
+body:not(.admin-split-layout) #description {
+    width: 100%;
+    min-width: 18rem;
+    max-width: 100%;
+    resize: both;
 }
 
 .product-extra-groups {
