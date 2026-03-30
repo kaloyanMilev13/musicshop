@@ -1,0 +1,28 @@
+MusicShop - checklist za flashka
+
+Preporachitelen variant:
+- Kopirai cqlata papka `musicshop` bez preimenuvane.
+
+Zaduljitelni runtime elementi:
+- vseki osnoven `.html` fail v korena
+- papka `api/`
+- papka `css/`
+- papka `js/`
+- papka `images/`
+- fail `musicshop_last.sql`
+
+Ne preimenuvai papkata:
+- proektut tryabva da stoi kato `musicshop`
+- v koda ima zahardkodeni putishta `/musicshop/api/...`
+
+Nezaduljitelni:
+- `documentation/`
+- `musicshop.sql`
+- `seed_imaginary_news_20260325.sql`
+- `product_description_updates_20260326.sql`
+- `start_stack.py`
+- `stop_stack.py`
+- `reset_db_kala.sh`
+
+Ako iskash instalaciq bez internet:
+- dobavi i instalator za XAMPP na flashkata

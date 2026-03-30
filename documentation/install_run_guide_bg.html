@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8">
+  <title>MusicShop - Инструкции за инсталиране и стартиране</title>
+  <style>
+    body {
+      font-family: "DejaVu Sans", Arial, sans-serif;
+      line-height: 1.45;
+      margin: 2.2cm;
+      color: #111;
+    }
+    h1, h2, h3 {
+      color: #1d3557;
+      margin-bottom: 0.3em;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 0.8em;
+    }
+    p, li {
+      font-size: 11pt;
+    }
+    code {
+      font-family: "DejaVu Sans Mono", monospace;
+      background: #f3f4f6;
+      padding: 1px 4px;
+    }
+    .note {
+      border-left: 4px solid #1d3557;
+      padding-left: 12px;
+      margin: 12px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>MusicShop<br>Инструкции за инсталиране и стартиране</h1>
+
+  <p>
+    Този документ описва как проектът <strong>MusicShop</strong> да бъде прехвърлен с флашка
+    и стартиран на друг компютър. Проектът е уеб приложение с <strong>PHP + Apache + MariaDB/MySQL</strong>.
+  </p>
+
+  <h2>1. Какво трябва да има на флашката</h2>
+  <p><strong>Най-сигурният вариант</strong> е да се копира цялата папка <code>musicshop</code> без преименуване.</p>
+
+  <p>Ако се подготвя минимален пакет, задължително трябва да присъстват:</p>
+  <ul>
+    <li>всички основни <code>.html</code> файлове в корена на проекта;</li>
+    <li>папка <code>api/</code>;</li>
+    <li>папка <code>css/</code>;</li>
+    <li>папка <code>js/</code>;</li>
+    <li>папка <code>images/</code>;</li>
+    <li>файл <code>musicshop_last.sql</code> - основният SQL архив за базата данни.</li>
+  </ul>
+
+  <div class="note">
+    <p>
+      <strong>Важно:</strong> папката трябва да се казва точно <code>musicshop</code>.
+      В кода има заявки от вида <code>/musicshop/api/...</code>. Ако папката се преименува,
+      сайтът няма да може да зарежда данни от API-то.
+    </p>
+  </div>
+
+  <p>Незадължителни файлове:</p>
+  <ul>
+    <li><code>start_stack.py</code> и <code>stop_stack.py</code> - помощни скриптове за Linux;</li>
+    <li><code>reset_db_kala.sh</code> - помощен Linux скрипт за нулиране на базата;</li>
+    <li>папка <code>documentation/</code> - документация, не е нужна за работата на сайта;</li>
+    <li>старите SQL файлове <code>musicshop.sql</code>, <code>seed_imaginary_news_20260325.sql</code>,
+      <code>product_description_updates_20260326.sql</code> - не са нужни, ако се използва <code>musicshop_last.sql</code>.</li>
+  </ul>
+
+  <h2>2. Необходим софтуер</h2>
+  <p>За стартиране на проекта на Windows най-лесно е да се използва <strong>XAMPP</strong>.</p>
+  <ul>
+    <li>Apache</li>
+    <li>MariaDB / MySQL</li>
+    <li>PHP</li>
+    <li>phpMyAdmin</li>
+  </ul>
+
+  <p>
+    Ако компютърът няма интернет, може на флашката да се добави и инсталатор за XAMPP.
+    Ако XAMPP вече е инсталиран, не е нужно да се копира.
+  </p>
+
+  <h2>3. Инсталиране и стартиране на Windows чрез XAMPP</h2>
+
+  <h3>3.1. Копиране на проекта</h3>
+  <ol>
+    <li>Инсталирайте XAMPP.</li>
+    <li>Отворете папката <code>C:\xampp\htdocs\</code>.</li>
+    <li>Копирайте в нея цялата папка <code>musicshop</code> от флашката.</li>
+    <li>Крайният път трябва да бъде <code>C:\xampp\htdocs\musicshop\</code>.</li>
+  </ol>
+
+  <h3>3.2. Стартиране на сървърите</h3>
+  <ol>
+    <li>Отворете XAMPP Control Panel.</li>
+    <li>Стартирайте <strong>Apache</strong>.</li>
+    <li>Стартирайте <strong>MySQL</strong>.</li>
+  </ol>
+
+  <h3>3.3. Създаване на базата данни</h3>
+  <ol>
+    <li>Отворете <code>http://localhost/phpmyadmin</code>.</li>
+    <li>Създайте нова база данни с име <code>musicshop</code> и кодировка <code>utf8mb4_unicode_ci</code>.</li>
+    <li>Отворете базата <code>musicshop</code>.</li>
+    <li>Изберете таба <strong>Import</strong>.</li>
+    <li>Импортирайте файла <code>musicshop_last.sql</code>.</li>
+  </ol>
+
+  <h3>3.4. Потребител за базата данни</h3>
+  <p>Във файла <code>api/db.php</code> са зададени следните настройки:</p>
+  <ul>
+    <li>Host: <code>127.0.0.1</code></li>
+    <li>Port: <code>3306</code></li>
+    <li>User: <code>kala</code></li>
+    <li>Password: <code>kala</code></li>
+    <li>Database: <code>musicshop</code></li>
+  </ul>
+
+  <p>Има два възможни начина:</p>
+  <ol>
+    <li>Да се създаде MySQL потребител <code>kala</code> с парола <code>kala</code>.</li>
+    <li>Или да се редактира файлът <code>api/db.php</code> и да се заменят данните с локалните настройки
+      на MySQL/XAMPP, например потребител <code>root</code> с празна парола.</li>
+  </ol>
+
+  <p>Примерни настройки за XAMPP:</p>
+  <ul>
+    <li><code>$DB_USER = 'root';</code></li>
+    <li><code>$DB_PASS = '';</code></li>
+  </ul>
+
+  <h3>3.5. Стартиране на сайта</h3>
+  <p>След успешен импорт и работещи Apache/MySQL, сайтът се отваря от:</p>
+  <p><code>http://localhost/musicshop/</code></p>
+
+  <h2>4. Проверка дали проектът работи</h2>
+  <ol>
+    <li>Отворете началната страница.</li>
+    <li>Проверете дали се зареждат продукти и новини.</li>
+    <li>Тествайте регистрация на нов потребител.</li>
+    <li>Тествайте вход в системата.</li>
+    <li>При нужда проверете връзката към базата през <code>http://localhost/musicshop/api/test_db.php</code>.</li>
+  </ol>
+
+  <h2>5. По желание: стартиране на Linux</h2>
+  <p>Проектът първоначално е подготвен за среда с Apache (<code>httpd</code>) и MariaDB.</p>
+  <ol>
+    <li>Копирайте проекта в уеб директория, така че да се достъпва като <code>/musicshop</code>.</li>
+    <li>Стартирайте Apache и MariaDB.</li>
+    <li>Създайте база <code>musicshop</code> и импортнете <code>musicshop_last.sql</code>.</li>
+    <li>Настройте потребителските данни във файла <code>api/db.php</code>.</li>
+  </ol>
+
+  <p>
+    Файловете <code>start_stack.py</code> и <code>stop_stack.py</code> работят само ако на Linux
+    има услуги с имена <code>httpd</code> и <code>mariadb</code> и ако потребителят има права да ги стартира.
+  </p>
+
+  <h2>6. Чести проблеми</h2>
+  <ul>
+    <li><strong>Празни страници или липсващи продукти:</strong> най-често има проблем с базата данни или импортът не е направен.</li>
+    <li><strong>Грешка при свързване към базата:</strong> проверете настройките във файла <code>api/db.php</code>.</li>
+    <li><strong>404 / API not found:</strong> проектът вероятно не е в папка <code>musicshop</code>.</li>
+    <li><strong>Липсващи изображения:</strong> уверете се, че папка <code>images/</code> е копирана изцяло.</li>
+  </ul>
+
+  <h2>7. Препоръка за предаване с флашка</h2>
+  <p>Препоръчителна структура на флашката:</p>
+  <ul>
+    <li><code>musicshop/</code> - целият проект;</li>
+    <li><code>XAMPP Installer</code> - по желание, ако ще се инсталира офлайн;</li>
+    <li>този файл с инструкции.</li>
+  </ul>
+
+  <p>
+    Ако има достатъчно място, най-практично е да се даде <strong>цялата папка на проекта</strong>,
+    а не само минимален подбор от файлове. Така рискът да липсва важен ресурс е най-малък.
+  </p>
+</body>
+</html>
