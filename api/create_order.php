@@ -34,7 +34,7 @@ if ($name === '' || $email === '' || $phone === '' || $address === '' || $city =
     exit;
 }
 
-// Validate items
+// Validate and combine duplicate product rows from the client cart.
 $itemList = [];
 foreach ($data['items'] as $item) {
     $pid = isset($item['product_id']) ? (int)$item['product_id'] : 0;
@@ -45,16 +45,22 @@ foreach ($data['items'] as $item) {
         exit;
     }
 
-    $itemList[] = [
-        "product_id" => $pid,
-        "quantity" => $qty
-    ];
+    if (!isset($itemList[$pid])) {
+        $itemList[$pid] = [
+            "product_id" => $pid,
+            "quantity" => 0
+        ];
+    }
+
+    $itemList[$pid]["quantity"] += $qty;
 }
 
 if (count($itemList) === 0) {
     echo json_encode(["ok" => false, "error" => "No valid items"]);
     exit;
 }
+
+ksort($itemList);
 
 $conn->begin_transaction();
 
@@ -94,8 +100,9 @@ try {
 
     $total = 0.0;
 
-    $stmtProd = $conn->prepare("SELECT price FROM products WHERE id = ?");
+    $stmtProd = $conn->prepare("SELECT name, price, stock FROM products WHERE id = ? FOR UPDATE");
     $stmtItem = $conn->prepare("INSERT INTO order_items (order_id, product_id, quantity, unit_price) VALUES (?, ?, ?, ?)");
+    $stmtStock = $conn->prepare("UPDATE products SET stock = stock - ? WHERE id = ?");
 
     foreach ($itemList as $it) {
         $pid = $it['product_id'];
@@ -110,16 +117,27 @@ try {
             throw new Exception("Product not found: " . $pid);
         }
 
+        $stock = (int)$prod['stock'];
+        if ($qty > $stock) {
+            throw new Exception(
+                "Not enough stock for " . $prod['name'] . ". Available: " . $stock . ", requested: " . $qty
+            );
+        }
+
         $price = (float)$prod['price'];
         $lineTotal = $price * $qty;
         $total += $lineTotal;
 
         $stmtItem->bind_param("iiid", $order_id, $pid, $qty, $price);
         $stmtItem->execute();
+
+        $stmtStock->bind_param("ii", $qty, $pid);
+        $stmtStock->execute();
     }
 
     $stmtProd->close();
     $stmtItem->close();
+    $stmtStock->close();
 
     // Update total
     $stmtUp = $conn->prepare("UPDATE orders SET total_price = ? WHERE id = ?");

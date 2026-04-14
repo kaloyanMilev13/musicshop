@@ -284,7 +284,7 @@
             cartBtn.addEventListener("click", () => {
                 if (currentModalProduct) {
                     const safeName = (currentModalProduct.name || "").replace(/"/g, '&quot;').replace(/'/g, "\\'");
-                    addToCart(currentModalProduct.id, safeName, currentModalProduct.price);
+                    addToCart(currentModalProduct.id, safeName, currentModalProduct.price, currentModalProduct.stock);
                     closeProductModal();
                 }
             });
@@ -308,18 +308,28 @@
         localStorage.setItem('musicshop_cart', JSON.stringify(cart));
     }
 
-    function addToCart(id, name, price) {
+    function addToCart(id, name, price, stock) {
         const cart = getCart();
+        const availableStock = Number(stock);
+        const hasStockLimit = Number.isFinite(availableStock);
         const existing = cart.find(item => item.id === id);
+        const currentQty = existing ? Number(existing.quantity) || 0 : 0;
+
+        if (hasStockLimit && currentQty + 1 > availableStock) {
+            alert("Няма достатъчна наличност. Налични: " + availableStock);
+            return;
+        }
 
         if (existing) {
-            existing.quantity += 1;
+            existing.quantity = currentQty + 1;
+            if (hasStockLimit) existing.stock = availableStock;
         } else {
             cart.push({
                 id: id,
                 name: name,
                 price: Number(price),
-                quantity: 1
+                quantity: 1,
+                stock: hasStockLimit ? availableStock : undefined
             });
         }
 
@@ -462,7 +472,7 @@
                     const cartBtn = card.querySelector(".cart-btn");
                     const removeBtn = card.querySelector(".remove-btn");
 
-                    if (cartBtn) cartBtn.addEventListener("click", () => addToCart(p.id, safeName, p.price));
+                    if (cartBtn) cartBtn.addEventListener("click", () => addToCart(p.id, safeName, p.price, p.stock));
                     if (removeBtn) removeBtn.addEventListener("click", () => removeFavorite(p.id));
 
                     grid.appendChild(card);

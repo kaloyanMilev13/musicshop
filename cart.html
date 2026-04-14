@@ -400,8 +400,8 @@
                 if (footerSecondary) footerSecondary.innerHTML = 'Нямаш профил? <a href="register.html">Създай такъв</a>';
             });
 
-        // Render cart initially
-        renderCart();
+        // Render cart with current stock, including carts saved before stock was tracked.
+        refreshCartStock().finally(renderCart);
     });
 
     // ----- Cart helpers (same logic as your original) -----
@@ -422,6 +422,59 @@
         localStorage.removeItem('musicshop_cart');
     }
 
+    async function fetchProductStock(productId) {
+        const resp = await fetch('/musicshop/api/products.php?id=' + encodeURIComponent(productId), {
+            credentials: 'include'
+        });
+        const data = await resp.json();
+        if (!data.ok || !data.products || !data.products.length) return null;
+
+        return data.products[0];
+    }
+
+    async function refreshCartStock() {
+        const cart = getCart();
+        if (cart.length === 0) return cart;
+
+        const products = await Promise.all(cart.map(item => fetchProductStock(item.id).catch(() => null)));
+        let changed = false;
+
+        cart.forEach((item, index) => {
+            const product = products[index];
+            if (!product) return;
+
+            const stock = Number(product.stock);
+            if (Number.isFinite(stock)) {
+                item.stock = stock;
+                changed = true;
+            }
+            if (product.name) item.name = product.name;
+            if (product.price !== undefined) item.price = Number(product.price);
+        });
+
+        if (changed) saveCart(cart);
+        return cart;
+    }
+
+    async function validateCartStock() {
+        const cart = await refreshCartStock();
+        const overStockItem = cart.find(item => {
+            const stock = Number(item.stock);
+            const quantity = Number(item.quantity) || 0;
+            return Number.isFinite(stock) && quantity > stock;
+        });
+
+        if (!overStockItem) return true;
+
+        alert(
+            "Няма достатъчна наличност за " + overStockItem.name +
+            ". Налични: " + overStockItem.stock +
+            ", в количката: " + overStockItem.quantity
+        );
+        renderCart();
+        return false;
+    }
+
     function renderCart() {
         const cart = getCart();
         const container = document.getElementById("cart_list");
@@ -439,6 +492,9 @@
 
         cart.forEach((item, index) => {
             const lineTotal = item.price * item.quantity;
+            const stock = Number(item.stock);
+            const stockLabel = Number.isFinite(stock) ? `<span class="stock-info">Налични: ${stock}</span>` : "";
+            const incDisabled = Number.isFinite(stock) && item.quantity >= stock ? "disabled" : "";
             total += lineTotal;
 
             const div = document.createElement("div");
@@ -449,7 +505,8 @@
                     <button class="btn-outline view-btn" data-id="${item.id}">Виж продукт</button>
                     <button class="btn-outline dec-btn" data-index="${index}">-</button>
                     <span class="qty">${item.quantity}</span>
-                    <button class="btn-outline inc-btn" data-index="${index}">+</button>
+                    <button class="btn-outline inc-btn" data-index="${index}" ${incDisabled}>+</button>
+                    ${stockLabel}
                     <span class="line-total">€${lineTotal.toFixed(2)}</span>
                     <button class="btn-outline remove-btn" data-index="${index}">Премахни</button>
                 </div>
@@ -497,7 +554,14 @@
         const cart = getCart();
         if (!cart[index]) return;
 
-        cart[index].quantity += delta;
+        const currentQty = Number(cart[index].quantity) || 0;
+        const stock = Number(cart[index].stock);
+        if (delta > 0 && Number.isFinite(stock) && currentQty + delta > stock) {
+            alert("Няма достатъчна наличност. Налични: " + stock);
+            return;
+        }
+
+        cart[index].quantity = currentQty + delta;
 
         if (cart[index].quantity <= 0) {
             cart.splice(index, 1);
@@ -517,12 +581,15 @@
     }
 
     // ----- Place order with checkout fields -----
-    function placeOrder() {
-        const cart = getCart();
+    async function placeOrder() {
+        let cart = getCart();
         if (cart.length === 0) {
             alert("Количката е празна.");
             return;
         }
+
+        if (!await validateCartStock()) return;
+        cart = getCart();
 
         const name     = document.getElementById("chk_name").value.trim();
         const email    = document.getElementById("chk_email").value.trim();

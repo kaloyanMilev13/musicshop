@@ -309,7 +309,7 @@ function renderCarouselItem(p) {
             <div class="carousel-item-price">€${Number(p.price).toFixed(2)}</div>
             <div class="carousel-item-meta">${metaParts.join(' · ') || '-'}</div>
             <div class="carousel-item-actions">
-                <button class="primary" onclick="addToCart(${p.id}, '${safeName}', ${p.price})">Добави в количката</button>
+                <button class="primary" onclick="addToCart(${p.id}, '${safeName}', ${p.price}, ${Number(p.stock) || 0})">Добави в количката</button>
                 <button class="secondary" onclick="addFavorite(${p.id})">Любими</button>
             </div>
         </div>
@@ -498,18 +498,28 @@ function saveCart(cart) {
 localStorage.setItem('musicshop_cart', JSON.stringify(cart));
 }
 
-function addToCart(id, name, price) {
+function addToCart(id, name, price, stock) {
 const cart = getCart();
+const availableStock = Number(stock);
+const hasStockLimit = Number.isFinite(availableStock);
 
 const existing = cart.find(item => item.id === id);
+const currentQty = existing ? Number(existing.quantity) || 0 : 0;
+if (hasStockLimit && currentQty + 1 > availableStock) {
+alert("Няма достатъчна наличност. Налични: " + availableStock);
+return;
+}
+
 if (existing) {
-existing.quantity += 1;
+existing.quantity = currentQty + 1;
+if (hasStockLimit) existing.stock = availableStock;
 } else {
 cart.push({
 id: id,
 name: name,
 price: Number(price),
-quantity: 1
+quantity: 1,
+stock: hasStockLimit ? availableStock : undefined
 });
 }
 
