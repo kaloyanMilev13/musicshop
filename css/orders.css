@@ -1,0 +1,77 @@
+/* Ensure readable totals in dark theme */
+body.dark-theme .order-total {
+    color: #ffffff !important;
+}
+body.dark-theme .order-items li {
+    color: #e6e6e6 !important;
+}
+body.dark-theme .order-id,
+body.dark-theme .order-date {
+    color: #f5f5f5 !important;
+}
+
+.orders-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.login-btn-header {
+    background: #ffffff;
+    color: #222222;
+    border: 1px solid #e6e6e6;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.login-btn-header:hover {
+    background: #e6e6e6;
+    border-color: #d0d0d0;
+}
+
+body.dark-theme .login-btn-header {
+    background: #2a2a2a;
+    color: #f5f5f5;
+    border-color: #3a3a3a;
+}
+
+body.dark-theme .login-btn-header:hover {
+    background: #333333;
+    border-color: #4a4a4a;
+}
+
+.brand-icon {
+    width: 48px;
+    height: 48px;
+    margin-right: 0.6rem;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.brand-icon img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
+}
+
+.brand-icon .brand-logo-dark {
+    display: none;
+}
+
+.nav-links a {
+    white-space: nowrap;
+}
+
+body.dark-theme .brand-icon .brand-logo-light {
+    display: none;
+}
+
+body.dark-theme .brand-icon .brand-logo-dark {
+    display: block;
+}

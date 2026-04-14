@@ -1,0 +1,628 @@
+/* Extracted and adapted color palette and utilities from MusicStoreGitHubUI.css */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: #f8f8f8; /* Light background for better contrast */
+    color: #333; /* Darker text for readability */
+}
+
+a {
+    color: #888;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: #383838;
+    text-decoration: none;
+}
+
+input,
+button:focus,
+a:focus {
+    outline: none;
+}
+
+/* Width utilities for flexible layouts */
+.w-10 { width: 10% !important; }
+.w-20 { width: 20% !important; }
+.w-25 { width: 25% !important; }
+.w-30 { width: 30% !important; }
+.w-40 { width: 40% !important; }
+.w-50 { width: 50% !important; }
+.w-60 { width: 60% !important; }
+.w-70 { width: 70% !important; }
+.w-75 { width: 75% !important; }
+.w-80 { width: 80% !important; }
+.w-90 { width: 90% !important; }
+.w-100 { width: 100% !important; }
+
+/* Enhanced header styling */
+.site-header {
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    gap: 1rem;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.brand-icon {
+    width: 48px;
+    height: 48px;
+    margin-right: 0.6rem;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.brand-icon img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
+}
+
+.brand-icon .brand-logo-dark {
+    display: none;
+}
+
+.brand-text h1 {
+    font-size: 1.5rem;
+    margin: 0;
+    color: #383838;
+}
+
+.brand-text p {
+    font-size: 0.8rem;
+    margin: 0;
+    color: #888;
+}
+
+.nav-links {
+    display: flex;
+    gap: 1rem;
+}
+
+.nav-links a {
+    font-weight: 500;
+    transition: color 0.3s ease;
+    white-space: nowrap;
+}
+
+.nav-links a.active {
+    color: #383838;
+    font-weight: 600;
+}
+
+.nav-secondary {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.theme-toggle {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+.user-status-pill {
+    display: flex;
+    align-items: center;
+    background-color: #f0f0f0;
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+.user-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #ccc;
+    margin-right: 0.5rem;
+}
+
+.login-btn-header {
+    background: #ffffff;
+    color: #222222;
+    border: 1px solid #e6e6e6;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.login-btn-header:hover {
+    background: #e6e6e6;
+    border-color: #d0d0d0;
+}
+
+.logout-btn {
+    background-color: #383838;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background-color 0.3s ease;
+}
+
+.logout-btn:hover {
+    background-color: #222;
+}
+
+.home-empty {
+    font-size: 0.95rem;
+    color: #888;
+}
+
+/* Main content enhancements */
+.page-wrapper {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+}
+
+.hero-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    position: relative;
+}
+
+.hero-tag {
+    background-color: #f0f0f0;
+    border-radius: 20px;
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+    display: inline-block;
+    margin-bottom: 1rem;
+}
+
+.hero-title {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    color: #383838;
+}
+
+.hero-title span {
+    color: #888;
+    font-style: italic;
+}
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    color: #888;
+    margin-bottom: 2rem;
+}
+
+.hero-cta {
+    display: inline-block;
+    background-color: #383838;
+    color: #fff;
+    padding: 1rem 2rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.hero-cta:hover {
+    background-color: #222;
+}
+
+.side-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.side-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.side-card h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+    color: #383838;
+}
+
+.side-card p {
+    font-size: 0.9rem;
+    color: #888;
+    margin-bottom: 1rem;
+}
+
+.side-card a {
+    color: #383838;
+    font-weight: 500;
+    text-decoration: underline;
+    transition: color 0.3s ease;
+}
+
+.side-card a:hover {
+    color: #222;
+}
+
+/* Carousel sections */
+.carousel-section {
+    grid-column: 1 / -1;
+    margin: 3rem 0;
+}
+
+.carousel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.2rem;
+}
+
+.carousel-header h2 {
+    font-size: 1.9rem;
+    font-weight: 600;
+    color: #383838;
+}
+
+.carousel-header a {
+    color: #888;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+.carousel-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+}
+
+.carousel-track {
+    display: flex;
+    gap: 1.5rem;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 0 1rem;
+}
+
+.carousel-item {
+    min-width: 280px;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.carousel-item:hover {
+    transform: translateY(-10px);
+}
+
+.carousel-item img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+}
+
+.product-carousel .carousel-item img {
+    object-fit: contain;
+    object-position: center;
+    display: block;
+    padding: 0.75rem;
+    background: #f0f0f0;
+}
+
+.carousel-item-placeholder {
+    height: 220px;
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #888;
+    font-size: 0.95rem;
+}
+
+.carousel-item-body {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.carousel-item-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #383838;
+    margin-bottom: 0.4rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.carousel-item-price {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #383838;
+    margin-bottom: 0.6rem;
+}
+
+.carousel-item-meta {
+    font-size: 0.85rem;
+    color: #888;
+    margin-bottom: 0.9rem;
+}
+
+.carousel-item-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: auto;
+}
+
+.carousel-item-actions button {
+    flex: 1;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.carousel-item-actions .primary {
+    background: #383838;
+    color: #fff;
+}
+
+.carousel-item-actions .primary:hover {
+    background: #222;
+}
+
+.carousel-item-actions .secondary {
+    background: #f0f0f0;
+    color: #383838;
+}
+
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    border: none;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    font-size: 1.6rem;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.carousel-btn.prev {
+    left: 12px;
+}
+
+.carousel-btn.next {
+    right: 12px;
+}
+
+.carousel-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* Footer enhancements */
+footer {
+    background-color: #fff;
+    border-top: 1px solid #eee;
+    padding: 2rem 0;
+    margin-top: 4rem;
+}
+
+.footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #888;
+}
+
+.footer-inner a {
+    color: #888;
+    text-decoration: underline;
+}
+
+.footer-inner a:hover {
+    color: #383838;
+}
+
+/* Responsive media queries adapted from MusicStoreGitHubUI.css */
+@media (max-width: 1200px) {
+    .page-wrapper {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .nav-inner {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .nav-links {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .hero-title {
+        font-size: 2rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+
+    .carousel-item {
+        min-width: 240px;
+    }
+}
+
+@media (max-width: 500px) {
+    .carousel-item {
+        min-width: calc(100vw - 100px);
+    }
+
+    .footer-inner {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+}
+
+/* Dark theme enhancements */
+body.dark-theme {
+    background-color: #121212;
+    color: #ddd;
+}
+
+body.dark-theme .site-header,
+body.dark-theme .hero-card,
+body.dark-theme .side-card,
+body.dark-theme .product-card,
+body.dark-theme footer {
+    background-color: #1e1e1e;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-theme a,
+body.dark-theme .brand-text p,
+body.dark-theme .hero-subtitle,
+body.dark-theme .side-card p,
+body.dark-theme .product-meta,
+body.dark-theme .product-description,
+body.dark-theme .footer-inner {
+    color: #bbb;
+}
+
+body.dark-theme a:hover,
+body.dark-theme .brand-text h1,
+body.dark-theme .nav-links a.active,
+body.dark-theme .hero-title,
+body.dark-theme .side-card h3,
+body.dark-theme .product-name,
+body.dark-theme .product-price {
+    color: #fff;
+}
+
+body.dark-theme .hero-tag,
+body.dark-theme .user-status-pill {
+    background-color: #333;
+}
+
+body.dark-theme .brand-icon .brand-logo-light {
+    display: none;
+}
+
+body.dark-theme .brand-icon .brand-logo-dark {
+    display: block;
+}
+
+body.dark-theme .logout-btn,
+body.dark-theme .hero-cta,
+body.dark-theme .product-actions .primary {
+    background-color: #444;
+}
+
+body.dark-theme .logout-btn:hover,
+body.dark-theme .hero-cta:hover,
+body.dark-theme .product-actions .primary:hover {
+    background-color: #555;
+}
+
+body.dark-theme .product-actions button:nth-child(2) {
+    background-color: #333;
+    color: #ddd;
+}
+
+body.dark-theme .product-actions button:nth-child(2):hover {
+    background-color: #444;
+}
+
+body.dark-theme .login-btn-header {
+    background: #2a2a2a;
+    color: #f5f5f5;
+    border-color: #3a3a3a;
+}
+
+body.dark-theme .login-btn-header:hover {
+    background: #333333;
+    border-color: #4a4a4a;
+}
+
+/* Dark theme fixes for carousel */
+body.dark-theme .carousel-item {
+    background-color: #1e1e1e;
+}
+
+body.dark-theme .carousel-item-title,
+body.dark-theme .carousel-item-price {
+    color: #ffffff;
+}
+
+body.dark-theme .carousel-item-meta {
+    color: #c0c0c0;
+}
+
+body.dark-theme .carousel-item-actions .primary {
+    background: #444;
+    color: #ffffff;
+}
+
+body.dark-theme .carousel-item-actions .secondary {
+    background: #2a2a2a;
+    color: #f5f5f5;
+}
